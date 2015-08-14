@@ -15,8 +15,8 @@ class GrupoFuncionalidade extends TRecord
     public function __construct($id = NULL)
     {
         parent::__construct($id);
-        parent::addAttribute('system_group_id');
-        parent::addAttribute('system_program_id');
+        parent::addAttribute('grupo_id');
+        parent::addAttribute('funcionalidade_id');
     }
 }
 ?>

@@ -16,8 +16,8 @@ class UsuarioFuncionalidade extends TRecord
     public function __construct($id = NULL)
     {
         parent::__construct($id);
-        parent::addAttribute('system_user_id');
-        parent::addAttribute('system_program_id');
+        parent::addAttribute('usuario_id');
+        parent::addAttribute('funcionalidade_id');
     }
 }
 ?>
