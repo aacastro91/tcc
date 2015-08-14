@@ -1,0 +1,44 @@
+<menu>
+    <menuitem label='Administration'>
+        <menu>
+              <menuitem label='Cadastro Usuario'>
+                  <icon>fa:user-plus fa-fx blue</icon>
+                  <action>UsuarioFormList</action>
+              </menuitem>
+              <menuitem label='Groups'>
+                  <icon>fa:users fa-fw blue</icon>
+                  <action>SystemGroupList</action>
+              </menuitem>
+              <menuitem label='Users'>
+                  <icon>fa:user fa-fw blue</icon>
+                  <action>SystemUserList</action>
+              </menuitem>
+        </menu>
+    </menuitem>
+    
+    <menuitem label='Cadastro'>
+        <menu>
+            <menuitem label='Aluno'>
+                <icon></icon>
+                <action>ListAluno</action>
+            </menuitem>
+            <menuitem label='Common page 2'>
+                <icon></icon>
+                <action>CommonPage</action>
+            </menuitem>
+            <menuitem label='Common page 3'>
+                <icon></icon>
+                <action>CommonPage</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+    
+    <menuitem label='Logout'>
+        <menu>
+              <menuitem label='Logout'>
+                  <icon></icon>
+                  <action>LoginForm#method=onLogout#static=1</action>
+              </menuitem>
+        </menu>
+    </menuitem>
+</menu>
