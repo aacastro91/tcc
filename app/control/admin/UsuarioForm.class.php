@@ -1,7 +1,7 @@
 <?php
 /**
  * UsuarioForm Registration
- * @author  <your name here>
+ * @author  <your nome here>
  */
 class UsuarioForm extends TPage
 {
@@ -27,72 +27,72 @@ class UsuarioForm extends TPage
         // add the table inside the form
         $this->form->add($table);
         
-        $frame_groups = new TFrame(NULL, 280);
-        $frame_groups->setLegend(_t('Groups'));
-        $frame_groups->style .= ';margin: 4px';
-        $frame_programs = new TFrame(NULL, 280);
-        $frame_programs->setLegend(_t('Programs'));
-        $frame_programs->style .= ';margin: 15px';
+        $frame_grupos = new TFrame(NULL, 280);
+        $frame_grupos->setLegend(_t('Groups'));
+        $frame_grupos->style .= ';margin: 4px';
+        $frame_funcionalidades = new TFrame(NULL, 280);
+        $frame_funcionalidades->setLegend(_t('Programs'));
+        $frame_funcionalidades->style .= ';margin: 15px';
 
 
         // create the form fields
         $id                  = new TEntry('id');
-        $name                = new TEntry('name');
-        $login               = new TEntry('login');
-        $password            = new TPassword('password');
-        $repassword          = new TPassword('repassword');
+        $nome                = new TEntry('nome');
+        $prontuario          = new TEntry('prontuario');
+        $password            = new TPassword('senha');
+        $repassword          = new TPassword('resenha');
         $email               = new TEntry('email');
-        $multifield_programs = new TMultiField('programs');
-        $program_id          = new TDBSeekButton('program_id', 'permission', 'form_Usuario', 'SystemProgram', 'name', 'programs_id', 'programs_name');
-        $program_name        = new TEntry('program_name');
-        $groups              = new TDBCheckGroup('groups','permission','SystemGroup','id','name');
-        $frontpage_id        = new TDBSeekButton('frontpage_id', 'permission', 'form_Usuario', 'SystemProgram', 'name', 'frontpage_id', 'frontpage_name');
-        $frontpage_name      = new TEntry('frontpage_name');
+        $multifield_funcionalidades = new TMultiField('funcionalidades');
+        $funcionalidade_id   = new TDBSeekButton('funcionalidade_id', 'saciq', 'form_Usuario', 'Funcionalidade', 'nome', 'funcionalidades_id', 'funcionalidades_nome');
+        $funcionalidade_nome = new TEntry('funcionalidade_nome');
+        $grupos              = new TDBCheckGroup('grupos','saciq','Grupo','id','nome');
+        //$frontpage_id        = new TDBSeekButton('frontpage_id', 'saciq', 'form_Usuario', 'Funcionalidade', 'nome', 'frontpage_id', 'frontpage_nome');
+        //$frontpage_nome      = new TEntry('frontpage_nome');
         
         $scroll = new TScroll;
         $scroll->setSize(290, 230);
-        $scroll->add( $groups );
-        $frame_groups->add( $scroll );
-        $frame_programs->add( $multifield_programs );
+        $scroll->add( $grupos );
+        $frame_grupos->add( $scroll );
+        $frame_funcionalidades->add( $multifield_funcionalidades );
 
         // define the sizes
         $id->setSize(100);
-        $name->setSize(200);
-        $login->setSize(150);
+        $nome->setSize(200);
+        $prontuario->setSize(150);
         $password->setSize(150);
         $email->setSize(200);
-        $frontpage_id->setSize(100);
-        $multifield_programs->setHeight(140);
+        //$frontpage_id->setSize(100);
+        $multifield_funcionalidades->setHeight(140);
         
         // outros
         $id->setEditable(false);
-        $program_name->setEditable(false);
-        $frontpage_name->setEditable(false);
+        $funcionalidade_nome->setEditable(false);
+        //$frontpage_name->setEditable(false);
         
         // validations
-        $name->addValidation(_t('Name'), new TRequiredValidator);
-        $login->addValidation('Login', new TRequiredValidator);
+        $nome->addValidation(_t('Name'), new TRequiredValidator);
+        $prontuario->addValidation('Login', new TRequiredValidator);
         $email->addValidation('Email', new TEmailValidator);
-        $program_id->setSize(50);
-        $program_name->setSize(200);
+        $funcionalidade_id->setSize(50);
+        $funcionalidade_nome->setSize(200);
         
         // configuracoes multifield
-        $multifield_programs->setClass('SystemProgram');
-        $multifield_programs->addField('id', 'ID',  $program_id, 60);
-        $multifield_programs->addField('name',_t('Name'), $program_name, 250);
-        $multifield_programs->setOrientation('horizontal');
+        $multifield_funcionalidades->setClass('Funcionalidade');
+        $multifield_funcionalidades->addField('id', 'ID',  $funcionalidade_id, 60);
+        $multifield_funcionalidades->addField('nome',_t('Name'), $funcionalidade_nome, 250);
+        $multifield_funcionalidades->setOrientation('horizontal');
         
         // add a row for the field id
-        $table->addRowSet(new TLabel('ID:'),                 $id,           new TLabel(_t('Name').': '), $name);
-        $table->addRowSet(new TLabel(_t('Login').': ' ),     $login,        new TLabel(_t('Email').': '), $email);
+        $table->addRowSet(new TLabel('ID:'),                 $id,           new TLabel(_t('Name').': '), $nome);
+        $table->addRowSet(new TLabel(_t('Login').': ' ),     $prontuario,        new TLabel(_t('Email').': '), $email);
         $table->addRowSet(new TLabel(_t('Password').': '),   $password,     new TLabel(_t('Password confirmation').': '), $repassword);
-        $table->addRowSet(new TLabel(_t('Front page').': '), $frontpage_id, new TLabel(_t('Page name') . ': '), $frontpage_name);
+        //$table->addRowSet(new TLabel(_t('Front page').': '), $frontpage_id, new TLabel(_t('Page nome') . ': '), $frontpage_name);
         
         $row=$table->addRow();
-        $cell = $row->addCell($frame_groups);
+        $cell = $row->addCell($frame_grupos);
         $cell->colspan = 2;
         
-        $cell = $row->addCell($frame_programs);
+        $cell = $row->addCell($frame_funcionalidades);
         $cell->colspan = 2;
 
         // create an action button (save)
@@ -106,11 +106,11 @@ class UsuarioForm extends TPage
         $new_button->setImage('ico_new.png');
         
         $list_button=new TButton('list');
-        $list_button->setAction(new TAction(array('SystemUserList','onReload')), _t('Back to the listing'));
+        $list_button->setAction(new TAction(array('UsuarioList','onReload')), _t('Back to the listing'));
         $list_button->setImage('ico_datagrid.png');
         
         // define the form fields
-        $this->form->setFields(array($id,$name,$login,$password,$repassword,$multifield_programs,$frontpage_id, $frontpage_name, $groups,$email,$save_button,$new_button,$list_button));
+        $this->form->setFields(array($id,$nome,$prontuario,$password,$repassword,$multifield_funcionalidades,/*$frontpage_id, $frontpage_name,*/ $grupos,$email,$save_button,$new_button,$list_button));
         
         $buttons = new THBox;
         $buttons->add($save_button);
@@ -124,7 +124,7 @@ class UsuarioForm extends TPage
 
         $container = new TTable;
         $container->style = 'width: 80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'SystemUserList'));
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'UsuarioList'));
         $container->addRow()->addCell($this->form);
 
         // add the form to the page
@@ -139,32 +139,32 @@ class UsuarioForm extends TPage
     {
         try
         {
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
             // get the form data into an active record Usuario
-            $object = $this->form->getData('SystemUser');
+            $object = $this->form->getData('Usuario');
             
             // form validation
             $this->form->validate();
             
-            $senha = $object->password;
+            $senha = $object->senha;
             
             if( ! $object->id )
             {
-                if( ! $object->password )
+                if( ! $object->senha )
                     throw new Exception(TAdiantiCoreTranslator::translate('The field ^1 is required', _t('Password')));
             }
             
-            if( $object->password )
+            if( $object->senha )
             {
-                if( $object->password != $object->repassword )
+                if( $object->senha != $object->resenha )
                     throw new Exception(_t('The passwords do not match'));
                 
-                $object->password = md5($object->password);
+                $object->senha = md5($object->senha);
             }
             else
-                unset($object->password);
+                unset($object->senha);
             
             
             if( $object->groups )
@@ -220,27 +220,27 @@ class UsuarioForm extends TPage
                 // get the parameter $key
                 $key=$param['key'];
                 
-                // open a transaction with database 'permission'
-                TTransaction::open('permission');
+                // open a transaction with database 'saciq'
+                TTransaction::open('saciq');
                 
                 // instantiates object Usuario
-                $object = new SystemUser($key);
+                $object = new Usuario($key);
                 
-                unset($object->password);
+                unset($object->senha);
                 
-                $groups = array();
+                $grupos = array();
                 
-                if( $groups_db = $object->getSystemUserGroups() )
+                if( $grupos_db = $object->getUsuarioGrupos() )
                 {
-                    foreach( $groups_db as $grup )
+                    foreach( $grupos_db as $grupo )
                     {
-                        $groups[] = $grup->id;
+                        $grupos[] = $grupo->id;
                     }
                 }
                 
-                $object->programs = $object->getSystemUserPrograms();
+                $object->funcionalidades = $object->getUsuarioFuncionalidades();
                 
-                $object->groups = $groups;
+                $object->grupos = $grupos;
                 
                 // fill the form with the active record data
                 $this->form->setData($object);

@@ -6,7 +6,8 @@ class PermissaoSistema
         
         $funcionalidades = TSession::getValue('funcionalidades');
         //var_dump($funcionalidades);
-       // return true;
+        //var_dump($action);
+        return true;
         return (isset($funcionalidades[$action]) AND $funcionalidades[$action]);
     } 
 }
