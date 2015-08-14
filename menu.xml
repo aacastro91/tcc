@@ -3,11 +3,11 @@
         <menu>
               <menuitem label='Programs'>
                   <icon>fa:file-code-o fa-fw green</icon>
-                  <action>SystemProgramList</action>
+                  <action>FuncionalidadeList</action>
               </menuitem>
               <menuitem label='Groups'>
                   <icon>fa:users fa-fw blue</icon>
-                  <action>SystemGroupList</action>
+                  <action>GrupoList</action>
               </menuitem>
               <menuitem label='Users'>
                   <icon>fa:user fa-fw blue</icon>

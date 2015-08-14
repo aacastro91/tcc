@@ -1,9 +1,9 @@
 <?php
 /**
- * System_groupList Listing
- * @author  <your name here>
+ * FuncionalidadeList Listing
+ * @author  <your nome here>
  */
-class SystemGroupList extends TPage
+class FuncionalidadeList extends TPage
 {
     private $form;     // registration form
     private $datagrid; // listing
@@ -19,44 +19,43 @@ class SystemGroupList extends TPage
         parent::__construct();
         
         // creates the form
-        $this->form = new TForm('form_search_System_group');
+        $this->form = new TForm('form_search_Funcionalidade');
         $this->form->class = 'tform';
         
         // creates a table
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel(_t('Groups')), '' )->class = 'tformtitle';
-        
+        $table->addRowSet( new TLabel(_t('Programs')), '' )->class = 'tformtitle';
+
         // add the table inside the form
         $this->form->add($table);
         
         // create the form fields
-        $id = new TEntry('id');
-        $id->setValue(TSession::getValue('s_id'));
+        $nome = new TEntry('nome');
+        $nome->setValue(TSession::getValue('Funcionalidade_nome'));
         
-        $name = new TEntry('name');
-        $name->setValue(TSession::getValue('s_name'));
+        $control = new TEntry('classe');
+        $control->setValue(TSession::getValue('Funcionalidade_control'));
         
-        // add a row for the filter field
-        $row=$table->addRow();
-        $row->addCell(new TLabel('ID:'));
-        $row->addCell($id);
-        
-        $row=$table->addRow();
-        $row->addCell(new TLabel(_t('Name') . ': '));
-        $row->addCell($name);
+        // add rows for the filter fields
+        $row=$table->addRowSet(new TLabel(_t('Name') . ': '), $nome);
+        $row=$table->addRowSet(new TLabel(_t('Controller') . ': '), $control);
         
         // create two action buttons to the form
         $find_button = new TButton('find');
         $new_button  = new TButton('new');
+        
         // define the button actions
         $find_button->setAction(new TAction(array($this, 'onSearch')), _t('Find'));
         $find_button->setImage('ico_find.png');
         
-        $new_button->setAction(new TAction(array('SystemGroupForm', 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array('FuncionalidadeForm', 'onEdit')), _t('New'));
         $new_button->setImage('ico_new.png');
         
+        // define wich are the form fields
+        $this->form->setFields(array($nome, $control, $find_button, $new_button));
+
         $container = new THBox;
         $container->add($find_button);
         $container->add($new_button);
@@ -65,39 +64,46 @@ class SystemGroupList extends TPage
         $row->class = 'tformaction';
         $cell = $row->addCell( $container );
         $cell->colspan = 2;
-        
-        // define wich are the form fields
-        $this->form->setFields(array($id, $name, $find_button, $new_button));
-        
+
         // creates a DataGrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
         
         // creates the datagrid columns
-        $id   = new TDataGridColumn('id', 'ID', 'center');
-        $name = new TDataGridColumn('name', _t('Name'), 'center');
+        $id         = new TDataGridColumn('id', 'ID', 'right');
+        $nome       = new TDataGridColumn('nome', _t('Name'), 'left');
+        $classe = new TDataGridColumn('classe', _t('Controller'), 'left');
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
-        $this->datagrid->addColumn($name);
+        $this->datagrid->addColumn($nome);
+        $this->datagrid->addColumn($classe);
 
         // creates the datagrid column actions
         $order_id= new TAction(array($this, 'onReload'));
         $order_id->setParameter('order', 'id');
         $id->setAction($order_id);
 
-        $order_name= new TAction(array($this, 'onReload'));
-        $order_name->setParameter('order', 'name');
-        $name->setAction($order_name);
+        $order_nome= new TAction(array($this, 'onReload'));
+        $order_nome->setParameter('order', 'nome');
+        $nome->setAction($order_nome);
+
+        $order_classe= new TAction(array($this, 'onReload'));
+        $order_classe->setParameter('order', 'classe');
+        $classe->setAction($order_classe);
 
         // inline editing
-        $name_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $name_edit->setField('id');
-        $name->setEditAction($name_edit);
+        $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
+        $nome_edit->setField('id');
+        $nome->setEditAction($nome_edit);
+
+        $classe_edit = new TDataGridAction(array($this, 'onInlineEdit'));
+        $classe_edit->setField('id');
+        $classe->setEditAction($classe_edit);
 
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array('SystemGroupForm', 'onEdit'));
+        $action1 = new TDataGridAction(array('FuncionalidadeForm', 'onEdit'));
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
@@ -120,15 +126,15 @@ class SystemGroupList extends TPage
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
         // creates the page structure using a table
-        $container = new TTable;
-        $container->style = 'width: 80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $container->addRow()->addCell($this->form);
-        $container->addRow()->addCell($this->datagrid);
-        $container->addRow()->addCell($this->pageNavigation);
+        $table = new TTable;
+        $table->style = 'width: 80%';
+        $table->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $table->addRow()->addCell($this->form);
+        $table->addRow()->addCell($this->datagrid);
+        $table->addRow()->addCell($this->pageNavigation);
         
-        // add the container inside the page
-        parent::add($container);
+        // add the table inside the page
+        parent::add($table);
     }
     
     /**
@@ -136,7 +142,7 @@ class SystemGroupList extends TPage
      * Inline record editing
      * @param $param Array containing:
      *              key: object ID value
-     *              field name: object attribute to be updated
+     *              field nome: object attribute to be updated
      *              value: new attribute content 
      */
     function onInlineEdit($param)
@@ -148,11 +154,11 @@ class SystemGroupList extends TPage
             $key   = $param['key'];
             $value = $param['value'];
             
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // instantiates object System_group
-            $object = new SystemGroup($key);
+            // instantiates object Funcionalidade
+            $object = new Funcionalidade($key);
             // deletes the object from the database
             $object->{$field} = $value;
             $object->store();
@@ -183,30 +189,33 @@ class SystemGroupList extends TPage
         // get the search form data
         $data = $this->form->getData();
         
-        TSession::setValue('s_id_filter',   NULL);
-        TSession::setValue('s_name_filter', NULL);
+        TSession::setValue('Funcionalidade_nome_filter',   NULL);
+        TSession::setValue('Funcionalidade_nome', '');
         
-        TSession::setValue('s_id', '');
-        TSession::setValue('s_name', '');
+        TSession::setValue('Funcionalidade_control_filter',   NULL);
+        TSession::setValue('Funcionalidade_control', '');
         
         // check if the user has filled the form
-        if ( $data->id )
+        if ( $data->nome )
         {
             // creates a filter using what the user has typed
-            $filter = new TFilter('id', '=', "{$data->id}");
+            $filter = new TFilter('nome', 'like', "%{$data->nome}%");
             
             // stores the filter in the session
-            TSession::setValue('s_id_filter',   $filter);
-            TSession::setValue('s_id', $data->id);
+            TSession::setValue('Funcionalidade_nome_filter',   $filter);
+            TSession::setValue('Funcionalidade_nome', $data->nome);            
         }
-        if ( $data->name )
+        
+        if ( $data->classe )
         {
             // creates a filter using what the user has typed
-            $filter = new TFilter('name', 'like', "%{$data->name}%");
+            $filter = new TFilter('classe', 'like', "%{$data->classe}%");
             
-            TSession::setValue('s_name_filter', $filter);
-            TSession::setValue('s_name', $data->name);            
+            // stores the filter in the session
+            TSession::setValue('Funcionalidade_control_filter',   $filter);
+            TSession::setValue('Funcionalidade_control', $data->classe);            
         }
+        
         // fill the form with data again
         $this->form->setData($data);
         
@@ -224,34 +233,34 @@ class SystemGroupList extends TPage
     {
         try
         {
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            if( ! isset($param['order']) )
+            // creates a repository for Funcionalidade
+            $repository = new TRepository('Funcionalidade');
+            $limit = 10;
+            // creates a criteria
+            $criteria = new TCriteria;
+            
+            if (!isset($param['order']))
             {
                 $param['order'] = 'id';
                 $param['direction'] = 'asc';
             }
             
-            // creates a repository for System_group
-            $repository = new TRepository('SystemGroup');
-            $limit = 10;
-            // creates a criteria
-            $criteria = new TCriteria;
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             
-            if (TSession::getValue('s_id_filter'))
+            if (TSession::getValue('Funcionalidade_nome_filter'))
             {
                 // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('s_id_filter'));
+                $criteria->add(TSession::getValue('Funcionalidade_nome_filter'));
             }
-            if (TSession::getValue('s_name_filter'))
+            if (TSession::getValue('Funcionalidade_control_filter'))
             {
                 // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('s_name_filter'));
+                $criteria->add(TSession::getValue('Funcionalidade_control_filter'));
             }
-            
             // load the objects according to criteria
             $objects = $repository->load($criteria);
             
@@ -313,11 +322,11 @@ class SystemGroupList extends TPage
         {
             // get the parameter $key
             $key=$param['key'];
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // instantiates object System_group
-            $object = new SystemGroup($key);
+            // instantiates object Funcionalidade
+            $object = new Funcionalidade($key);
             
             // deletes the object from the database
             $object->delete();

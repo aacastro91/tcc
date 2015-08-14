@@ -1,9 +1,10 @@
 <?php
 /**
- * System_groupForm Registration
- * @author  <your name here>
+ * GrupoForm Registration
+ * @author  <your nome here>
  */
-class SystemGroupForm extends TPage
+
+class GrupoForm extends TPage
 {
     protected $form; // form
     
@@ -23,7 +24,7 @@ class SystemGroupForm extends TPage
         $frame_programs->setLegend(_t('Programs'));
         
         // creates the form
-        $this->form = new TForm('form_System_group');
+        $this->form = new TForm('form_Grupo');
         $this->form->class = 'tform';
         
         
@@ -33,36 +34,38 @@ class SystemGroupForm extends TPage
 
         // create the form fields
         $id              = new TEntry('id');
-        $name            = new TEntry('name');
+        $nome            = new TEntry('nome');
+        $sigla           = new TEntry('sigla');
         $multifield      = new TMultiField('programs');
-        $program_id      = new TDBSeekButton('program_id', 'permission', 'form_System_group', 'SystemProgram', 'name', 'programs_id', 'programs_name');
-        $program_name    = new TEntry('program_name');
+        $program_id      = new TDBSeekButton('program_id', 'saciq', 'form_Grupo', 'Funcionalidade', 'nome', 'programs_id', 'programs_nome');
+        $program_nome    = new TEntry('program_nome');
         
         $frame_programs->add($multifield);    
         
         $multifield->setHeight(140);
-        $multifield->setClass('SystemProgram');
+        $multifield->setClass('Funcionalidade');
         $multifield->addField('id', _t('Program') . ' ID',  $program_id, 100, true);
-        $multifield->addField('name',_t('Name'), $program_name, 250);
+        $multifield->addField('nome',_t('Name'), $program_nome, 250);
         $multifield->setOrientation('horizontal');
         
         // define the sizes
         $program_id->setSize(70);
         $id->setSize(100);
-        $name->setSize(200);
+        $nome->setSize(200);
 
         // validations
-        $name->addValidation('name', new TRequiredValidator);
+        $nome->addValidation('nome', new TRequiredValidator);
         
         // outras propriedades
         $id->setEditable(false);
-        $program_name->setEditable(false);
+        $program_nome->setEditable(false);
 
         // add a row for the field id
         $table->addRowSet(new TLabel('ID:'), $id);
-        $table->addRowSet(new TLabel(_t('Name') . ': '), $name);
+        $table->addRowSet(new TLabel(_t('Name') . ': '), $nome);
+        $table->addRowSet(new TLabel('Sigla:'), $sigla);
         
-        // add a row for the field name
+        // add a row for the field nome
         $row = $table->addRow();
         $cell = $row->addCell($frame_programs);
         $cell->colspan = 2;
@@ -78,11 +81,11 @@ class SystemGroupForm extends TPage
         $new_button->setImage('ico_new.png');
         
         $list_button=new TButton('list');
-        $list_button->setAction(new TAction(array('SystemGroupList','onReload')), _t('Back to the listing'));
+        $list_button->setAction(new TAction(array('GrupoList','onReload')), _t('Back to the listing'));
         $list_button->setImage('ico_datagrid.png');
 
         // define the form fields
-        $this->form->setFields(array($id,$name,$multifield,$save_button,$new_button,$list_button));
+        $this->form->setFields(array($id,$nome,$sigla,$multifield,$save_button,$new_button,$list_button));
         
         $buttons = new THBox;
         $buttons->add($save_button);
@@ -91,7 +94,7 @@ class SystemGroupForm extends TPage
         
         $container = new TTable;
         $container->width = '80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'SystemGroupList'));
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'GrupoList'));
         $container->addRow()->addCell($this->form);
         
         $row=$table->addRow();
@@ -111,17 +114,17 @@ class SystemGroupForm extends TPage
     {
         try
         {
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // get the form data into an active record System_group
-            $object = $this->form->getData('SystemGroup');
+            // get the form data into an active record Grupo
+            $object = $this->form->getData('Grupo');
             
             if( $object->programs )
             {
                 foreach( $object->programs as $program )
                 {
-                    $object->addSystemProgram( $program );
+                    $object->addFuncionalidade( $program );
                 }
             }
             
@@ -155,13 +158,13 @@ class SystemGroupForm extends TPage
                 // get the parameter $key
                 $key=$param['key'];
                 
-                // open a transaction with database 'permission'
-                TTransaction::open('permission');
+                // open a transaction with database 'saciq'
+                TTransaction::open('saciq');
                 
-                // instantiates object System_group
-                $object = new SystemGroup($key);
+                // instantiates object Grupo
+                $object = new Grupo($key);
                 
-                $object->programs = $object->getSystemPrograms();
+                $object->programs = $object->getFuncionalidades();
                 
                 // fill the form with the active record data
                 $this->form->setData($object);

@@ -1,9 +1,9 @@
 <?php
 /**
- * SystemProgramList Listing
- * @author  <your name here>
+ * GrupoList Listing
+ * @author  <your nome here>
  */
-class SystemProgramList extends TPage
+class GrupoList extends TPage
 {
     private $form;     // registration form
     private $datagrid; // listing
@@ -19,43 +19,44 @@ class SystemProgramList extends TPage
         parent::__construct();
         
         // creates the form
-        $this->form = new TForm('form_search_SystemProgram');
+        $this->form = new TForm('form_search_Grupo');
         $this->form->class = 'tform';
         
         // creates a table
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel(_t('Programs')), '' )->class = 'tformtitle';
-
+        $table->addRowSet( new TLabel(_t('Groups')), '' )->class = 'tformtitle';
+        
         // add the table inside the form
         $this->form->add($table);
         
         // create the form fields
-        $name = new TEntry('name');
-        $name->setValue(TSession::getValue('SystemProgram_name'));
+        $id = new TEntry('id');
+        $id->setValue(TSession::getValue('s_id'));
         
-        $control = new TEntry('controller');
-        $control->setValue(TSession::getValue('SystemProgram_control'));
+        $nome = new TEntry('nome');
+        $nome->setValue(TSession::getValue('s_nome'));
         
-        // add rows for the filter fields
-        $row=$table->addRowSet(new TLabel(_t('Name') . ': '), $name);
-        $row=$table->addRowSet(new TLabel(_t('Controller') . ': '), $control);
+        // add a row for the filter field
+        $row=$table->addRow();
+        $row->addCell(new TLabel('ID:'));
+        $row->addCell($id);
+        
+        $row=$table->addRow();
+        $row->addCell(new TLabel(_t('Name') . ': '));
+        $row->addCell($nome);
         
         // create two action buttons to the form
         $find_button = new TButton('find');
         $new_button  = new TButton('new');
-        
         // define the button actions
         $find_button->setAction(new TAction(array($this, 'onSearch')), _t('Find'));
         $find_button->setImage('ico_find.png');
         
-        $new_button->setAction(new TAction(array('SystemProgramForm', 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array('GrupoForm', 'onEdit')), _t('New'));
         $new_button->setImage('ico_new.png');
         
-        // define wich are the form fields
-        $this->form->setFields(array($name, $control, $find_button, $new_button));
-
         $container = new THBox;
         $container->add($find_button);
         $container->add($new_button);
@@ -64,46 +65,52 @@ class SystemProgramList extends TPage
         $row->class = 'tformaction';
         $cell = $row->addCell( $container );
         $cell->colspan = 2;
-
+        
+        // define wich are the form fields
+        $this->form->setFields(array($id, $nome, $find_button, $new_button));
+        
         // creates a DataGrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
         
         // creates the datagrid columns
-        $id         = new TDataGridColumn('id', 'ID', 'right');
-        $name       = new TDataGridColumn('name', _t('Name'), 'left');
-        $controller = new TDataGridColumn('controller', _t('Controller'), 'left');
+        $id    = new TDataGridColumn('id', 'ID', 'center');
+        $nome  = new TDataGridColumn('nome', _t('Name'), 'center');
+        $sigla = new TDataGridColumn('sigla', 'Sigla', 'center');
+        
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
-        $this->datagrid->addColumn($name);
-        $this->datagrid->addColumn($controller);
+        $this->datagrid->addColumn($nome);
+        $this->datagrid->addColumn($sigla);
 
         // creates the datagrid column actions
         $order_id= new TAction(array($this, 'onReload'));
         $order_id->setParameter('order', 'id');
         $id->setAction($order_id);
 
-        $order_name= new TAction(array($this, 'onReload'));
-        $order_name->setParameter('order', 'name');
-        $name->setAction($order_name);
-
-        $order_controller= new TAction(array($this, 'onReload'));
-        $order_controller->setParameter('order', 'controller');
-        $controller->setAction($order_controller);
+        $order_nome= new TAction(array($this, 'onReload'));
+        $order_nome->setParameter('order', 'nome');
+        $nome->setAction($order_nome);
+        
+        $order_sigla= new TAction(array($this, 'onReload'));
+        $order_sigla->setParameter('order', 'sigla');
+        $sigla->setAction($order_sigla);
+        
 
         // inline editing
-        $name_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $name_edit->setField('id');
-        $name->setEditAction($name_edit);
-
-        $controller_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $controller_edit->setField('id');
-        $controller->setEditAction($controller_edit);
+        $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
+        $nome_edit->setField('id');
+        $nome->setEditAction($nome_edit);
+        
+        $sigla_edit = new \Adianti\Widget\Datagrid\TDataGridAction(array($this,'onInlineEdit'));
+        $sigla_edit->setField('id');
+        $sigla->setEditAction($sigla_edit);
+        
 
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array('SystemProgramForm', 'onEdit'));
+        $action1 = new TDataGridAction(array('GrupoForm', 'onEdit'));
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
@@ -126,15 +133,15 @@ class SystemProgramList extends TPage
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
         // creates the page structure using a table
-        $table = new TTable;
-        $table->style = 'width: 80%';
-        $table->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
-        $table->addRow()->addCell($this->form);
-        $table->addRow()->addCell($this->datagrid);
-        $table->addRow()->addCell($this->pageNavigation);
+        $container = new TTable;
+        $container->style = 'width: 80%';
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->addRow()->addCell($this->form);
+        $container->addRow()->addCell($this->datagrid);
+        $container->addRow()->addCell($this->pageNavigation);
         
-        // add the table inside the page
-        parent::add($table);
+        // add the container inside the page
+        parent::add($container);
     }
     
     /**
@@ -142,7 +149,7 @@ class SystemProgramList extends TPage
      * Inline record editing
      * @param $param Array containing:
      *              key: object ID value
-     *              field name: object attribute to be updated
+     *              field nome: object attribute to be updated
      *              value: new attribute content 
      */
     function onInlineEdit($param)
@@ -154,11 +161,11 @@ class SystemProgramList extends TPage
             $key   = $param['key'];
             $value = $param['value'];
             
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // instantiates object SystemProgram
-            $object = new SystemProgram($key);
+            // instantiates object Grupo
+            $object = new Grupo($key);
             // deletes the object from the database
             $object->{$field} = $value;
             $object->store();
@@ -189,33 +196,30 @@ class SystemProgramList extends TPage
         // get the search form data
         $data = $this->form->getData();
         
-        TSession::setValue('SystemProgram_name_filter',   NULL);
-        TSession::setValue('SystemProgram_name', '');
+        TSession::setValue('s_id_filter',   NULL);
+        TSession::setValue('s_nome_filter', NULL);
         
-        TSession::setValue('SystemProgram_control_filter',   NULL);
-        TSession::setValue('SystemProgram_control', '');
+        TSession::setValue('s_id', '');
+        TSession::setValue('s_nome', '');
         
         // check if the user has filled the form
-        if ( $data->name )
+        if ( $data->id )
         {
             // creates a filter using what the user has typed
-            $filter = new TFilter('name', 'like', "%{$data->name}%");
+            $filter = new TFilter('id', '=', "{$data->id}");
             
             // stores the filter in the session
-            TSession::setValue('SystemProgram_name_filter',   $filter);
-            TSession::setValue('SystemProgram_name', $data->name);            
+            TSession::setValue('s_id_filter',   $filter);
+            TSession::setValue('s_id', $data->id);
         }
-        
-        if ( $data->controller )
+        if ( $data->nome )
         {
             // creates a filter using what the user has typed
-            $filter = new TFilter('controller', 'like', "%{$data->controller}%");
+            $filter = new TFilter('nome', 'like', "%{$data->nome}%");
             
-            // stores the filter in the session
-            TSession::setValue('SystemProgram_control_filter',   $filter);
-            TSession::setValue('SystemProgram_control', $data->controller);            
+            TSession::setValue('s_nome_filter', $filter);
+            TSession::setValue('s_nome', $data->nome);            
         }
-        
         // fill the form with data again
         $this->form->setData($data);
         
@@ -233,34 +237,34 @@ class SystemProgramList extends TPage
     {
         try
         {
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // creates a repository for SystemProgram
-            $repository = new TRepository('SystemProgram');
-            $limit = 10;
-            // creates a criteria
-            $criteria = new TCriteria;
-            
-            if (!isset($param['order']))
+            if( ! isset($param['order']) )
             {
                 $param['order'] = 'id';
                 $param['direction'] = 'asc';
             }
             
+            // creates a repository for Grupo
+            $repository = new TRepository('Grupo');
+            $limit = 10;
+            // creates a criteria
+            $criteria = new TCriteria;
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             
-            if (TSession::getValue('SystemProgram_name_filter'))
+            if (TSession::getValue('s_id_filter'))
             {
                 // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('SystemProgram_name_filter'));
+                $criteria->add(TSession::getValue('s_id_filter'));
             }
-            if (TSession::getValue('SystemProgram_control_filter'))
+            if (TSession::getValue('s_nome_filter'))
             {
                 // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('SystemProgram_control_filter'));
+                $criteria->add(TSession::getValue('s_nome_filter'));
             }
+            
             // load the objects according to criteria
             $objects = $repository->load($criteria);
             
@@ -322,11 +326,11 @@ class SystemProgramList extends TPage
         {
             // get the parameter $key
             $key=$param['key'];
-            // open a transaction with database 'permission'
-            TTransaction::open('permission');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
-            // instantiates object SystemProgram
-            $object = new SystemProgram($key);
+            // instantiates object Grupo
+            $object = new Grupo($key);
             
             // deletes the object from the database
             $object->delete();

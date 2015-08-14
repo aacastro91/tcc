@@ -1,9 +1,9 @@
 <?php
 /**
- * SystemProgramForm Registration
- * @author  <your name here>
+ * FuncionalidadeForm Registration
+ * @author  <your nome here>
  */
-class SystemProgramForm extends TStandardForm
+class FuncionalidadeForm extends TStandardForm
 {
     protected $form; // form
     
@@ -17,40 +17,40 @@ class SystemProgramForm extends TStandardForm
                 
         // creates the form
         
-        $this->form = new TQuickForm('form_SystemProgram');
+        $this->form = new TQuickForm('form_Funcionalidade');
         $this->form->setFormTitle(_t('Program'));
         $this->form->class = 'tform'; // CSS class
         
         // defines the database
-        parent::setDatabase('permission');
+        parent::setDatabase('saciq');
         
         // defines the active record
-        parent::setActiveRecord('SystemProgram');
+        parent::setActiveRecord('Funcionalidade');
         
         // create the form fields
         $id            = new TEntry('id');
-        $name          = new TEntry('name');
-        $controller    = new TEntry('controller');
+        $nome          = new TEntry('nome');
+        $classe        = new TEntry('classe');
         
         $id->setEditable(false);
 
         // add the fields
         $this->form->addQuickField('ID', $id,  50);
-        $this->form->addQuickField(_t('Name') . ': ', $name,  200);
-        $this->form->addQuickField(_t('Controller') . ': ', $controller,  200);
+        $this->form->addQuickField(_t('Name') . ': ', $nome,  200);
+        $this->form->addQuickField(_t('Controller') . ': ', $classe,  200);
 
         // validations
-        $name->addValidation(_t('Name'), new TRequiredValidator);
-        $controller->addValidation(('Controller'), new TRequiredValidator);
+        $nome->addValidation(_t('Name'), new TRequiredValidator);
+        $classe->addValidation(('Controller'), new TRequiredValidator);
 
         // add form actions
         $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'ico_save.png');
         $this->form->addQuickAction(_t('New'), new TAction(array($this, 'onEdit')), 'ico_new.png');
-        $this->form->addQuickAction(_t('Back to the listing'),new TAction(array('SystemProgramList','onReload')),'ico_datagrid.png');
+        $this->form->addQuickAction(_t('Back to the listing'),new TAction(array('FuncionalidadeList','onReload')),'ico_datagrid.png');
 
         $container = new TTable;
         $container->style = 'width: 80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml','SystemProgramList'));
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml','FuncionalidadeList'));
         $container->addRow()->addCell($this->form);
         
         
