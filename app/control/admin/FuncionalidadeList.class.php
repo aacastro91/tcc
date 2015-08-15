@@ -26,7 +26,7 @@ class FuncionalidadeList extends TPage
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel(_t('Programs')), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Funcionalidades'), '' )->class = 'tformtitle';
 
         // add the table inside the form
         $this->form->add($table);
@@ -34,9 +34,11 @@ class FuncionalidadeList extends TPage
         // create the form fields
         $nome = new TEntry('nome');
         $nome->setValue(TSession::getValue('Funcionalidade_nome'));
+        $nome->setSize(500);
         
         $control = new TEntry('classe');
         $control->setValue(TSession::getValue('Funcionalidade_control'));
+        $control->setSize(500);
         
         // add rows for the filter fields
         $row=$table->addRowSet(new TLabel(_t('Name') . ': '), $nome);

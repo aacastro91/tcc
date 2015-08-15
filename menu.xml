@@ -1,15 +1,15 @@
 <menu>
     <menuitem label='Administration'>
         <menu>
-              <menuitem label='Programs'>
+              <menuitem label='Funcionalidades'>
                   <icon>fa:file-code-o fa-fw green</icon>
                   <action>FuncionalidadeList</action>
               </menuitem>
-              <menuitem label='Groups'>
+              <menuitem label='Grupos'>
                   <icon>fa:users fa-fw blue</icon>
                   <action>GrupoList</action>
               </menuitem>
-              <menuitem label='Users'>
+              <menuitem label='Usuários'>
                   <icon>fa:user fa-fw blue</icon>
                   <action>UsuarioList</action>
               </menuitem>
