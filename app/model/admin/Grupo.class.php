@@ -1,4 +1,10 @@
 <?php
+
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRecord;
+use Adianti\Database\TRepository;
+use Adianti\Registry\TSession;
 /**
  * System_group Active Record
  * @author  <your-name-here>

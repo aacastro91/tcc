@@ -1,4 +1,10 @@
 <?php
+
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRecord;
+use Adianti\Database\TRepository;
+
 /**
  * System_user Active Record
  * @author  <your-name-here>
@@ -25,19 +31,19 @@ class Usuario extends TRecord
     }
     
     /**
-     * Method addSystem_user_group
-     * Add a System_user_group to the System_user
-     * @param $object Instance of System_group
+     * Method addSystem_user_grupo
+     * Add a System_user_grupo to the System_user
+     * @param $object Instance of System_grupo
      */
-    public function addUsuarioGrupo(UsuarioGrupo $object)
+    public function addUsuarioGrupo(Grupo $object)
     {
         $this->usuario_grupos[] = $object;
     }
     
     /**
-     * Method getSystem_user_groups
-     * Return the System_user' System_user_group's
-     * @return Collection of System_user_group
+     * Method getSystem_user_grupos
+     * Return the System_user' Usuario_grupos
+     * @return Collection of Usuario_group
      */
     public function getUsuarioGrupos()
     {
@@ -79,7 +85,7 @@ class Usuario extends TRecord
      */
     public function load($id)
     {
-        // load the related System_user_group objects
+        // load the related System_user_grupo objects
         $repository = new TRepository('UsuarioGrupo');
         $criteria = new TCriteria;
         $criteria->add(new TFilter('usuario_id', '=', $id));
@@ -119,12 +125,12 @@ class Usuario extends TRecord
         // store the object itself
         parent::store();
     
-        // delete the related System_userSystem_user_group objects
-        $criteria = new TCriteria;
+        // delete the related System_userSystem_user_grupo objects
+        $criteria = new TCriteria();
         $criteria->add(new TFilter('usuario_id', '=', $this->id));
         $repository = new TRepository('UsuarioGrupo');
         $repository->delete($criteria);
-        // store the related System_userSystem_user_group objects
+        // store the related System_userSystem_user_grupo objects
         if ($this->usuario_grupos)
         {
             foreach ($this->usuario_grupos as $usuario_grupo)
@@ -159,7 +165,7 @@ class Usuario extends TRecord
      */
     public function delete($id = NULL)
     {
-        // delete the related System_userSystem_user_group objects
+        // delete the related System_userSystem_user_grupo objects
         $id = isset($id) ? $id : $this->id;
         $repository = new TRepository('UsuarioGrupo');
         $criteria = new TCriteria;
@@ -228,9 +234,9 @@ class Usuario extends TRecord
     {
         $funcionalidades = array();
         
-        foreach( $this->getUsuarioGrupos() as $groupo )
+        foreach( $this->getUsuarioGrupos() as $grupo )
         {
-            foreach( $groupo->getSystemPrograms() as $func )
+            foreach( $grupo->getFuncionalidades() as $func )
             {
                 $funcionalidades[$func->classe] = true;
             }
@@ -245,17 +251,17 @@ class Usuario extends TRecord
     }
     
     /**
-     * Check if the user is within a group
+     * Check if the user is within a grupo
      */
-    public function checkInGroup(Grupo $group )
+    public function checkInGroup(Grupo $grupo )
     {
         $usuario_grupos = array();
-        foreach( $this->getUsuarioGrupos() as $group )
+        foreach( $this->getUsuarioGrupos() as $grupo )
         {
-            $usuario_grupos[] = $group->id;
+            $usuario_grupos[] = $grupo->id;
         }
     
-        return in_array($group->id, $usuario_grupos);
+        return in_array($grupo->id, $usuario_grupos);
     }
 }
 ?>

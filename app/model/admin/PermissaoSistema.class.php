@@ -3,11 +3,10 @@ class PermissaoSistema
 {
     public static function checkPermission($action)
     {
-        
+        //pega as funcionalidades que o usuario logado pode acessar
         $funcionalidades = TSession::getValue('funcionalidades');
-        //var_dump($funcionalidades);
-        //var_dump($action);
-        return true;
+        
+        //retorna true ou falso, indicando se o usuario pode ou nao acessar a tela
         return (isset($funcionalidades[$action]) AND $funcionalidades[$action]);
     } 
 }
