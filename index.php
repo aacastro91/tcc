@@ -21,7 +21,7 @@ if ( TSession::getValue('logged') )
     ob_start();
     $callback = array('PermissaoSistema', 'checkPermission');
     $xml = new SimpleXMLElement(file_get_contents('menu.xml'));
-    $menu = new TMenu($xml, $callback, 1, 'nav collapse', '');
+    $menu = new TMenu($xml, $callback, 0, 'nav collapse', '');
     $menu->class = 'nav';
     $menu->id    = 'side-menu';
     $menu->show();

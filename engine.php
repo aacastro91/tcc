@@ -12,12 +12,11 @@ class TApplication extends AdiantiCoreApplication
             
             if (TSession::getValue('logged')) // logged
             {
+                $funcionalidades = (array)TSession::getValue('funcionalidades');
                 // $programs = (array) TSession::getValue('programs'); // programs with permission
-                // $programs = array_merge($programs, array('Adianti\Base\TStandardSeek' => TRUE, 'LoginForm' => TRUE, 'AdiantiMultiSearchService' => TRUE, 'AdiantiUploaderService' => TRUE, 'EmptyPage' => TRUE)); // default programs
+                $funcionalidades = array_merge($funcionalidades, array('Adianti\Base\TStandardSeek' => TRUE, 'LoginForm' => TRUE, 'AdiantiMultiSearchService' => TRUE, 'AdiantiUploaderService' => TRUE, 'EmptyPage' => TRUE)); // default programs
                 
-                // if( isset($programs[$class]) )
-                
-                if( PermissaoSistema::checkPermission($class))
+                 if( isset($funcionalidades[$class]) )
                 {
                     parent::run($debug);
                 }

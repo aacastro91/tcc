@@ -1,5 +1,5 @@
 <menu>
-    <menuitem label='Administration'>
+    <menuitem label='Administração'>
         <menu>
               <menuitem label='Funcionalidades'>
                   <icon>fa:file-code-o fa-fw green</icon>
