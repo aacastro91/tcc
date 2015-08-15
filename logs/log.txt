@@ -1,0 +1,10 @@
+Debug: 2015-08-15 13:57:19 - ** Salvando Usuário **
+Debug: 2015-08-15 13:57:19 - SELECT * FROM grupo_funcionalidade WHERE (grupo_id = '1')
+Debug: 2015-08-15 13:57:19 - SELECT * FROM funcionalidade WHERE (id = '1')
+Debug: 2015-08-15 13:57:19 - SELECT * FROM grupo WHERE (id = '1')
+Debug: 2015-08-15 13:57:19 - SELECT * FROM usuario WHERE (id = '1')
+Debug: 2015-08-15 13:57:19 - UPDATE usuario SET nome = 'Anderson A Castro', prontuario = '1320351', email = 'anderson_matogrosso@hotmail.com' WHERE (id = '1')
+Debug: 2015-08-15 13:57:19 - DELETE FROM usuario_grupo WHERE (usuario_id = '1')
+Debug: 2015-08-15 13:57:19 - SELECT max(id) as id FROM usuario_grupo
+Debug: 2015-08-15 13:57:19 - INSERT INTO usuario_grupo (grupo_id, usuario_id, id) values ('1', '1', 1)
+Debug: 2015-08-15 13:57:19 - DELETE FROM usuario_funcionalidade WHERE (usuario_id = '1')
