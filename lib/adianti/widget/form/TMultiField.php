@@ -332,10 +332,12 @@ class TMultiField extends TField implements AdiantiWidgetInterface
             $del = new TButton("{$this->name}btnDelete");
             $del->setLabel(AdiantiCoreTranslator::translate('Delete'));
             $del->setImage('ico_delete.png');
+            $del->setProperty('disabled', '1'); //aparecer desabilitado na criação
             
             $can = new TButton("{$this->name}btnCancel");
             $can->setLabel(AdiantiCoreTranslator::translate('Cancel'));
             $can->setImage('ico_close.png');
+            $can->setProperty('disabled', '1');//aparecer desabilitado na criação
             
             $hbox_buttons = new THBox;
             $hbox_buttons->{'style'} = 'margin-top:3px;margin-bottom:3px';

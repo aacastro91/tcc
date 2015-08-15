@@ -224,6 +224,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `SACIQ`.`grupo` (
   `id` INT NOT NULL,
   `nome` VARCHAR(45) NULL,
+  `sigla` VARCHAR(10) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

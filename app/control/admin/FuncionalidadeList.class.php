@@ -169,7 +169,7 @@ class FuncionalidadeList extends TPage
             // reload the listing
             $this->onReload($param);
             // shows the success message
-            new TMessage('info', "Record Updated");
+            new TMessage('info', _t("Record Updated"));
         }
         catch (Exception $e) // in case of exception
         {

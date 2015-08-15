@@ -52,6 +52,7 @@ class GrupoForm extends TPage
         $program_id->setSize(70);
         $id->setSize(100);
         $nome->setSize(200);
+        $sigla->setSize(150);
 
         // validations
         $nome->addValidation('nome', new TRequiredValidator);
