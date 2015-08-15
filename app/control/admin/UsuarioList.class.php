@@ -18,20 +18,20 @@ class UsuarioList extends TPage
     {
         parent::__construct();
         
-        // creates the form
+        // Cria o form
         $this->form = new TForm('form_search_Usuario');
         $this->form->class = 'tform';
         
-        // creates a table
+        // cria a tabela
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel(_t('Users')), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Usuários'), '' )->class = 'tformtitle';
         
-        // add the table inside the form
+        // adiciona a tabela no form
         $this->form->add($table);
         
-        // create the form fields
+        // cria os campos de pesquisa do form
         $id = new TEntry('id');
         $id->setValue(TSession::getValue('Usuario_id'));
         
@@ -40,16 +40,16 @@ class UsuarioList extends TPage
         
         // add a row for the filter field
         $table->addRowSet(new TLabel('ID:'), $id);
-        $table->addRowSet(new TLabel(_t('Name') . ': '), $nome);
+        $table->addRowSet(new TLabel('Nome: '), $nome);
         
-        // create two action buttons to the form
+        // cria dois botoes de acao para o form
         $find_button = new TButton('find');
         $new_button  = new TButton('new');
-        // define the button actions
-        $find_button->setAction(new TAction(array($this, 'onSearch')), _t('Find'));
+        // define as acoes dos botoes
+        $find_button->setAction(new TAction(array($this, 'onSearch')), 'Buscar');
         $find_button->setImage('ico_find.png');
         
-        $new_button->setAction(new TAction(array('UsuarioForm', 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array('UsuarioForm', 'onEdit')), 'Novo');
         $new_button->setImage('ico_new.png');
         
         // add a row for the form actions
@@ -72,9 +72,9 @@ class UsuarioList extends TPage
         
         // creates the datagrid columns
         $id     = new TDataGridColumn('id',    'ID', 'right');
-        $nome   = new TDataGridColumn('nome',  _t('Name'), 'left');
+        $nome   = new TDataGridColumn('nome',  'Nome', 'left');
         $prontuario  = new TDataGridColumn('prontuario', 'Prontuario', 'left');
-        $email  = new TDataGridColumn('email', _t('Email'), 'left');
+        $email  = new TDataGridColumn('email', 'Email', 'left');
 
 
         // add the columns to the DataGrid
@@ -104,12 +104,12 @@ class UsuarioList extends TPage
         
         // creates two datagrid actions
         $action1 = new TDataGridAction(array('UsuarioForm', 'onEdit'));
-        $action1->setLabel(_t('Edit'));
+        $action1->setLabel('Editar');
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
+        $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
         
@@ -172,13 +172,13 @@ class UsuarioList extends TPage
             // reload the listing
             $this->onReload($param);
             // shows the success message
-            new TMessage('info', _t('Record Updated'));
+            new TMessage('info', 'Registro atualizado');
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -189,7 +189,7 @@ class UsuarioList extends TPage
      */
     function onSearch()
     {
-        // get the search form data
+        // pegar os dados do form de busca
         $data = $this->form->getData();
         
         TSession::setValue('Usuario_id_filter',   NULL);
@@ -228,7 +228,7 @@ class UsuarioList extends TPage
     
     /**
      * method onReload()
-     * Load the datagrid with the database objects
+     * carregar o datagrid com objetos do banco
      */
     function onReload($param = NULL)
     {
@@ -285,19 +285,19 @@ class UsuarioList extends TPage
             TTransaction::close();
             $this->loaded = true;
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
     
     /**
      * method onDelete()
-     * executed whenever the user clicks at the delete button
+     * executada quando o usuario clica no botao delete
      * Ask if the user really wants to delete the record
      */
     function onDelete($param)
@@ -306,8 +306,8 @@ class UsuarioList extends TPage
         $action = new TAction(array($this, 'Delete'));
         $action->setParameters($param); // pass the key parameter ahead
         
-        // shows a dialog to the user
-        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
+        // mostra o dialogo para o usuario
+        new TQuestion('Deseja realmente excluir ?', $action);
     }
     
     /**
@@ -337,12 +337,12 @@ class UsuarioList extends TPage
             // shows the success message
             new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'));
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }

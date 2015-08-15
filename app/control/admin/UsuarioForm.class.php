@@ -1,4 +1,25 @@
 <?php
+
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TTransaction;
+use Adianti\Log\TLoggerTXT;
+use Adianti\Validator\TEmailValidator;
+use Adianti\Validator\TRequiredValidator;
+use Adianti\Widget\Container\TFrame;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TScroll;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Form\TMultiField;
+use Adianti\Widget\Form\TPassword;
+use Adianti\Widget\Util\TXMLBreadCrumb;
+use Adianti\Widget\Wrapper\TDBCheckGroup;
+use Adianti\Widget\Wrapper\TDBSeekButton;
 /**
  * UsuarioForm Registration
  * @author  <your nome here>
@@ -14,7 +35,7 @@ class UsuarioForm extends TPage
     function __construct()
     {
         parent::__construct();
-        // creates the form
+        // Cria o form
         $this->form = new TForm('form_Usuario');
         $this->form->class = 'tform';
 
@@ -22,20 +43,20 @@ class UsuarioForm extends TPage
         $table = new TTable;
         $table->style = 'width: 100%';
         
-        $table->addRowSet( new TLabel(_t('User')), '', '','' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Usuário'), '', '','' )->class = 'tformtitle';
         
-        // add the table inside the form
+        // adiciona a tabela no form
         $this->form->add($table);
         
         $frame_grupos = new TFrame(NULL, 280);
-        $frame_grupos->setLegend(_t('Groups'));
+        $frame_grupos->setLegend('Grupos');
         $frame_grupos->style .= ';margin: 4px';
         $frame_funcionalidades = new TFrame(NULL, 280);
-        $frame_funcionalidades->setLegend(_t('Programs'));
+        $frame_funcionalidades->setLegend('Funcionalidades');
         $frame_funcionalidades->style .= ';margin: 15px';
 
 
-        // create the form fields
+        // cria os campos de pesquisa do form
         $id                  = new TEntry('id');
         $nome                = new TEntry('nome');
         $prontuario          = new TEntry('prontuario');
@@ -61,16 +82,15 @@ class UsuarioForm extends TPage
         $prontuario->setSize(150);
         $password->setSize(150);
         $email->setSize(200);
-        //$frontpage_id->setSize(100);
         $multifield_funcionalidades->setHeight(140);
         
         // outros
         $id->setEditable(false);
         $funcionalidade_nome->setEditable(false);
-        //$frontpage_name->setEditable(false);
+        $email->setProperty('autocomplete', 'off');
         
         // validations
-        $nome->addValidation(_t('Name'), new TRequiredValidator);
+        $nome->addValidation('Nome', new TRequiredValidator);
         $prontuario->addValidation('Login', new TRequiredValidator);
         $email->addValidation('Email', new TEmailValidator);
         $funcionalidade_id->setSize(50);
@@ -79,14 +99,13 @@ class UsuarioForm extends TPage
         // configuracoes multifield
         $multifield_funcionalidades->setClass('Funcionalidade');
         $multifield_funcionalidades->addField('id', 'ID',  $funcionalidade_id, 60);
-        $multifield_funcionalidades->addField('nome',_t('Name'), $funcionalidade_nome, 250);
+        $multifield_funcionalidades->addField('nome','Nome', $funcionalidade_nome, 250);
         $multifield_funcionalidades->setOrientation('horizontal');
         
         // add a row for the field id
-        $table->addRowSet(new TLabel('ID:'),                 $id,           new TLabel(_t('Name').': '), $nome);
-        $table->addRowSet(new TLabel(_t('Login').': ' ),     $prontuario,        new TLabel(_t('Email').': '), $email);
-        $table->addRowSet(new TLabel(_t('Password').': '),   $password,     new TLabel(_t('Password confirmation').': '), $repassword);
-        //$table->addRowSet(new TLabel(_t('Front page').': '), $frontpage_id, new TLabel(_t('Page nome') . ': '), $frontpage_name);
+        $table->addRowSet(new TLabel('ID:'),           $id,         new TLabel('Nome: '), $nome);
+        $table->addRowSet(new TLabel('Prontuário: ' ), $prontuario, new TLabel('Email: '), $email);
+        $table->addRowSet(new TLabel('Senha: '),       $password,   new TLabel('Confirmação da senha: '), $repassword);
         
         $row=$table->addRow();
         $cell = $row->addCell($frame_grupos);
@@ -97,16 +116,16 @@ class UsuarioForm extends TPage
 
         // create an action button (save)
         $save_button=new TButton('save');
-        $save_button->setAction(new TAction(array($this, 'onSave')), _t('Save'));
+        $save_button->setAction(new TAction(array($this, 'onSave')), 'Salvar');
         $save_button->setImage('ico_save.png');
         
         // create an new button (edit with no parameters)
         $new_button=new TButton('new');
-        $new_button->setAction(new TAction(array($this, 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array($this, 'onEdit')), 'Novo');
         $new_button->setImage('ico_new.png');
         
         $list_button=new TButton('list');
-        $list_button->setAction(new TAction(array('UsuarioList','onReload')), _t('Back to the listing'));
+        $list_button->setAction(new TAction(array('UsuarioList','onReload')), 'Voltar para a listagem');
         $list_button->setImage('ico_datagrid.png');
         
         // define the form fields
@@ -153,13 +172,13 @@ class UsuarioForm extends TPage
             if( ! $object->id )
             {
                 if( ! $object->senha )
-                    throw new Exception(TAdiantiCoreTranslator::translate('The field ^1 is required', _t('Password')));
+                    throw new Exception('O campo Senha é obrigatório');
             }
             
             if( $object->senha )
             {
                 if( $object->senha != $object->resenha )
-                    throw new Exception(_t('The passwords do not match'));
+                    throw new Exception('As senhas não conferem');
                 
                 $object->senha = md5($object->senha);
             }
@@ -167,25 +186,26 @@ class UsuarioForm extends TPage
                 unset($object->senha);
             
             
-            if( $object->groups )
+            if( $object->grupos )
             {
-                foreach( $object->groups as $group )
+                foreach( $object->grupos as $group )
                 {
-                    $object->addSystemUserGroup( new SystemGroup($group) );
+                    $object->addUsuarioGrupo( new Grupo($group) );
                 }
             }
             
-            if( $object->programs )
+            if( $object->funcionalidades )
             {
-                foreach( $object->programs as $program )
+                foreach( $object->funcionalidades as $funcionalidade )
                 {
-                    $object->addSystemUserProgram( $program );
+                    $object->addUsuarioFuncionalidade( $funcionalidade );
                 }
             }
             
             $object->store(); // stores the object
             
-            $object->password = $senha;
+            $object->senha = '';
+            $object->resenha = '';
             
             // fill the form with the active record data
             $this->form->setData($object);
@@ -197,12 +217,12 @@ class UsuarioForm extends TPage
             new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
             // reload the listing
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -253,12 +273,12 @@ class UsuarioForm extends TPage
                 $this->form->clear();
             }
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }

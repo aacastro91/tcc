@@ -1,4 +1,25 @@
 <?php
+
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * GrupoList Listing
  * @author  <your nome here>
@@ -11,50 +32,54 @@ class GrupoList extends TPage
     private $loaded;
     
     /**
-     * Class constructor
-     * Creates the page, the form and the listing
+     * Construtor
+     * 
+     * Criação da listagem de grupos
      */
     public function __construct()
     {
         parent::__construct();
         
-        // creates the form
+        // Cria o form
         $this->form = new TForm('form_search_Grupo');
         $this->form->class = 'tform';
         
-        // creates a table
+        // cria a tabela
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel(_t('Groups')), '' )->class = 'tformtitle';
+        //cria o titulo
+        $table->addRowSet( new TLabel('Grupos'), '' )->class = 'tformtitle';
         
-        // add the table inside the form
+        // Adiciona a tabela no form
         $this->form->add($table);
         
-        // create the form fields
-        $id = new TEntry('id');
-        $id->setValue(TSession::getValue('s_id'));
-        
+        // Cria os campos para filtro      
         $nome = new TEntry('nome');
         $nome->setValue(TSession::getValue('s_nome'));
+        $nome->setSize(300);
         
-        // add a row for the filter field
-        $row=$table->addRow();
-        $row->addCell(new TLabel('ID:'));
-        $row->addCell($id);
+        $sigla = new TEntry('sigla');
+        $sigla->setValue(TSession::getValue('s_sigla'));
+        $sigla->setSize(100);
         
+        // Adiciona linha na tabela para inserir o campos
         $row=$table->addRow();
-        $row->addCell(new TLabel(_t('Name') . ': '));
+        $row->addCell(new TLabel('Nome: '));
         $row->addCell($nome);
         
-        // create two action buttons to the form
+        $row = $table->addRow();
+        $row->addCell(new TLabel('Sigla: '));
+        $row->addCell($sigla);
+        
+        // cria os dois botoes de ações do form
         $find_button = new TButton('find');
         $new_button  = new TButton('new');
-        // define the button actions
-        $find_button->setAction(new TAction(array($this, 'onSearch')), _t('Find'));
+        // define o botao de acao
+        $find_button->setAction(new TAction(array($this, 'onSearch')),'Buscar');
         $find_button->setImage('ico_find.png');
         
-        $new_button->setAction(new TAction(array('GrupoForm', 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array('GrupoForm', 'onEdit')), 'Novo');
         $new_button->setImage('ico_new.png');
         
         $container = new THBox;
@@ -66,26 +91,26 @@ class GrupoList extends TPage
         $cell = $row->addCell( $container );
         $cell->colspan = 2;
         
-        // define wich are the form fields
-        $this->form->setFields(array($id, $nome, $find_button, $new_button));
+        // define qual é os campos do form
+        $this->form->setFields(array($nome, $sigla, $find_button, $new_button));
         
-        // creates a DataGrid
+        // cria o datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
         
-        // creates the datagrid columns
+        // cria as colunas do datagrid
         $id    = new TDataGridColumn('id', 'ID', 'center');
-        $nome  = new TDataGridColumn('nome', _t('Name'), 'center');
+        $nome  = new TDataGridColumn('nome', 'Nome', 'center');
         $sigla = new TDataGridColumn('sigla', 'Sigla', 'center');
         
 
-        // add the columns to the DataGrid
+        // adiciona as colunas ao datagrid
         $this->datagrid->addColumn($id);
         $this->datagrid->addColumn($nome);
         $this->datagrid->addColumn($sigla);
 
-        // creates the datagrid column actions
+        // cria as acoes das colunas do datagrid (quando clica no titulo do grid)
         $order_id= new TAction(array($this, 'onReload'));
         $order_id->setParameter('order', 'id');
         $id->setAction($order_id);
@@ -99,40 +124,40 @@ class GrupoList extends TPage
         $sigla->setAction($order_sigla);
         
 
-        // inline editing
+        // edição em linha
         $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
         $nome_edit->setField('id');
         $nome->setEditAction($nome_edit);
         
-        $sigla_edit = new \Adianti\Widget\Datagrid\TDataGridAction(array($this,'onInlineEdit'));
+        $sigla_edit = new TDataGridAction(array($this,'onInlineEdit'));
         $sigla_edit->setField('id');
         $sigla->setEditAction($sigla_edit);
         
 
-        // creates two datagrid actions
+        // cria duas acoes do datagrid
         $action1 = new TDataGridAction(array('GrupoForm', 'onEdit'));
-        $action1->setLabel(_t('Edit'));
+        $action1->setLabel('Editar');
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
+        $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
         
-        // add the actions to the datagrid
+        // adiciona as acoes ao datagrid
         $this->datagrid->addAction($action1);
         $this->datagrid->addAction($action2);
         
-        // create the datagrid model
+        // cria o modelo do datagrid
         $this->datagrid->createModel();
         
-        // creates the page navigation
+        // cria o navegador de paginas
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        // creates the page structure using a table
+        // cria a estrutura da tela usando tabelas
         $container = new TTable;
         $container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
@@ -146,81 +171,82 @@ class GrupoList extends TPage
     
     /**
      * method onInlineEdit()
-     * Inline record editing
+     * Metodo para edicao em linha na Datagrid
      * @param $param Array containing:
-     *              key: object ID value
-     *              field nome: object attribute to be updated
-     *              value: new attribute content 
+     *              key: id do objeto
+     *              field nome: nome do campo que vai ser atualizado
+     *              value: Novo valor do atributo
      */
     function onInlineEdit($param)
     {
         try
         {
-            // get the parameter $key
+            // pega os parametros
             $field = $param['field'];
             $key   = $param['key'];
             $value = $param['value'];
             
-            // open a transaction with database 'saciq'
+            // abre uma transacao com o banco 'saciq'
             TTransaction::open('saciq');
             
-            // instantiates object Grupo
+            // instancia um objeto de Grupo
             $object = new Grupo($key);
-            // deletes the object from the database
+            // atualiza o campo do objeto
             $object->{$field} = $value;
+            //salva o objeto modificado
             $object->store();
             
-            // close the transaction
+            // fecha a transacao
             TTransaction::close();
             
-            // reload the listing
+            // recarrega a lista
             $this->onReload($param);
-            // shows the success message
-            new TMessage('info', "Record Updated");
+            // mostra a menssagem de sucesso
+            new TMessage('info', "Registro atualziado");
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
     
     /**
      * method onSearch()
-     * Register the filter in the session when the user performs a search
+     * registrar o filtro na sessão quando o usuário realiza uma pesquisa
      */
     function onSearch()
     {
-        // get the search form data
+        // pegar os dados do form de busca
         $data = $this->form->getData();
         
-        TSession::setValue('s_id_filter',   NULL);
-        TSession::setValue('s_nome_filter', NULL);
+        TSession::setValue('s_nome_filter',   NULL);
+        TSession::setValue('s_sigla_filter', NULL);
         
-        TSession::setValue('s_id', '');
         TSession::setValue('s_nome', '');
+        TSession::setValue('s_sigla', '');
         
-        // check if the user has filled the form
-        if ( $data->id )
-        {
-            // creates a filter using what the user has typed
-            $filter = new TFilter('id', '=', "{$data->id}");
-            
-            // stores the filter in the session
-            TSession::setValue('s_id_filter',   $filter);
-            TSession::setValue('s_id', $data->id);
-        }
+        // checa se o valor foi preenchido pelo usuario
         if ( $data->nome )
         {
-            // creates a filter using what the user has typed
+            // cria o filtro usando o que o usuario digitou
             $filter = new TFilter('nome', 'like', "%{$data->nome}%");
             
             TSession::setValue('s_nome_filter', $filter);
             TSession::setValue('s_nome', $data->nome);            
         }
-        // fill the form with data again
+        if ( $data->sigla )
+        {
+            // cria o filtro usando o que o usuario digitou
+            $filter = new TFilter('sigla', 'like', "%{$data->sigla}%");
+            
+            // stores the filter in the session
+            TSession::setValue('s_sigla_filter',   $filter);
+            TSession::setValue('s_sigla', $data->sigla);
+        }
+        // preenche o form com os dados novamente
         $this->form->setData($data);
         
         $param=array();
@@ -231,13 +257,13 @@ class GrupoList extends TPage
     
     /**
      * method onReload()
-     * Load the datagrid with the database objects
+     * carregar o datagrid com objetos do banco
      */
     function onReload($param = NULL)
     {
         try
         {
-            // open a transaction with database 'saciq'
+            // abre uma transacao com o banco 'saciq'
             TTransaction::open('saciq');
             
             if( ! isset($param['order']) )
@@ -246,109 +272,109 @@ class GrupoList extends TPage
                 $param['direction'] = 'asc';
             }
             
-            // creates a repository for Grupo
+            // cria um repository para Grupo
             $repository = new TRepository('Grupo');
             $limit = 10;
-            // creates a criteria
+            // cria um criteria
             $criteria = new TCriteria;
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             
-            if (TSession::getValue('s_id_filter'))
-            {
-                // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('s_id_filter'));
-            }
             if (TSession::getValue('s_nome_filter'))
             {
-                // add the filter stored in the session to the criteria
+                // adiciona o filtro gravado na sessao para o obj criteria.
                 $criteria->add(TSession::getValue('s_nome_filter'));
             }
+            if (TSession::getValue('s_sigla_filter'))
+            {
+                // adiciona o filtro gravado na sessao para o obj criteria.
+                $criteria->add(TSession::getValue('s_sigla_filter'));
+            }
             
-            // load the objects according to criteria
+            // carrega os objetos de acordo o filtro criteria
             $objects = $repository->load($criteria);
             
             $this->datagrid->clear();
             if ($objects)
             {
-                // iterate the collection of active records
+                // iterar a coleção de active records
                 foreach ($objects as $object)
                 {
-                    // add the object inside the datagrid
+                    // adiciona o objeto dentro do datagrid
                     $this->datagrid->addItem($object);
                 }
             }
             
-            // reset the criteria for record count
+            // reset o criteria para o record count
             $criteria->resetProperties();
             $count= $repository->count($criteria);
             
-            $this->pageNavigation->setCount($count); // count of records
-            $this->pageNavigation->setProperties($param); // order, page
-            $this->pageNavigation->setLimit($limit); // limit
+            $this->pageNavigation->setCount($count); // quantidade de registros
+            $this->pageNavigation->setProperties($param); // ordem, pagina
+            $this->pageNavigation->setLimit($limit); // limite
             
-            // close the transaction
+            // fecha a transacao
             TTransaction::close();
             $this->loaded = true;
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // em caso de erro
         {
-            // shows the exception error message
+            // mostra a mensagem de excessao
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
     
     /**
      * method onDelete()
-     * executed whenever the user clicks at the delete button
-     * Ask if the user really wants to delete the record
+     * executada quando o usuario clica no botao delete
+     * pergunta se o usuario realmente deseja excluir
      */
     function onDelete($param)
     {
-        // define the delete action
+        // define a acao de deletar
         $action = new TAction(array($this, 'Delete'));
         $action->setParameters($param); // pass the key parameter ahead
         
-        // shows a dialog to the user
-        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
+        // mostra o dialogo para o usuario
+        new TQuestion('Deseja realmente excluir ?', $action);
     }
     
     /**
      * method Delete()
-     * Delete a record
+     * Deleta o registro
      */
     function Delete($param)
     {
         try
         {
-            // get the parameter $key
+            // pega o parametro $key
             $key=$param['key'];
-            // open a transaction with database 'saciq'
+            // abre uma transacao com o banco 'saciq'
             TTransaction::open('saciq');
             
-            // instantiates object Grupo
+            // instancia o objeto Grupo
             $object = new Grupo($key);
             
-            // deletes the object from the database
+            // deleta os objetos do banco de dados
             $object->delete();
             
-            // close the transaction
+            // fecha a transacao
             TTransaction::close();
             
-            // reload the listing
+            // recarrega a listagem
             $this->onReload( $param );
-            // shows the success message
+            // mostra menssagem de sucesso
             new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'));
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -359,7 +385,7 @@ class GrupoList extends TPage
      */
     function show()
     {
-        // check if the datagrid is already loaded
+        // checa se o datagrid ja está carregado
         if (!$this->loaded)
         {
             $this->onReload( func_get_arg(0) );

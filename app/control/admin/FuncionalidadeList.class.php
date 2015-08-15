@@ -18,20 +18,20 @@ class FuncionalidadeList extends TPage
     {
         parent::__construct();
         
-        // creates the form
+        // Cria o form
         $this->form = new TForm('form_search_Funcionalidade');
         $this->form->class = 'tform';
         
-        // creates a table
+        // cria a tabela
         $table = new TTable;
         $table->style = 'width:100%';
         
         $table->addRowSet( new TLabel('Funcionalidades'), '' )->class = 'tformtitle';
 
-        // add the table inside the form
+        // adiciona a tabela no form
         $this->form->add($table);
         
-        // create the form fields
+        // cria os campos de pesquisa do form
         $nome = new TEntry('nome');
         $nome->setValue(TSession::getValue('Funcionalidade_nome'));
         $nome->setSize(500);
@@ -40,22 +40,22 @@ class FuncionalidadeList extends TPage
         $control->setValue(TSession::getValue('Funcionalidade_control'));
         $control->setSize(500);
         
-        // add rows for the filter fields
-        $row=$table->addRowSet(new TLabel(_t('Name') . ': '), $nome);
-        $row=$table->addRowSet(new TLabel(_t('Controller') . ': '), $control);
+        // adiciona linha para os campos de filtro
+        $row=$table->addRowSet(new TLabel('Nome: '), $nome);
+        $row=$table->addRowSet(new TLabel('Classe de Controle: '), $control);
         
-        // create two action buttons to the form
+        // cria dois botoes de acao para o form
         $find_button = new TButton('find');
         $new_button  = new TButton('new');
         
-        // define the button actions
-        $find_button->setAction(new TAction(array($this, 'onSearch')), _t('Find'));
+        // define as acoes dos botoes
+        $find_button->setAction(new TAction(array($this, 'onSearch')), 'Buscar');
         $find_button->setImage('ico_find.png');
         
-        $new_button->setAction(new TAction(array('FuncionalidadeForm', 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array('FuncionalidadeForm', 'onEdit')), 'Novo');
         $new_button->setImage('ico_new.png');
         
-        // define wich are the form fields
+        // define quais sao os campos do form
         $this->form->setFields(array($nome, $control, $find_button, $new_button));
 
         $container = new THBox;
@@ -67,22 +67,22 @@ class FuncionalidadeList extends TPage
         $cell = $row->addCell( $container );
         $cell->colspan = 2;
 
-        // creates a DataGrid
+        // cria o datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
         
-        // creates the datagrid columns
+        // cria as colunas do datagrid
         $id         = new TDataGridColumn('id', 'ID', 'right');
-        $nome       = new TDataGridColumn('nome', _t('Name'), 'left');
-        $classe = new TDataGridColumn('classe', _t('Controller'), 'left');
+        $nome       = new TDataGridColumn('nome', 'Nome', 'left');
+        $classe = new TDataGridColumn('classe', 'Classe de Controle', 'left');
 
-        // add the columns to the DataGrid
+        // adiciona as colunas ao datagrid
         $this->datagrid->addColumn($id);
         $this->datagrid->addColumn($nome);
         $this->datagrid->addColumn($classe);
 
-        // creates the datagrid column actions
+        // cria as acoes das colunas do datagrid
         $order_id= new TAction(array($this, 'onReload'));
         $order_id->setParameter('order', 'id');
         $id->setAction($order_id);
@@ -95,7 +95,7 @@ class FuncionalidadeList extends TPage
         $order_classe->setParameter('order', 'classe');
         $classe->setAction($order_classe);
 
-        // inline editing
+        // edicao inline
         $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
         $nome_edit->setField('id');
         $nome->setEditAction($nome_edit);
@@ -104,30 +104,30 @@ class FuncionalidadeList extends TPage
         $classe_edit->setField('id');
         $classe->setEditAction($classe_edit);
 
-        // creates two datagrid actions
+        // cria 2 acoes do datagrid
         $action1 = new TDataGridAction(array('FuncionalidadeForm', 'onEdit'));
-        $action1->setLabel(_t('Edit'));
+        $action1->setLabel('Editar');
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
+        $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
         
-        // add the actions to the datagrid
+        // adiciona as acoes ao datagrid
         $this->datagrid->addAction($action1);
         $this->datagrid->addAction($action2);
         
-        // create the datagrid model
+        // cria o modelo do datagrid
         $this->datagrid->createModel();
         
-        // creates the page navigation
+        // cria o navegador de paginas
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        // creates the page structure using a table
+        // cria a estrutura da pagina usando tabela
         $table = new TTable;
         $table->style = 'width: 80%';
         $table->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
@@ -135,13 +135,13 @@ class FuncionalidadeList extends TPage
         $table->addRow()->addCell($this->datagrid);
         $table->addRow()->addCell($this->pageNavigation);
         
-        // add the table inside the page
+        // adiciona a tabela $table dentro da pagina
         parent::add($table);
     }
     
     /**
      * method onInlineEdit()
-     * Inline record editing
+     * edicao de registro inline
      * @param $param Array containing:
      *              key: object ID value
      *              field nome: object attribute to be updated
@@ -171,13 +171,13 @@ class FuncionalidadeList extends TPage
             // reload the listing
             $this->onReload($param);
             // shows the success message
-            new TMessage('info', _t("Record Updated"));
+            new TMessage('info', 'Registro atualizado');
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -188,7 +188,7 @@ class FuncionalidadeList extends TPage
      */
     function onSearch()
     {
-        // get the search form data
+        // pegar os dados do form de busca
         $data = $this->form->getData();
         
         TSession::setValue('Funcionalidade_nome_filter',   NULL);
@@ -229,7 +229,7 @@ class FuncionalidadeList extends TPage
     
     /**
      * method onReload()
-     * Load the datagrid with the database objects
+     * carregar o datagrid com objetos do banco
      */
     function onReload($param = NULL)
     {
@@ -289,19 +289,19 @@ class FuncionalidadeList extends TPage
             TTransaction::close();
             $this->loaded = true;
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
     
     /**
      * method onDelete()
-     * executed whenever the user clicks at the delete button
+     * executada quando o usuario clica no botao delete
      * Ask if the user really wants to delete the record
      */
     function onDelete($param)
@@ -310,8 +310,8 @@ class FuncionalidadeList extends TPage
         $action = new TAction(array($this, 'Delete'));
         $action->setParameters($param); // pass the key parameter ahead
         
-        // shows a dialog to the user
-        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
+        // mostra o dialogo para o usuario
+        new TQuestion('Deseja realmente excluir ?', $action);
     }
     
     /**
@@ -341,12 +341,12 @@ class FuncionalidadeList extends TPage
             // shows the success message
             new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted'));
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }

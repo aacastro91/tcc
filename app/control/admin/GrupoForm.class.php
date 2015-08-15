@@ -21,18 +21,18 @@ class GrupoForm extends TPage
         $table->style = 'width:100%';
         
         $frame_programs = new TFrame;
-        $frame_programs->setLegend(_t('Programs'));
+        $frame_programs->setLegend('Funcionalidades');
         
-        // creates the form
+        // Cria o form
         $this->form = new TForm('form_Grupo');
         $this->form->class = 'tform';
         
         
         // add the notebook inside the form
         $this->form->add($table);
-        $table->addRowSet( new TLabel(_t('Group')), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Grupo'), '' )->class = 'tformtitle';
 
-        // create the form fields
+        // cria os campos de pesquisa do form
         $id              = new TEntry('id');
         $nome            = new TEntry('nome');
         $sigla           = new TEntry('sigla');
@@ -44,8 +44,8 @@ class GrupoForm extends TPage
         
         $multifield->setHeight(140);
         $multifield->setClass('Funcionalidade');
-        $multifield->addField('id', _t('Program') . ' ID',  $program_id, 100, true);
-        $multifield->addField('nome',_t('Name'), $program_nome, 250);
+        $multifield->addField('id', 'Funcionalidade' . ' ID',  $program_id, 100, true);
+        $multifield->addField('nome','Nome', $program_nome, 250);
         $multifield->setOrientation('horizontal');
         
         // define the sizes
@@ -63,7 +63,7 @@ class GrupoForm extends TPage
 
         // add a row for the field id
         $table->addRowSet(new TLabel('ID:'), $id);
-        $table->addRowSet(new TLabel(_t('Name') . ': '), $nome);
+        $table->addRowSet(new TLabel('Nome: '), $nome);
         $table->addRowSet(new TLabel('Sigla:'), $sigla);
         
         // add a row for the field nome
@@ -73,16 +73,16 @@ class GrupoForm extends TPage
 
         // create an action button (save)
         $save_button=new TButton('save');
-        $save_button->setAction(new TAction(array($this, 'onSave')), _t('Save'));
+        $save_button->setAction(new TAction(array($this, 'onSave')), 'Salvar');
         $save_button->setImage('ico_save.png');
         
         // create an new button (edit with no parameters)
         $new_button=new TButton('new');
-        $new_button->setAction(new TAction(array($this, 'onEdit')), _t('New'));
+        $new_button->setAction(new TAction(array($this, 'onEdit')), 'Novo');
         $new_button->setImage('ico_new.png');
         
         $list_button=new TButton('list');
-        $list_button->setAction(new TAction(array('GrupoList','onReload')), _t('Back to the listing'));
+        $list_button->setAction(new TAction(array('GrupoList','onReload')), 'Voltar para a listagem');
         $list_button->setImage('ico_datagrid.png');
 
         // define the form fields
@@ -134,14 +134,14 @@ class GrupoForm extends TPage
             $this->form->setData($object); // fill the form with the active record data
             
             TTransaction::close(); // close the transaction
-            new TMessage('info', _t('Record saved')); // shows the success message
+            new TMessage('info', 'Registro salvo'); // shows the success message
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -178,12 +178,12 @@ class GrupoForm extends TPage
                 $this->form->clear();
             }
         }
-        catch (Exception $e) // in case of exception
+        catch (Exception $e) // Em caso de erro
         {
-            // shows the exception error message
+            // mostrar mensagem de erro
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
             
-            // undo all pending operations
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
