@@ -210,6 +210,11 @@ class UsuarioForm extends TPage
             // fill the form with the active record data
             $this->form->setData($object);
             
+            $usuario = new Usuario(TSession::getValue('id'));
+            $funcionalidades = $usuario->getFuncionalidades();
+            $funcionalidades['LoginForm'] = TRUE;
+            TSession::setValue('funcionalidades',$funcionalidades);
+            
             // close the transaction
             TTransaction::close();
             

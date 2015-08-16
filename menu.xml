@@ -15,7 +15,30 @@
       </menuitem>
     </menu>
   </menuitem>
-    
+  <menuitem label='Cadastro'>
+    <menu>
+      <menuitem label='Campus'>
+        <icon></icon>
+        <action>CampusList</action>
+      </menuitem>
+    </menu>
+  </menuitem> 
+  <menuitem label='Relatório'>
+    <menu>
+      <menuitem label='Common page 1'>
+        <icon></icon>
+        <action>CommonPage</action>
+      </menuitem>
+    </menu>
+  </menuitem>
+  <menuitem label='Importação'>
+    <menu>
+      <menuitem label='Importar tabela'>
+        <icon></icon>
+        <action>CommonPage</action>
+      </menuitem>
+    </menu>
+  </menuitem>
   <menuitem label='Common pages'>
     <menu>
       <menuitem label='Common page 1'>
