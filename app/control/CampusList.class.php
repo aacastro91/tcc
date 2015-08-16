@@ -9,7 +9,6 @@ use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
-use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridAction;
 use Adianti\Widget\Datagrid\TDataGridColumn;
@@ -20,6 +19,7 @@ use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * CampusList Listing
  * @author  <your name here>
@@ -102,12 +102,12 @@ class CampusList extends TPage
         
 
         // creates the datagrid columns
-        $id   = new TDataGridColumn('id', 'ID', 'right', 50);
-        $nome   = new TDataGridColumn('nome', 'Nome', 'left', 250);
-        $uasg   = new TDataGridColumn('uasg', 'UASG', 'left', 100);
-        $sigla   = new TDataGridColumn('sigla', 'Sigla', 'left', 150);
+        $id      = new TDataGridColumn('id', 'ID', 'right');
+        $nome    = new TDataGridColumn('nome', 'Nome', 'left');
+        $uasg    = new TDataGridColumn('uasg', 'UASG', 'left');
+        $sigla   = new TDataGridColumn('sigla', 'Sigla', 'left');
 
-
+        
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
         $this->datagrid->addColumn($nome);

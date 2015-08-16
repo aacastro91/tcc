@@ -1,13 +1,12 @@
 <?php
 
 use Adianti\Base\TStandardForm;
-use Adianti\Database\TTransaction;
+use Adianti\Control\TAction;
 use Adianti\Validator\TRequiredValidator;
-use Adianti\Widget\Container\THBox;
-use Adianti\Widget\Dialog\TMessage;
-use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 use Adianti\Widget\Wrapper\TQuickForm;
 /**
  * CampusForm Registration
@@ -78,62 +77,4 @@ class CampusForm extends TStandardForm
         // Adiciona o formulário a pagina
         parent::add($container);
     }
-
-    /**
-     * method onSave()
-     * Executed whenever the user clicks at the save button
-     
-    function onSave()
-    {
-        try
-        {
-            TTransaction::open('saciq'); // open a transaction
-            
-            // get the form data into an active record Campus
-            $object = $this->form->getData('Campus');
-            $this->form->validate(); // form validation
-            $object->store(); // stores the object
-            $this->form->setData($object); // keep form data
-            TTransaction::close(); // close the transaction
-            
-            // shows the success message
-            new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
-            $this->form->setData( $this->form->getData() ); // keep form data
-            TTransaction::rollback(); // undo all pending operations
-        }
-    }
-    
-    /**
-     * method onEdit()
-     * Executed whenever the user clicks at the edit button da datagrid
-     
-    function onEdit($param)
-    {
-        try
-        {
-            if (isset($param['key']))
-            {
-                $key=$param['key'];  // get the parameter $key
-                TTransaction::open('saciq'); // open a transaction
-                $object = new Campus($key); // instantiates the Active Record
-                $this->form->setData($object); // fill the form
-                TTransaction::close(); // close the transaction
-            }
-            else
-            {
-                $this->form->clear();
-            }
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
-        }
-    }
-     * 
-     */
 }
