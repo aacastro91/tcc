@@ -217,6 +217,7 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 
 .navbar {
  /* background: #348451; */
+     background-image: -moz-linear-gradient(top,#6db33f,#49772a);
      background-image: -webkit-linear-gradient(top,#6db33f,#49772a);
 }
 
@@ -263,6 +264,7 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 }
 
 #page-wrapper {
+  background-image: -moz-linear-gradient(top,#f9f5f0,#e1d9cf);
   background-image: -webkit-linear-gradient(top,#f9f5f0,#e1d9cf);
 }
 

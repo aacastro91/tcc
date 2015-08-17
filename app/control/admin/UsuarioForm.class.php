@@ -98,7 +98,7 @@ class UsuarioForm extends TPage
         
         // configuracoes multifield
         $multifield_funcionalidades->setClass('Funcionalidade');
-        $multifield_funcionalidades->addField('id', 'ID',  $funcionalidade_id, 60);
+        $multifield_funcionalidades->addField('id', 'ID',  $funcionalidade_id, 60, true);
         $multifield_funcionalidades->addField('nome','Nome', $funcionalidade_nome, 250);
         $multifield_funcionalidades->setOrientation('horizontal');
         
@@ -224,8 +224,22 @@ class UsuarioForm extends TPage
         }
         catch (Exception $e) // Em caso de erro
         {
-            // mostrar mensagem de erro
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+            if (strpos($e->getMessage(), 'Integrity constraint violation')) {
+                $posi = strpos($e->getMessage(), 'Duplicate entry ') + strlen('Duplicate entry ') + 1;
+                $posf = strpos($e->getMessage(), '\' for key');
+                $str = substr($e->getMessage(), $posi, 3);
+
+                $idUsuario = substr($str, 0, strpos($str, '-'));
+                $usuario = new Usuario($idUsuario);
+                $idFuncionalidade = substr($str, strpos($str, '-') + 1);
+                $funcionalidade = new Funcionalidade($idFuncionalidade);
+
+
+                new TMessage('error', '<b>Registro duplicado</b><br>A funcionalidade "' . $funcionalidade->nome . '"<br>já foi registrada para o usuário ' . $usuario->nome);
+            } else {
+
+                new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+            }
             
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();

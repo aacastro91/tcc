@@ -3,7 +3,7 @@
  * FuncionalidadeForm Registration
  * @author  <your nome here>
  */
-class FuncionalidadeForm extends TStandardForm
+class FuncionalidadeForm extends TPage
 {
     protected $form; // form
     
@@ -20,12 +20,6 @@ class FuncionalidadeForm extends TStandardForm
         $this->form = new TQuickForm('form_Funcionalidade');
         $this->form->setFormTitle('Cadastro de Funcionalidades');
         $this->form->class = 'tform'; // CSS class
-        
-        // define o banco de dados
-        parent::setDatabase('saciq');
-        
-        // define a classe modelo (activeRecord)
-        parent::setActiveRecord('Funcionalidade');
         
         // Cria os campos do formulário
         $id            = new TEntry('id');
@@ -57,5 +51,71 @@ class FuncionalidadeForm extends TStandardForm
         // Adiciona o formulário a pagina
         parent::add($container);
     }
+    
+    
+    /**
+     * method onSave()
+     * Executed whenever the user clicks at the save button
+     */
+    function onSave() {
+        try {
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
+
+            // get the form data into an active record Grupo
+            $object = $this->form->getData('Funcionalidade');
+            $this->form->validate(); // form validation
+            $object->store(); // stores the object
+            $this->form->setData($object); // fill the form with the active record data
+            
+            TTransaction::close(); // close the transaction
+            new TMessage('info', 'Registro salvo'); // shows the success message
+        } catch (Exception $e) { // Em caso de erro
+            if (strpos($e->getMessage(), 'Integrity constraint violation')) {
+                
+
+                new TMessage('error', '<b>Registro duplicado</b><br>A Classe de controle "' . $object->classe . '" já foi registrada');
+            } else {
+
+                new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+            }
+            // desfazer todas as operacoes pendentes
+            TTransaction::rollback();
+        }
+    }
+
+    /**
+     * method onEdit()
+     * Executed whenever the user clicks at the edit button da datagrid
+     */
+    function onEdit($param) {
+        try {
+            if (isset($param['key'])) {
+                // get the parameter $key
+                $key = $param['key'];
+
+                // open a transaction with database 'saciq'
+                TTransaction::open('saciq');
+
+                // instantiates object Grupo
+                $object = new Funcionalidade($key);
+
+                // fill the form with the active record data
+                $this->form->setData($object);
+
+                // close the transaction
+                TTransaction::close();
+            } else {
+                $this->form->clear();
+            }
+        } catch (Exception $e) { // Em caso de erro
+            // mostrar mensagem de erro
+            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+
+            // desfazer todas as operacoes pendentes
+            TTransaction::rollback();
+        }
+    }
+
 }
 ?>
