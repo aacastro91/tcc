@@ -50,7 +50,10 @@ class TFile extends TField implements AdiantiWidgetInterface
         $this->tag-> name  = 'file_' . $this->name;  // tag name
         $this->tag-> value = $this->value; // tag value
         $this->tag-> type  = 'file';       // input type
-        $this->tag-> style = "width:{$this->size}px;height:{$this->height}px";  // size
+        if (is_string($this->size))
+          $this->tag-> style = "width:{$this->size};height:{$this->height}px";  // size
+        else
+          $this->tag-> style = "width:{$this->size}px;height:{$this->height}px";  // size
         
         $hdFileName = new THidden($this->name);
         $hdFileName->setValue( $this->value );

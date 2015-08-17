@@ -4,85 +4,97 @@ use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
-use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Base\TElement;
-use Adianti\Widget\Base\TStyle;
+use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Form\TPassword;
 
-
 /**
- * Classe de formulario do login
- *
- * @author Anderson
+ * LoginForm Registration
+ * @author  <your name here>
  */
 class LoginForm extends TPage {
 
-  protected $form;
+  protected $form; // form
+
+  /**
+   * Class constructor
+   * Creates the page and the registration form
+   */
 
   function __construct() {
-
     parent::__construct();
 
-    //Cria o formulario 'form_User'
+    $table = new TTable;
+    $table->width = '100%';
+    // creates the form
     $this->form = new TForm('form_User');
-    $this->form->class = 'navbar-form navbar-right';
-    
-    //Cria uma div de contenção
-    $div = new TElement('div');
-    $this->form->add($div);
+    $this->form->class = 'tform';
+    $this->form->style = 'width: 450px;margin:auto; margin-top:120px;';
 
-    // cria uma nova div, atribuindo a classe do bootstrap
-    // chamada form-group
-    $g1 = new TElement('div');
-    $g1->class = 'form-group';
-    $div->add($g1);
-    
-    //cria o campo login
+    // add the notebook inside the form
+    $this->form->add($table);
+
+    // create the form fields
     $login = new TEntry('prontuario');
-    $login->type = 'text';
+    $password = new TPassword('senha');
+
+    // define the sizes
+    $login->setSize(320, 40);
+    $password->setSize(320, 40);
+
+    $login->style = 'height:35px; font-size:14px;float:left;border-bottom-left-radius: 0;border-top-left-radius: 0;';
+    $password->style = 'height:35px;margin-bottom: 15px;font-size:14px;float:left;border-bottom-left-radius: 0;border-top-left-radius: 0;';
+
+    $row = $table->addRow();
+    $row->addCell(new TLabel('Login'))->colspan = 2;
+    $row->class = 'tformtitle';
+
     $login->placeholder = 'Prontuário';
-    $login->class = 'form-control';
-    $login->setProperty('style', 'margin-bottom:0px',false);
-    $login->addValidation('Login', new TRequiredValidator);
-    //adiciona do primeiro grupo
-    $g1->add($login);
-
-    //cria uma nova div
-    $g2 = new TElement('div');
-    $g2->class = 'form-group';
-    $div->add($g2);
-    
-    $style = new TStyle('x');
-    
-    //cria o campo da senha
-    $password = new TPassword('senha');   
-    //$password->type = 'text';
     $password->placeholder = 'Senha';
-    $password->class = 'form-control';
-    $password->setProperty('style', 'margin-bottom:0px',false);
-    $password->addValidation('Senha',new TRequiredValidator);
-    //atribui ao grupo 2
-    $g2->add($password);
-    
 
-    //cria o botao de login
-    $login_button = new TButton('login');
-    
-    // define a acao do botao
-    $login_button->setAction(new TAction(array($this, 'onLogin')),'Entrar');
-    $login_button->class = 'btn btn-success btn-defualt';
+    $user = '<span style="float:left;width:35px;margin-left:45px;height:35px;" class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>';
+    $locker = '<span style="float:left;width:35px;margin-left:45px;height:35px;" class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>';
 
-    $div->add($login_button);
-    $this->form->setFields(array($login, $password, $login_button));
+    $container1 = new TElement('div');
+    $container1->add($user);
+    $container1->add($login);
+
+    $container2 = new TElement('div');
+    $container2->add($locker);
+    $container2->add($password);
+
+    $row = $table->addRow();
+    $row->addCell($container1)->colspan = 2;
+
+    // add a row for the field password
+    $row = $table->addRow();
+    $row->addCell($container2)->colspan = 2;
+
+    // create an action button (save)
+    $save_button = new TButton('save');
+    // define the button action
+    $save_button->setAction(new TAction(array($this, 'onLogin')), _t('Log in'));
+    $save_button->class = 'btn btn-success btn-defualt';
+    $save_button->style = 'margin-left:32px;width:355px;height:40px;border-radius:6px;font-size:18px';
+
+    $row = $table->addRow();
+    $row->class = 'tformaction';
+    $cell = $row->addCell($save_button);
+    $cell->colspan = 2;
+
+    $this->form->setFields(array($login, $password, $save_button));
+
+    // add the form to the page
     parent::add($this->form);
   }
 
   /**
-   * Autenticação do usuario
+   * Autenticates the User
    */
   function onLogin() {
     try {
@@ -93,13 +105,13 @@ class LoginForm extends TPage {
       if ($user) {
         $funcionalidades = $user->getFuncionalidades();
         $funcionalidades['LoginForm'] = TRUE;
-        
+
         TSession::setValue('logged', TRUE);
         TSession::setValue('id', $user->id);
         TSession::setValue('nome', $user->nome);
         TSession::setValue('prontuario', $user->prontuario);
-        TSession::setValue('funcionalidades',$funcionalidades);
-        
+        TSession::setValue('funcionalidades', $funcionalidades);
+
         TApplication::gotoPage('EmptyPage'); // reload
       }
       TTransaction::close();
@@ -109,13 +121,15 @@ class LoginForm extends TPage {
       TTransaction::rollback();
     }
   }
-  
+
   /**
-     * Logout
-     */
-    function onLogout()
-    {
-        TSession::freeSession();
-        TApplication::gotoPage('LoginForm', '');
-    }
+   * Logout
+   */
+  function onLogout() {
+    TSession::freeSession();
+    TApplication::gotoPage('LoginForm', '');
+  }
+
 }
+
+?>

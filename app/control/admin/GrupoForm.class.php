@@ -61,14 +61,14 @@ class GrupoForm extends TPage
         
         $multifield->setHeight(140);
         $multifield->setClass('Funcionalidade');
-        $multifield->addField('id', 'Funcionalidade' . ' ID',  $program_id, 100, true);
-        $multifield->addField('nome','Nome', $program_nome, 250);
+        $multifield->addField('id', 'ID',  $program_id, 100, true);
+        $multifield->addField('nome','Funcionalidade', $program_nome, 250);
         $multifield->setOrientation('horizontal');
         
         // define the sizes
         $program_id->setSize(70);
         $id->setSize(100);
-        $nome->setSize(200);
+        $nome->setSize(400);
         $sigla->setSize(150);
 
         // validations

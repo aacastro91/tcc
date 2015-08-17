@@ -142,7 +142,7 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 
 .tformtitle > td
 {
-    background-color: #32A25B !important;
+    background-color: #5C9735 !important;
     padding: 8px 0px 8px 5px !important;
 }
 
@@ -216,7 +216,8 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 /* modificando o estilo do template.*/
 
 .navbar {
-  background: #348451;
+ /* background: #348451; */
+     background-image: -webkit-linear-gradient(top,#6db33f,#49772a);
 }
 
 .nav .open>a, .nav .open>a:hover, .nav .open>a:focus
@@ -229,32 +230,45 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
 }
 
 .navbar-default {
-  border-color: #348451;
+  border-color: #4A782A;
 }
 
 #side-menu{
-  background: #82D9A2 !important;
+  background: #5C9735 !important;
 }
 
 #side-menu a:hover{
-  background: #63CF8B !important;
+  background: #79BF4A !important;
 }
 
 .sidebar ul li {
-    border-top: 1px solid #B1E7C5 !important;
-    border-bottom: 1px solid #B1E7C5 !important;
+    border-top: 1px solid #84C559 !important;
+    border-bottom: 1px solid #33561B !important;
 }
 
 .sidebar ul li:first-of-type {
-    border-top: 1px solid #2EA968 !important;
+    border-top: 1px solid #33561B !important;
 }
 
 .sidebar ul li a.active {
-    background-color: #53CA7F !important;
+    background-color: #65A63A !important;
+}
+
+#side-menu li a {
+    color: white !important;
+}
+
+.navbar-brand {
+    color: white !important;
+}
+
+#page-wrapper {
+  background-image: -webkit-linear-gradient(top,#f9f5f0,#e1d9cf);
 }
 
 body {
-  background-color: #8DF3C8 !important;
+ /* background-image: -webkit-linear-gradient(top,#f9f5f0,#e1d9cf); */
+  background-color: #A6D586 !important;
 }
 
 /* fim modificacao */

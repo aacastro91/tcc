@@ -34,8 +34,8 @@
   <menuitem label='Importação'>
     <menu>
       <menuitem label='Importar tabela'>
-        <icon></icon>
-        <action>CommonPage</action>
+        <icon>fa:upload fa-fw red</icon>
+        <action>ImportForm</action>
       </menuitem>
     </menu>
   </menuitem>
