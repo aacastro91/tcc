@@ -55,8 +55,9 @@ class ImportForm extends TPage {
         $table->addRowSet(new TLabel('Local do arquivo:'), $file);
 
         $container = new TTable;
+        ;
         $container->style = 'width: 80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        //$container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', ''));
         $container->addRow()->addCell($this->form);
 
         $row = $table->addRow();
@@ -72,6 +73,8 @@ class ImportForm extends TPage {
 
     function onImportar($param) {
         var_dump($param);
+        $importacao = new TExcelImport();
+        
     }
 
 }
