@@ -106,7 +106,8 @@ CREATE TABLE `funcionalidade` (
   `id` int(11) NOT NULL,
   `nome` varchar(100) DEFAULT NULL,
   `classe` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `classe_UNIQUE` (`classe`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -157,6 +158,7 @@ CREATE TABLE `grupo_funcionalidade` (
   `grupo_id` int(11) NOT NULL,
   `funcionalidade_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `grupo_funcionalidade_unique` (`grupo_id`,`funcionalidade_id`),
   KEY `fk_grupo_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id`),
   KEY `fk_grupo_has_funcionalidade_grupo1_idx` (`grupo_id`),
   CONSTRAINT `fk_grupo_has_funcionalidade_funcionalidade1` FOREIGN KEY (`funcionalidade_id`) REFERENCES `funcionalidade` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -170,7 +172,7 @@ CREATE TABLE `grupo_funcionalidade` (
 
 LOCK TABLES `grupo_funcionalidade` WRITE;
 /*!40000 ALTER TABLE `grupo_funcionalidade` DISABLE KEYS */;
-INSERT INTO `grupo_funcionalidade` VALUES (1,1,3),(2,1,4),(3,1,5),(4,1,2),(5,1,6),(6,1,1),(7,1,7),(8,1,8),(9,1,9),(10,1,10),(11,1,11);
+INSERT INTO `grupo_funcionalidade` VALUES (1,1,1),(11,1,2),(2,1,3),(3,1,4),(4,1,5),(5,1,6),(6,1,7),(7,1,8),(8,1,9),(9,1,10),(10,1,11);
 /*!40000 ALTER TABLE `grupo_funcionalidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -421,6 +423,7 @@ CREATE TABLE `usuario_funcionalidade` (
   `usuario_id` int(11) NOT NULL,
   `funcionalidade_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `usuario_funcionalidade` (`usuario_id`,`funcionalidade_id`),
   KEY `fk_usuario_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id`),
   KEY `fk_usuario_has_funcionalidade_usuario1_idx` (`usuario_id`),
   CONSTRAINT `fk_usuario_has_funcionalidade_funcionalidade1` FOREIGN KEY (`funcionalidade_id`) REFERENCES `funcionalidade` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -434,6 +437,7 @@ CREATE TABLE `usuario_funcionalidade` (
 
 LOCK TABLES `usuario_funcionalidade` WRITE;
 /*!40000 ALTER TABLE `usuario_funcionalidade` DISABLE KEYS */;
+INSERT INTO `usuario_funcionalidade` VALUES (1,1,1);
 /*!40000 ALTER TABLE `usuario_funcionalidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -483,4 +487,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-17  0:28:17
+-- Dump completed on 2015-08-18 18:24:29
