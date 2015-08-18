@@ -1,13 +1,18 @@
 <?php
 
-require_once 'excel_reader2.php';
+error_reporting(E_ALL ^ E_NOTICE);
 
-class TExcelImport{
-    
-    var $data;
-    
+class TExcelImport {
+
+    private $data;
+
     public function __construct($filename) {
-        $data = new Spreadsheet_Excel_Reader($filename);
+        require_once 'excel_reader2.php';
+        $this->data = new Spreadsheet_Excel_Reader($filename);
     }
-    
+
+    public function dump() {
+        echo $this->data->dump(true, true);
+    }
+
 }

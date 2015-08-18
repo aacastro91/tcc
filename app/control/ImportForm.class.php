@@ -3,11 +3,11 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TFile;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
-use Adianti\Widget\Util\TXMLBreadCrumb;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -72,9 +72,30 @@ class ImportForm extends TPage {
     }
 
     function onImportar($param) {
-        var_dump($param);
-        $importacao = new TExcelImport();
+
+        $source_file = 'tmp/' . $param['file'];
+        $target_file = 'uploads/' . $param['file'];
+
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
         
+        // if the user uploaded a source file
+        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.ms-excel') {
+            // move to the target directory
+            rename($source_file, $target_file);
+            // update the photo_path
+        }
+        
+        if (!file_exists($target_file))
+        {
+            new TMessage('error', 'Arquivo Inválido');
+            return;
+            
+        }   
+        
+        $importacao = new TExcelImport($target_file);
+
+        $importacao->dump();
     }
 
 }
