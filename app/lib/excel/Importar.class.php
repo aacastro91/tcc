@@ -11,7 +11,7 @@
  *
  * @author Anderson
  */
-include_once ('./Classes/PHPExcel.php');
+include_once ('app/lib/excel/Classes/PHPExcel.php');
 
 class Importar {
 

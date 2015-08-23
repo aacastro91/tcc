@@ -15,4 +15,5 @@ define('APPLICATION_NAME', $ini['application']);
 define('OS', strtoupper(substr(PHP_OS, 0, 3)));
 define('PATH', dirname(__FILE__));
 define('LANG', $ini['language']);
+define('CAMPUS', $ini['campus']);
 

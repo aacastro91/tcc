@@ -43,7 +43,7 @@ class ImportForm extends TPage {
         $this->form->add($table);
 
         $file = new TFile('file');
-        $file->setProperty("accept", ".xls");
+        $file->setProperty("accept", ".xlsx");
         $file->setSize('70%');
 
         $botao_import = new TButton('btnImportar');
@@ -55,7 +55,7 @@ class ImportForm extends TPage {
         $table->addRowSet(new TLabel('Local do arquivo:'), $file);
 
         $container = new TTable;
-        ;
+        
         $container->style = 'width: 80%';
         //$container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', ''));
         $container->addRow()->addCell($this->form);
@@ -79,11 +79,19 @@ class ImportForm extends TPage {
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         
+        //echo $finfo->file($source_file);
+        //return;
+        
         // if the user uploaded a source file
-        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.ms-excel') {
+        if (file_exists($source_file)/* AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'*/) {
             // move to the target directory
             rename($source_file, $target_file);
-            // update the photo_path
+            //unlink($source_file);
+        }
+        else
+        {
+            new TMessage('error', 'Arquivo não suportado');
+            return;
         }
         
         if (!file_exists($target_file))
@@ -93,9 +101,10 @@ class ImportForm extends TPage {
             
         }   
         
-        $importacao = new TExcelImport($target_file);
+        $importacao = new Importar($target_file);
 
-        $importacao->dump();
+        $importacao->setActiveRow(3);
+        echo $importacao->getDescricaoCompleta();
     }
 
 }
