@@ -2,6 +2,9 @@
 
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TTransaction;
 use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
@@ -55,7 +58,7 @@ class ImportForm extends TPage {
         $table->addRowSet(new TLabel('Local do arquivo:'), $file);
 
         $container = new TTable;
-        
+
         $container->style = 'width: 80%';
         //$container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', ''));
         $container->addRow()->addCell($this->form);
@@ -71,40 +74,116 @@ class ImportForm extends TPage {
         parent::add($container);
     }
 
+    /*
+    private function LoadNaturezaByDescricao($descricao) {
+        $repository = new TRepository('Natureza');
+        $criteria = new TCriteria();
+        $criteria->add(new TFilter('descricao', '=', $descricao));
+        $nat = $repository->load($criteria);
+        if (count($nat) > 0) {
+            return  $nat[0];
+        } else {
+            return NULL;
+        }
+    }
+    
+    private function LoadSubElementoByDescricao($descricao) {
+        $repository = new TRepository('Subelemento');
+        $criteria = new TCriteria();
+        $criteria->add(new TFilter('descricao', '=', $descricao));
+        $nat = $repository->load($criteria);
+        if (count($nat) > 0) {
+            return  $nat[0];
+        } else {
+            return NULL;
+        }
+    }*/
+    
+    private function LoadObjectByField($model, $field, $value ){
+        $repository = new TRepository($model);
+        $criteria = new TCriteria();
+        $criteria->add(new TFilter($field, '=', $value));
+        $nat = $repository->load($criteria);
+        if (count($nat) > 0) {
+            return  $nat[0];
+        } else {
+            return NULL;
+        }
+    }
+
     function onImportar($param) {
 
         $source_file = 'tmp/' . $param['file'];
         $target_file = 'uploads/' . $param['file'];
 
-
         $finfo = new finfo(FILEINFO_MIME_TYPE);
-        
+
         //echo $finfo->file($source_file);
         //return;
-        
         // if the user uploaded a source file
-        if (file_exists($source_file)/* AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'*/) {
+        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             // move to the target directory
             rename($source_file, $target_file);
             //unlink($source_file);
-        }
-        else
-        {
+        } else {
             new TMessage('error', 'Arquivo não suportado');
             return;
         }
-        
-        if (!file_exists($target_file))
-        {
+
+        if (!file_exists($target_file)) {
             new TMessage('error', 'Arquivo Inválido');
             return;
-            
-        }   
-        
-        $importacao = new Importar($target_file);
+        }
 
+
+        set_time_limit(0);
+        $importacao = new Importar();
+        $importacao->loadFile($target_file);
+
+        // os dados da planilha iniciam na linha 3
         $importacao->setActiveRow(3);
-        echo $importacao->getDescricaoCompleta();
+
+        try {
+            TTransaction::open('saciq');
+
+            while (!$importacao->eof()) {
+
+                if (!$importacao->isValidRow()) {
+                    $importacao->nextRow();
+                    continue;
+                }
+                
+                $natureza = $this->LoadObjectByField('Natureza','descricao',$importacao->getNaturezaDespesa());
+                if (!isset($natureza)){
+                    $natureza = new Natureza();
+                    $natureza->descricao = $importacao->getNaturezaDespesa();
+                    $natureza->store();                    
+                }
+                
+                $subelemento = $this->LoadObjectByField('Subelemento','descricao',$importacao->getDescricaoSubElemento);
+                if (!isset($subelemento)){
+                    $subelemento = new Subelemento();
+                    $subelemento->id = $importacao->getNumeroSubElemento();
+                    $subelemento->descricao = $importacao->getDescricaoSubElemento();
+                    $subelemento->store();                            
+                }
+                
+                $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $importacao->getFornecedor());
+                if (!isset($subelemento)){
+                    $fornecedor = new Fornecedor();
+                    $fornecedor->nome = $importacao->getFornecedor();
+                    $fornecedor->cnpj = $importacao->getCNPJ();
+                    $fornecedor->store();                            
+                }
+                
+
+                $importacao->nextRow();
+            }
+
+            TTransaction::close();
+        } catch (Exception $e) {
+            TTransaction::rollback();
+        }
     }
 
 }
