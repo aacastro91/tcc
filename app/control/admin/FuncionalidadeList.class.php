@@ -1,4 +1,25 @@
 <?php
+
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * FuncionalidadeList Listing
  * @author  <your nome here>
@@ -67,15 +88,19 @@ class FuncionalidadeList extends TPage
         $cell = $row->addCell( $container );
         $cell->colspan = 2;
 
+        parent::include_css('app/resources/custom-table.css');
+
         // cria o datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
+        $this->datagrid->class = 'tdatagrid_table customized-table';
+        
         $this->datagrid->setHeight(320);
         
         // cria as colunas do datagrid
         $id         = new TDataGridColumn('id', 'ID', 'right');
         $nome       = new TDataGridColumn('nome', 'Nome', 'left');
-        $classe = new TDataGridColumn('classe', 'Classe de Controle', 'left');
+        $classe     = new TDataGridColumn('classe', 'Classe de Controle', 'left');
 
         // adiciona as colunas ao datagrid
         $this->datagrid->addColumn($id);

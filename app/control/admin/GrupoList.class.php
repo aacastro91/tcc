@@ -39,6 +39,7 @@ class GrupoList extends TPage
     public function __construct()
     {
         parent::__construct();
+        parent::include_css('app/resources/custom-table.css');
         
         // Cria o form
         $this->form = new TForm('form_search_Grupo');
@@ -97,6 +98,7 @@ class GrupoList extends TPage
         // cria o datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
         
         // cria as colunas do datagrid

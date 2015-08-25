@@ -38,6 +38,7 @@ class CampusList extends TPage
     public function __construct()
     {
         parent::__construct();
+        parent::include_css('app/resources/custom-table.css');
         
         // creates the form
         $this->form = new TForm('form_search_Campus');
@@ -98,6 +99,7 @@ class CampusList extends TPage
         // creates a Datagrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->style = 'width: 100%';
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
         
 

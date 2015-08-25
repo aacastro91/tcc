@@ -17,7 +17,7 @@ class UsuarioList extends TPage
     public function __construct()
     {
         parent::__construct();
-        
+        parent::include_css('app/resources/custom-table.css');
         // Cria o form
         $this->form = new TForm('form_search_Usuario');
         $this->form->class = 'tform';
@@ -68,6 +68,7 @@ class UsuarioList extends TPage
         // creates a DataGrid
         $this->datagrid = new TDataGrid;
         $this->datagrid->setHeight(320);
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->style = 'width: 100%';
         
         // creates the datagrid columns
