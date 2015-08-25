@@ -50,6 +50,9 @@ class AdiantiCoreLoader
      */
     public static function autoload($className)
     {
+        if (substr($className,0,8) == 'PHPExcel'){
+            return;
+        }
         $className = ltrim($className, '\\');
         $fileName  = '';
         $namespace = '';

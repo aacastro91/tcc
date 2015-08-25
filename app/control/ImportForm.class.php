@@ -118,13 +118,8 @@ class ImportForm extends TPage {
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
 
-        //echo $finfo->file($source_file);
-        //return;
-        // if the user uploaded a source file
         if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            // move to the target directory
             rename($source_file, $target_file);
-            //unlink($source_file);
         } else {
             new TMessage('error', 'Arquivo não suportado');
             return;
@@ -134,17 +129,16 @@ class ImportForm extends TPage {
             new TMessage('error', 'Arquivo Inválido');
             return;
         }
-
-
+        
         set_time_limit(0);
         $importacao = new Importar();
         $importacao->loadFile($target_file);
-
-        // os dados da planilha iniciam na linha 3
         $importacao->setActiveRow(3);
-
+        
         try {
             TTransaction::open('saciq');
+            
+            $srp = null;
 
             while (!$importacao->eof()) {
 
@@ -160,7 +154,7 @@ class ImportForm extends TPage {
                     $natureza->store();                    
                 }
                 
-                $subelemento = $this->LoadObjectByField('Subelemento','descricao',$importacao->getDescricaoSubElemento);
+                $subelemento = $this->LoadObjectByField('Subelemento','descricao',$importacao->getDescricaoSubElemento());
                 if (!isset($subelemento)){
                     $subelemento = new Subelemento();
                     $subelemento->id = $importacao->getNumeroSubElemento();
@@ -169,20 +163,49 @@ class ImportForm extends TPage {
                 }
                 
                 $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $importacao->getFornecedor());
-                if (!isset($subelemento)){
+                if (!isset($fornecedor)){
                     $fornecedor = new Fornecedor();
                     $fornecedor->nome = $importacao->getFornecedor();
                     $fornecedor->cnpj = $importacao->getCNPJ();
                     $fornecedor->store();                            
                 }
                 
-
+                if (!isset($srp)){
+                    $srp = new Srp();
+                    $srp->numeroSRP      = $importacao->getNroSRP();
+                    $srp->numeroIRP      = $importacao->getNroIRP();
+                    $srp->numeroProcesso = $importacao->getNumeroProcesso();
+                    $srp->uasg           = $importacao->getUasgGerenciadora();
+                    $srp->validade       = $importacao->getValidadeAta();
+                    $srp->nome           = $importacao->getNomeProcesso();
+                    $srp->natureza       = $natureza;
+                    $srp->store();
+                }
+                
+                $item = new Item();
+                $item->numeroItem = $importacao->getItem();
+                $item->descricaoSumaria = $importacao->getDescricaoSumaria();
+                $item->descricaoCompleta = $importacao->getDescricaoCompleta();
+                $item->descricaoPosLicitacao = $importacao->getDescricaoPosLicitacao();
+                $item->unidadeMedida = $importacao->getUnidadeDeMedida();
+                $item->marca = $importacao->getMarca();
+                $item->valorUnitario = $importacao->getValorUnitarioLicitado();
+                $item->quantidadeDisponivel = $importacao->getOrgao(CAMPUS);
+                $item->fabricante = $importacao->getFabricante();
+                $item->fornecedor = $fornecedor;
+                $item->subelemento = $subelemento;
+                $item->srp = $srp;
+                $item->store();
+                
                 $importacao->nextRow();
             }
+            
+            new TMessage('info', 'Planilha importada com sucesso');
 
             TTransaction::close();
         } catch (Exception $e) {
             TTransaction::rollback();
+            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
         }
     }
 
