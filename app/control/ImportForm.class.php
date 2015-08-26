@@ -41,7 +41,7 @@ class ImportForm extends TPage {
         $row->class = 'tformtitle';
         $cell = $row->addCell(new TLabel('Importar Planilha XLS'));
         $cell->colspan = 2;
-        //$table->addRowSet(new TLabel('Importar Planilha XLS'),'')->class = 'tformtitle';
+        
         // adiciona a tabela no form
         $this->form->add($table);
 
@@ -51,67 +51,57 @@ class ImportForm extends TPage {
 
         $botao_import = new TButton('btnImportar');
         $botao_import->setLabel('Importar');
-        $botao_import->class = 'btn btn-success btn-defualt';
-        $botao_import->style = 'margin-left: 40%;width: 250px; height: 40px'; //'margin-left:32px;width:355px;height:40px;border-radius:6px;font-size:18px';
-        $botao_import->setAction(new TAction(array($this, 'onImportar')), 'Import');
+        $botao_import->setAction(new TAction(array($this, 'onImportar')), 'Importar');
+        TButton::disableField('form_importar', 'btnImportar');
+
+        $botao_verificar = new TButton('btnVerificar');
+        $botao_verificar->setLabel('Verificar');
+        $botao_verificar->setAction(new TAction(array($this, 'onVerificar')), 'Verificar');
 
         $table->addRowSet(new TLabel('Local do arquivo:'), $file);
 
         $container = new TTable;
 
         $container->style = 'width: 80%';
-        //$container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', ''));
         $container->addRow()->addCell($this->form);
 
         $row = $table->addRow();
         $row->class = 'tformaction';
-        $cell = $row->addCell($botao_import);
+        $cell = $row->addMultiCell($botao_verificar, $botao_import);
         $cell->colspan = 2;
 
-        $this->form->setFields(array($file, $botao_import));
+        $this->form->setFields(array($file, $botao_import, $botao_verificar));
 
-        // add the form to the page
         parent::add($container);
     }
 
-    /*
-    private function LoadNaturezaByDescricao($descricao) {
-        $repository = new TRepository('Natureza');
-        $criteria = new TCriteria();
-        $criteria->add(new TFilter('descricao', '=', $descricao));
-        $nat = $repository->load($criteria);
-        if (count($nat) > 0) {
-            return  $nat[0];
-        } else {
-            return NULL;
-        }
+    public function onVerificar($param) {
+        $obj = $this->form->getData();
+        var_dump($obj);
+        TButton::disableField('form_importar', 'btnVerificar');
+        TButton::enableField('form_importar', 'btnImportar');
+        $this->form->setData($obj);
     }
-    
-    private function LoadSubElementoByDescricao($descricao) {
-        $repository = new TRepository('Subelemento');
-        $criteria = new TCriteria();
-        $criteria->add(new TFilter('descricao', '=', $descricao));
-        $nat = $repository->load($criteria);
-        if (count($nat) > 0) {
-            return  $nat[0];
-        } else {
-            return NULL;
-        }
-    }*/
-    
-    private function LoadObjectByField($model, $field, $value ){
+
+    private function LoadObjectByField($model, $field, $value) {
         $repository = new TRepository($model);
         $criteria = new TCriteria();
         $criteria->add(new TFilter($field, '=', $value));
         $nat = $repository->load($criteria);
         if (count($nat) > 0) {
-            return  $nat[0];
+            return $nat[0];
         } else {
             return NULL;
         }
     }
 
     function onImportar($param) {
+        
+        //var_dump($param);
+        
+        var_dump($this->form->getData());
+        
+        return;
 
         $source_file = 'tmp/' . $param['file'];
         $target_file = 'uploads/' . $param['file'];
@@ -129,15 +119,15 @@ class ImportForm extends TPage {
             new TMessage('error', 'Arquivo Inválido');
             return;
         }
-        
+
         set_time_limit(0);
         $importacao = new Importar();
         $importacao->loadFile($target_file);
         $importacao->setActiveRow(3);
-        
+
         try {
             TTransaction::open('saciq');
-            
+
             $srp = null;
 
             while (!$importacao->eof()) {
@@ -146,42 +136,42 @@ class ImportForm extends TPage {
                     $importacao->nextRow();
                     continue;
                 }
-                
-                $natureza = $this->LoadObjectByField('Natureza','descricao',$importacao->getNaturezaDespesa());
-                if (!isset($natureza)){
+
+                $natureza = $this->LoadObjectByField('Natureza', 'descricao', $importacao->getNaturezaDespesa());
+                if (!isset($natureza)) {
                     $natureza = new Natureza();
                     $natureza->descricao = $importacao->getNaturezaDespesa();
-                    $natureza->store();                    
+                    $natureza->store();
                 }
-                
-                $subelemento = $this->LoadObjectByField('Subelemento','descricao',$importacao->getDescricaoSubElemento());
-                if (!isset($subelemento)){
+
+                $subelemento = $this->LoadObjectByField('Subelemento', 'descricao', $importacao->getDescricaoSubElemento());
+                if (!isset($subelemento)) {
                     $subelemento = new Subelemento();
                     $subelemento->id = $importacao->getNumeroSubElemento();
                     $subelemento->descricao = $importacao->getDescricaoSubElemento();
-                    $subelemento->store();                            
+                    $subelemento->store();
                 }
-                
+
                 $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $importacao->getFornecedor());
-                if (!isset($fornecedor)){
+                if (!isset($fornecedor)) {
                     $fornecedor = new Fornecedor();
                     $fornecedor->nome = $importacao->getFornecedor();
                     $fornecedor->cnpj = $importacao->getCNPJ();
-                    $fornecedor->store();                            
+                    $fornecedor->store();
                 }
-                
-                if (!isset($srp)){
+
+                if (!isset($srp)) {
                     $srp = new Srp();
-                    $srp->numeroSRP      = $importacao->getNroSRP();
-                    $srp->numeroIRP      = $importacao->getNroIRP();
+                    $srp->numeroSRP = $importacao->getNroSRP();
+                    $srp->numeroIRP = $importacao->getNroIRP();
                     $srp->numeroProcesso = $importacao->getNumeroProcesso();
-                    $srp->uasg           = $importacao->getUasgGerenciadora();
-                    $srp->validade       = $importacao->getValidadeAta();
-                    $srp->nome           = $importacao->getNomeProcesso();
-                    $srp->natureza       = $natureza;
+                    $srp->uasg = $importacao->getUasgGerenciadora();
+                    $srp->validade = $importacao->getValidadeAta();
+                    $srp->nome = $importacao->getNomeProcesso();
+                    $srp->natureza = $natureza;
                     $srp->store();
                 }
-                
+
                 $item = new Item();
                 $item->numeroItem = $importacao->getItem();
                 $item->descricaoSumaria = $importacao->getDescricaoSumaria();
@@ -196,10 +186,10 @@ class ImportForm extends TPage {
                 $item->subelemento = $subelemento;
                 $item->srp = $srp;
                 $item->store();
-                
+
                 $importacao->nextRow();
             }
-            
+
             new TMessage('info', 'Planilha importada com sucesso');
 
             TTransaction::close();
