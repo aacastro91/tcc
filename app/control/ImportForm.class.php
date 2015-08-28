@@ -3,14 +3,22 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TCriteria;
+use Adianti\Database\TExpression;
 use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
+use Adianti\Validator\TRequiredValidator;
+use Adianti\Widget\Container\TNotebook;
 use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TFile;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TBreadCrumb;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,64 +33,223 @@ use Adianti\Widget\Form\TLabel;
  */
 class ImportForm extends TPage {
 
-    protected $form;
+    private $notebook;
+    private $form;
+    private $step;
+    private $frmSelecao;
+    private $frmImportacao;
+    private $gridSRP;
+    private $importacao;
 
     public function __construct() {
         parent::__construct();
-        // Cria o form
-        $this->form = new TForm('form_importar');
-        $this->form->class = 'tform';
 
-        // creates the table container
-        $table = new TTable;
-        $table->style = 'width: 100%';
+        // create the notebook
+        $this->notebook = new TNotebook(650, 125);
+        $this->notebook->setTabsVisibility(FALSE);
 
-        $row = $table->addRow();
-        $row->class = 'tformtitle';
-        $cell = $row->addCell(new TLabel('Importar Planilha XLS'));
-        $cell->colspan = 2;
-        
-        // adiciona a tabela no form
-        $this->form->add($table);
 
+        $this->step = new TBreadCrumb;
+        $this->step->addItem('Seleção', FALSE);
+        $this->step->addItem('Importação', TRUE);
+        $this->step->select('Seleção');
+
+        // create the form
+        $this->form = new TForm;
+
+        // creates the notebook page
+        $this->frmSelecao = new TTable;
+        $this->frmImportacao = new TTable;
+        $this->frmSelecao->style = 'width :640px';
+        $this->frmImportacao->style = 'width :640px';
+
+        // add the notebook inside the form
+        $this->form->add($this->notebook);
+
+        // adds the notebook page
+        $this->notebook->appendPage('Seleção', $this->frmSelecao);
+        $this->notebook->appendPage('Importação', $this->frmImportacao);
+
+        //criar campo da aba selecao
         $file = new TFile('file');
+        $file->addValidation('Arquivo', new TRequiredValidator);
         $file->setProperty("accept", ".xlsx");
-        $file->setSize('70%');
+        $file->setSize('90%');
 
-        $botao_import = new TButton('btnImportar');
-        $botao_import->setLabel('Importar');
-        $botao_import->setAction(new TAction(array($this, 'onImportar')), 'Importar');
-        TButton::disableField('form_importar', 'btnImportar');
-
-        $botao_verificar = new TButton('btnVerificar');
-        $botao_verificar->setLabel('Verificar');
-        $botao_verificar->setAction(new TAction(array($this, 'onVerificar')), 'Verificar');
-
-        $table->addRowSet(new TLabel('Local do arquivo:'), $file);
-
-        $container = new TTable;
-
-        $container->style = 'width: 80%';
-        $container->addRow()->addCell($this->form);
-
-        $row = $table->addRow();
-        $row->class = 'tformaction';
-        $cell = $row->addMultiCell($botao_verificar, $botao_import);
+        // itens pagina 1
+        $row = $this->frmSelecao->addRow();
+        $label = new TLabel('Importação do arquivo');
+        $row->class = 'tformtitle';
+        $cell = $row->addCell($label);
         $cell->colspan = 2;
 
-        $this->form->setFields(array($file, $botao_import, $botao_verificar));
+        $row = $this->frmSelecao->addRow();
+        $row->addCell(new TLabel('Local do arquivo:'));
+        $row->addCell($file);
 
-        parent::add($container);
+
+        // itens pagina 2
+        $this->gridSRP = new TDataGrid();
+        $numeroSRP = new TDataGridColumn('numeroSRP', 'SRP', 'left');
+        $nroProcesso = new TDataGridColumn('numeroProcesso', 'Nº Processo', 'left');
+        $uasg = new TDataGridColumn('uasg', 'UASG', 'left');
+        $validade = new TDataGridColumn('validade', 'Validade', 'left');
+        $natureza = new TDataGridColumn('natureza', 'Natureza de Despesa', 'left');
+        $nomeProcesso = new TDataGridColumn('nomeProcesso', 'Nome do Processo', 'left', 200);
+
+        $this->gridSRP->addColumn($numeroSRP);
+        $this->gridSRP->addColumn($nroProcesso);
+        $this->gridSRP->addColumn($uasg);
+        $this->gridSRP->addColumn($validade);
+        $this->gridSRP->addColumn($natureza);
+        $this->gridSRP->addColumn($nomeProcesso);
+
+        $this->gridSRP->createModel();
+
+        $row = $this->frmImportacao->addRow();
+        $row->class = 'tformtitle';
+        $cell = $row->addCell(new TLabel('Confirmação da SRP para Importação'));
+        $cell->colspan = 2;
+
+        $row = $this->frmImportacao->addRow();
+        $cell = $row->addCell($this->gridSRP);
+        $cell->colspan = 2;
+
+        $btnLoadFile = new TButton('btnLoadFile');
+        $btnLoadFile->setAction(new TAction(array($this, 'onLoadFile')), 'Continuar');
+        $btnLoadFile->setImage('ico_next.png');
+
+        $btnImportFile = new TButton('btnImportFile');
+        $btnImportFile->setAction(new TAction(array($this, 'onImportFile')), 'Importar');
+        $btnImportFile->setImage('ico_next.png');
+
+        $this->frmSelecao->addRowSet($btnLoadFile);
+        $this->frmImportacao->addRowSet($btnImportFile);
+
+        // define wich are the form fields
+        $this->form->setFields(array($file, $btnLoadFile, $btnImportFile));
+
+        // wrap the page content using vertical box
+        $vbox = new TVBox;
+        //$vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $vbox->add($this->step);
+        $vbox->add($this->form);
+
+        parent::add($vbox);
     }
 
-    public function onVerificar($param) {
-        $obj = $this->form->getData();
-        var_dump($obj);
-        TButton::disableField('form_importar', 'btnVerificar');
-        TButton::enableField('form_importar', 'btnImportar');
-        $this->form->setData($obj);
+    private function checkFile($file) {
+        $source_file = 'tmp/' . $file;
+        $target_file = 'uploads/' . $file;
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            if (file_exists($target_file))
+                unlink ($target_file);
+            rename($source_file, $target_file);
+        } else {
+            new TMessage('error', 'Arquivo não suportado');
+            return;
+        }
+
+        if (!file_exists($target_file)) {
+            new TMessage('error', 'Arquivo Inválido');
+            return;
+        }
+        return $target_file;
     }
 
+    private function checkDatabase($file) {
+        try {
+            TTransaction::open('saciq');
+
+            $criteria = new TCriteria;
+            $criteria->add(new TFilter('numeroSRP', '=', $this->importacao->getNroSRP()));
+            $criteria->add(new TFilter('numeroIRP', '=', $this->importacao->getNroIRP()));
+            $criteria->add(new TFilter('numeroProcesso', '=', $this->importacao->getNumeroProcesso()));
+            $criteria->add(new TFilter('uasg', '=', $this->importacao->getUasgGerenciadora()));
+            $criteria->add(new TFilter('validade', '=', $this->importacao->getValidadeAta()));
+
+            $repository = new TRepository('Srp');
+            $count = $repository->count($criteria);
+
+            if ($count > 0) {
+                $continua = new TAction(array($this, 'onContinua'));
+
+                // define os parâmetros de cada ação
+                $continua->setParameter('confirma', 1);
+                $continua->setParameter('file', $file);
+                new TQuestion('Essa SRP já foi importada, reimportar a planilha <br>irá excluir os dados anteriores, Confirma?', $continua);
+                TTransaction::close();
+                return false;
+            }
+            TTransaction::close();
+            return true;
+        } catch (Exception $e) {
+            TTransaction::rollback();
+        }
+    }
+
+    private function preencherGrid() {
+        $item = new StdClass;
+        $item->numeroSRP = $this->importacao->getNroSRP();  //'210/2013';
+        $item->numeroProcesso = $this->importacao->getNumeroProcesso(); //'2319/2013-73';
+        $item->uasg = $this->importacao->getUasgGerenciadora(); //'158154';
+        $item->validade = date('d/m/Y', strtotime($this->importacao->getValidadeAta())); //'01/01/2015';
+        $item->natureza = $this->importacao->getNaturezaDespesa(); //'PERMANENTE';
+        $item->nomeProcesso = $this->importacao->getNomeProcesso(); //'MOBILIÁRIO EM GERAL';
+        $this->gridSRP->addItem($item);
+    }
+
+    function onContinua($param) {
+
+        if (isset($param['confirma']) && $param['confirma'] == 1) {
+            $data = $this->form->getData();
+            $data->file = $param['file'];
+            $this->gridSRP->clear();
+            $this->importacao = new Importar();
+            $this->importacao->loadFile($param['file']);
+            $this->importacao->setActiveRow(3);
+            $this->preencherGrid();
+            $this->notebook->setCurrentPage(1);
+            $this->step->select('Importação');
+            $this->form->setData($data);
+        }
+    }
+
+    function onLoadFile($param) {
+        try {
+            $data = $this->form->getData();
+            $this->form->validate();
+        } catch (Exception $e) {
+            new TMessage('error', '<b>Error</b>: <br> ' . $e->getMessage());
+            return;
+        }
+
+        $file = $this->checkFile($param['file']);
+        $data->file = $file;
+
+        set_time_limit(0);
+
+        $this->importacao = new Importar();
+        $this->importacao->loadFile($file);
+        if (!$this->importacao->isValidFile()){
+            new TMessage('error', '<b>Error</b>: <br> Arquivo fora do padrão');
+            return;
+        }
+        
+        $this->importacao->setActiveRow(3);
+
+        $this->form->setData($data);
+
+        if ($this->checkDataBase($file)) {
+            $this->preencherGrid();
+            $this->notebook->setCurrentPage(1);
+            $this->step->select('Importação');
+        }
+    }
+    
     private function LoadObjectByField($model, $field, $value) {
         $repository = new TRepository($model);
         $criteria = new TCriteria();
@@ -95,101 +262,91 @@ class ImportForm extends TPage {
         }
     }
 
-    function onImportar($param) {
-        
-        //var_dump($param);
-        
-        var_dump($this->form->getData());
-        
-        return;
-
-        $source_file = 'tmp/' . $param['file'];
-        $target_file = 'uploads/' . $param['file'];
-
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-
-        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            rename($source_file, $target_file);
-        } else {
-            new TMessage('error', 'Arquivo não suportado');
-            return;
-        }
-
-        if (!file_exists($target_file)) {
-            new TMessage('error', 'Arquivo Inválido');
-            return;
-        }
-
-        set_time_limit(0);
-        $importacao = new Importar();
-        $importacao->loadFile($target_file);
-        $importacao->setActiveRow(3);
-
+    function onImportFile() {
+       
+        $data = $this->form->getData();
+        $this->importacao = new Importar();
+        $this->importacao->loadFile($data->file);
+        $this->importacao->setActiveRow(3);
         try {
             TTransaction::open('saciq');
+            
+            $criteria = new TCriteria;
+            $criteria->add(new TFilter('numeroSRP', '=', $this->importacao->getNroSRP()));
+            $criteria->add(new TFilter('numeroIRP', '=', $this->importacao->getNroIRP()));
+            $criteria->add(new TFilter('numeroProcesso', '=', $this->importacao->getNumeroProcesso()));
+            $criteria->add(new TFilter('uasg', '=', $this->importacao->getUasgGerenciadora()));
+            $criteria->add(new TFilter('validade', '=', $this->importacao->getValidadeAta()));
+
+            $repositorySrp = new TRepository('Srp');           
+            
+            $count = $repositorySrp->count($criteria);
+            if ($count > 0){
+                $RepSRP = $repositorySrp->load($criteria);
+                $RepSRP[0]->delete();
+            }            
 
             $srp = null;
 
-            while (!$importacao->eof()) {
+            while (!$this->importacao->eof()) {
 
-                if (!$importacao->isValidRow()) {
-                    $importacao->nextRow();
+                if (!$this->importacao->isValidRow()) {
+                    $this->importacao->nextRow();
                     continue;
                 }
 
-                $natureza = $this->LoadObjectByField('Natureza', 'descricao', $importacao->getNaturezaDespesa());
+                $natureza = $this->LoadObjectByField('Natureza', 'descricao', $this->importacao->getNaturezaDespesa());
                 if (!isset($natureza)) {
                     $natureza = new Natureza();
-                    $natureza->descricao = $importacao->getNaturezaDespesa();
+                    $natureza->descricao = $this->importacao->getNaturezaDespesa();
                     $natureza->store();
                 }
 
-                $subelemento = $this->LoadObjectByField('Subelemento', 'descricao', $importacao->getDescricaoSubElemento());
+                $subelemento = $this->LoadObjectByField('Subelemento', 'descricao', $this->importacao->getDescricaoSubElemento());
                 if (!isset($subelemento)) {
                     $subelemento = new Subelemento();
-                    $subelemento->id = $importacao->getNumeroSubElemento();
-                    $subelemento->descricao = $importacao->getDescricaoSubElemento();
+                    $subelemento->id = $this->importacao->getNumeroSubElemento();
+                    $subelemento->descricao = $this->importacao->getDescricaoSubElemento();
                     $subelemento->store();
                 }
 
-                $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $importacao->getFornecedor());
+                $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $this->importacao->getFornecedor());
                 if (!isset($fornecedor)) {
                     $fornecedor = new Fornecedor();
-                    $fornecedor->nome = $importacao->getFornecedor();
-                    $fornecedor->cnpj = $importacao->getCNPJ();
+                    $fornecedor->nome = $this->importacao->getFornecedor();
+                    $fornecedor->cnpj = $this->importacao->getCNPJ();
                     $fornecedor->store();
                 }
 
                 if (!isset($srp)) {
                     $srp = new Srp();
-                    $srp->numeroSRP = $importacao->getNroSRP();
-                    $srp->numeroIRP = $importacao->getNroIRP();
-                    $srp->numeroProcesso = $importacao->getNumeroProcesso();
-                    $srp->uasg = $importacao->getUasgGerenciadora();
-                    $srp->validade = $importacao->getValidadeAta();
-                    $srp->nome = $importacao->getNomeProcesso();
-                    $srp->natureza = $natureza;
-                    $srp->store();
+                    $srp->numeroSRP = $this->importacao->getNroSRP();
+                    $srp->numeroIRP = $this->importacao->getNroIRP();
+                    $srp->numeroProcesso = $this->importacao->getNumeroProcesso();
+                    $srp->uasg = $this->importacao->getUasgGerenciadora();
+                    $srp->validade = $this->importacao->getValidadeAta();
+                    $srp->nome = $this->importacao->getNomeProcesso();
+                    $srp->natureza = $natureza;                    
                 }
 
                 $item = new Item();
-                $item->numeroItem = $importacao->getItem();
-                $item->descricaoSumaria = $importacao->getDescricaoSumaria();
-                $item->descricaoCompleta = $importacao->getDescricaoCompleta();
-                $item->descricaoPosLicitacao = $importacao->getDescricaoPosLicitacao();
-                $item->unidadeMedida = $importacao->getUnidadeDeMedida();
-                $item->marca = $importacao->getMarca();
-                $item->valorUnitario = $importacao->getValorUnitarioLicitado();
-                $item->quantidadeDisponivel = $importacao->getOrgao(CAMPUS);
-                $item->fabricante = $importacao->getFabricante();
+                $item->numeroItem = $this->importacao->getItem();
+                $item->descricaoSumaria = $this->importacao->getDescricaoSumaria();
+                $item->descricaoCompleta = $this->importacao->getDescricaoCompleta();
+                $item->descricaoPosLicitacao = $this->importacao->getDescricaoPosLicitacao();
+                $item->unidadeMedida = $this->importacao->getUnidadeDeMedida();
+                $item->marca = $this->importacao->getMarca();
+                $item->valorUnitario = $this->importacao->getValorUnitarioLicitado();
+                $item->quantidadeDisponivel = $this->importacao->getOrgao(CAMPUS);
+                $item->fabricante = $this->importacao->getFabricante();
                 $item->fornecedor = $fornecedor;
                 $item->subelemento = $subelemento;
-                $item->srp = $srp;
-                $item->store();
+                $srp->addItem($item);
 
-                $importacao->nextRow();
+                $this->importacao->nextRow();
             }
-
+            $srp->store();
+            
             new TMessage('info', 'Planilha importada com sucesso');
 
             TTransaction::close();
@@ -197,6 +354,9 @@ class ImportForm extends TPage {
             TTransaction::rollback();
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
         }
+        $this->notebook->setCurrentPage(0);
+        $this->form->setData($data);
+        $this->step->select('Seleção');
     }
 
 }

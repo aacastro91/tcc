@@ -53,7 +53,21 @@ class Importar {
     }
 
     public function isValidRow() {
-        return !($this->getFornecedor() == 'CANCELADO');
+        if ($this->getFornecedor() == 'CANCELADO')
+            return false;
+        if ($this->getOrgao(CAMPUS)== '')
+            return false;
+        
+        return true;
+    }
+    
+    public function isValidFile(){
+        if ($this->getNaturezaDespesa()== '')
+            return false;
+        if ($this->getNomeProcesso() == '')
+            return false;
+        
+        return true;
     }
 
     private function getColumnCount() {
@@ -77,7 +91,7 @@ class Importar {
 
     public function getRowArray($row) {
         $return = array();
-        $count = $this->getColumnCount();
+        $count = @$this->getColumnCount();
         for ($i = 0; $i < $count; $i++){
             $return[] = $this->dataFile[$i][$row-1];
         }
