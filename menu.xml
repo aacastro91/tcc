@@ -21,6 +21,18 @@
                 <icon></icon>
                 <action>CampusList</action>
             </menuitem>
+            <menuitem label='Natureza'>
+                <icon></icon>
+                <action>NaturezaList</action>
+            </menuitem>
+            <menuitem label='SubElemento'>
+                <icon></icon>
+                <action>SubelementoList</action>
+            </menuitem>
+            <menuitem label='Fornecedor'>
+                <icon></icon>
+                <action>FornecedorList</action>
+            </menuitem>
         </menu>
     </menuitem> 
     <menuitem label='Relatório'>

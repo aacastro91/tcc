@@ -32,7 +32,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
     protected $id;
     protected $formName;
     protected $name;
-    
+
     /**
      * Class Constructor
      * @param  $name name of the field
@@ -43,7 +43,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
         $this->numericMask = FALSE;
         $this->replaceOnPost = FALSE;
     }
-    
+
     /**
      * Define the field's mask
      * @param $mask A mask for input data
@@ -52,7 +52,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
     {
         $this->mask = $mask;
     }
-    
+
     /**
      * Define the field's numeric mask (available just in web)
      * @param $decimals Sets the number of decimal points.
@@ -67,7 +67,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
         $this->thousandSeparator = $thousandSeparator;
         $this->replaceOnPost = $replaceOnPost;
     }
-    
+
     /**
      * Define the field's value
      * @param $value A string containing the field's value
@@ -83,7 +83,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
             $this->value = $value;
         }
     }
-    
+
     /**
      * Return the post data
      */
@@ -108,7 +108,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
             return '';
         }
     }
-    
+
     /**
      * Define max length
      * @param  $length Max length
@@ -120,7 +120,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
             $this->tag-> maxlength = $length;
         }
     }
-    
+
     /**
      * Define options for completion
      * @param $options array of options for completion
@@ -129,7 +129,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
     {
         $this->completion = $options;
     }
-    
+
     /**
      * Define the action to be executed when the user leaves the form field
      * @param $action TAction object
@@ -146,7 +146,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
             throw new Exception(AdiantiCoreTranslator::translate('Action (^1) must be static to be used in ^2', $string_action, __METHOD__));
         }
     }
-    
+
     /**
      * Shows the widget at the screen
      */
@@ -156,13 +156,17 @@ class TEntry extends TField implements AdiantiWidgetInterface
         $this->tag-> name  = $this->name;    // TAG name
         $this->tag-> value = $this->value;   // TAG value
         $this->tag-> type  = 'text';         // input type
-        $this->setProperty('style', "width:{$this->size}px", FALSE); //aggregate style info
-        
+        //$this->setProperty('style', "width:{$this->size}px", FALSE); //aggregate style info
+        if (is_string($this->size))
+            $this->setProperty('style', "width:{$this->size}", FALSE); //aggregate style info
+        else
+            $this->setProperty('style', "width:{$this->size}px", FALSE); //aggregate style info
+
         if ($this->id)
         {
             $this->tag->{'id'} = $this->id;
         }
-        
+
         // verify if the widget is non-editable
         if (parent::getEditable())
         {
@@ -178,7 +182,7 @@ class TEntry extends TField implements AdiantiWidgetInterface
                                                  __adianti_ajax_lookup('$string_action&'+serialform, document.{$this->formName}.{$this->name})", FALSE);
                 $this->setProperty('onBlur', $this->getProperty('exitaction'), FALSE);
             }
-            
+
             if ($this->mask)
             {
                 $this->tag-> onKeyPress="return tentry_mask(this,event,'{$this->mask}')";
@@ -190,10 +194,10 @@ class TEntry extends TField implements AdiantiWidgetInterface
             $this->tag->{'class'} = 'tfield_disabled'; // CSS
             $this->tag-> onmouseover = "style.cursor='default'";
         }
-        
+
         // shows the tag
         $this->tag->show();
-        
+
         if (isset($this->completion))
         {
             $options = json_encode($this->completion);
