@@ -45,7 +45,7 @@ class ImportForm extends TPage {
         parent::__construct();
 
         // create the notebook
-        $this->notebook = new TNotebook(650, 125);
+        $this->notebook = new TNotebook(650, 200);
         $this->notebook->setTabsVisibility(FALSE);
 
 
@@ -142,20 +142,19 @@ class ImportForm extends TPage {
         $source_file = 'tmp/' . $file;
         $target_file = 'uploads/' . $file;
 
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-
-        if (file_exists($source_file) AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        //$finfo = new finfo(FILEINFO_MIME_TYPE);
+    if (file_exists($source_file)){ //AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             if (file_exists($target_file))
                 unlink ($target_file);
             rename($source_file, $target_file);
         } else {
             new TMessage('error', 'Arquivo não suportado');
-            return;
+            return false;
         }
 
         if (!file_exists($target_file)) {
             new TMessage('error', 'Arquivo Inválido');
-            return;
+            return false;
         }
         return $target_file;
     }
@@ -228,6 +227,11 @@ class ImportForm extends TPage {
         }
 
         $file = $this->checkFile($param['file']);
+        
+        if ($file == false){
+            return;
+        }
+        
         $data->file = $file;
 
         set_time_limit(0);
