@@ -1,5 +1,9 @@
 <menu>
-    <menuitem label='Administração'>
+    <menuitem label='Home'>
+        <icon></icon>
+        <action>CommonPage</action>
+    </menuitem>
+    <menuitem label='Cadastros'>
         <menu>
             <menuitem label='Funcionalidades'>
                 <icon>fa:file-code-o fa-fw white</icon>
@@ -13,14 +17,14 @@
                 <icon>fa:user fa-fw white</icon>
                 <action>UsuarioList</action>
             </menuitem>
-        </menu>
-    </menuitem>
-    <menuitem label='Cadastro'>
-        <menu>
             <menuitem label='Campus'>
                 <icon></icon>
                 <action>CampusList</action>
-            </menuitem>
+            </menuitem>            
+        </menu>
+    </menuitem>
+    <menuitem label='Consulta'>
+        <menu>
             <menuitem label='Natureza'>
                 <icon></icon>
                 <action>NaturezaList</action>
@@ -33,24 +37,41 @@
                 <icon></icon>
                 <action>FornecedorList</action>
             </menuitem>
-        </menu>
-    </menuitem> 
-    <menuitem label='Relatório'>
-        <menu>
-            <menuitem label='Common page 1'>
+            <menuitem label='SRP/Quantitativos'>
                 <icon></icon>
                 <action>CommonPage</action>
             </menuitem>
         </menu>
-    </menuitem>
-    <menuitem label='Importar tabela'>
+    </menuitem> 
+    <menuitem label='Importação de dados'>
         <icon></icon>
         <action>ImportForm</action>
-    </menuitem>
+    </menuitem>    
     <menuitem label='Requisição de Quantitativo'>
+        <icon></icon>
+        <action>RequisicaoForm</action>
+    </menuitem>
+    <menuitem label='Cessão de Quantitativo'>
         <icon></icon>
         <action>CommonPage</action>
     </menuitem>
+    <menuitem label='Relatórios'>
+        <menu>
+            <menuitem label='Itens requeridos'>
+                <icon></icon>
+                <action>CommonPage</action>
+            </menuitem>
+            <menuitem label='Itens cedidos'>
+                <icon></icon>
+                <action>CommonPage</action>
+            </menuitem>
+            
+            <menuitem label='SRPs'>
+                <icon></icon>
+                <action>CommonPage</action>
+            </menuitem>
+        </menu>
+    </menuitem>    
     <menuitem label='Logout'>
         <menu>
             <menuitem label='Logout'>

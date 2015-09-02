@@ -78,7 +78,7 @@ class ImportForm extends TPage {
 
         // itens pagina 1
         $row = $this->frmSelecao->addRow();
-        $label = new TLabel('Importação do arquivo');
+        $label = new TLabel('Importação da tabela');
         $row->class = 'tformtitle';
         $cell = $row->addCell($label);
         $cell->colspan = 2;
@@ -314,7 +314,7 @@ class ImportForm extends TPage {
                     $subelemento->store();
                 }
 
-                $fornecedor = $this->LoadObjectByField('fornecedor', 'nome', $this->importacao->getFornecedor());
+                $fornecedor = $this->LoadObjectByField('fornecedor', 'cnpj', $this->importacao->getCNPJ());
                 if (!isset($fornecedor)) {
                     $fornecedor = new Fornecedor();
                     $fornecedor->nome = $this->importacao->getFornecedor();
