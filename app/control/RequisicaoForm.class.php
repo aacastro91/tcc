@@ -5,6 +5,7 @@ use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Wrapper\TDBSeekButton;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,44 +28,44 @@ class RequisicaoForm  extends TPage{
         // Cria o form
         $this->form = new TForm('form_requisicao');
         $this->form->class = 'tform';
-        
-        // cria a tabela
         $table = new TTable;
         $table->style = 'width:100%';
-        
-        //cria o titulo
-        $row = $table->addRow();
-        $row->class = 'tformtitle';
-        $cell = $row->addCell(new TLabel('Requisição de quantitativo'));
-        $cell->colspan = 2;  
-        
+        $this->form->add($table);       
         
         //criar os edits
-        $nroSRP        = new TEntry('numeroSRP');
-        $nome          = new TEntry('name');
+        $numeroSRP     = new TDBSeekButton('numeroSRP', 'saciq', 'form_requisicao','Srp', 'nome', 'numeroSRP', 'nome');
+        $nome          = new TEntry('nome');
         $nroProcesso   = new TEntry('numeroProcesso');
         $uasg          = new TEntry('uasg');
         $validadeAta   = new TEntry('data');
         $prazoEntrega  = new TEntry('prazoEntrega');
         
+        // add a row for the form title
+        $row  = $table->addRow();
+        $row->class = 'tformtitle'; // CSS class
+        $cell = $row->addCell( new TLabel('Requisição de quantitativo'));
+        $cell->colspan = 4;
         
-        $row = $table->addRow();
-        $row->addMultiCell(new TLabel('Nº SRP:'), $nroSRP);
-        $row->addMultiCell(new TLabel('Nome Licitação:'), $nome);
+        $table->addRowSet(new TLabel('Nº SRP:'),$numeroSRP, new TLabel('Nome Licitação:'), $nome );
         
-        $row = $table->addRow();
-        $row->addMultiCell(new TLabel('Proc. Orig:'), $nroProcesso);
-        $row->addMultiCell(new TLabel('UASG:'), $uasg);
+        $table->addRowSet(new TLabel('Proc. Orig:'), $nroProcesso, new TLabel('UASG:'), $uasg);
         
-        $row = $table->addRow();
-        $row->addMultiCell(new TLabel('Validade da Ata:'), $validadeAta);
-        $row->addMultiCell(new TLabel('Prazo de Entrega:'), $prazoEntrega);
+        $table->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Prazo de Entrega:'), $prazoEntrega);
+                
+       // $table_item->addRowSet(new Label, $product_id,  $lab_des, $product_description);
+
+        
+        //cria o titulo
+        //$row = $details->addRow();
+        //$row->class = 'tformtitle';
+        //$cell = $row->addCell(new TLabel('Requisição de quantitativo'));
+        //$cell->colspan = 2;  
         
         
         
-        $this->form->add($table);
         
-        //$this->form->setFields(array($nome, $control, $find_button, $new_button));
+        
+        $this->form->setFields(array($numeroSRP, $nome, $nroProcesso, $uasg, $validadeAta, $prazoEntrega));
         
         //$vbox->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         //$vbox->add();
