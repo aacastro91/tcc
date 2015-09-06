@@ -1,3 +1,6 @@
+CREATE DATABASE  IF NOT EXISTS `saciq` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `saciq`;
+
 -- MySQL dump 10.13  Distrib 5.6.17, for Win32 (x86)
 --
 -- Host: 127.0.0.1    Database: saciq
@@ -14,12 +17,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-DROP DATABASE IF EXISTS `saciq`;
-
-CREATE DATABASE `saciq`;
-
-USE `saciq`;
 
 --
 -- Table structure for table `campus`
@@ -245,6 +242,7 @@ CREATE TABLE `srp` (
   `nome` varchar(300) DEFAULT NULL,
   `natureza_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `numeroSRP_UNIQUE` (`numeroSRP`),
   KEY `fk_srp_natureza_idx` (`natureza_id`),
   CONSTRAINT `fk_srp_natureza` FOREIGN KEY (`natureza_id`) REFERENCES `natureza` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -338,4 +336,4 @@ CREATE TABLE `usuario_grupo` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-25  1:58:51
+-- Dump completed on 2015-09-06 16:28:51
