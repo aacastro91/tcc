@@ -66,14 +66,14 @@ class ItemSeek extends TWindow{
         //criar as colunas da datagrid 
         $numeroItem       = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
         $descricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição Sumária', 'left', 500);
-        $fabricante       = new TDataGridColumn('fabricante', 'fabricante', 'left', 150);
+        $quantidade       = new TDataGridColumn('quantidadeDisponivel', 'Quantidade', 'right', 70);
         $unidadeMedida    = new TDataGridColumn('unidadeMedida', 'Unidade', 'left', 50);
-        $valorUnitario    = new TDataGridColumn('valorUnitario', 'Valor Unit.', 'left', 70);
+        $valorUnitario    = new TDataGridColumn('valorUnitario', 'Valor Unit.', 'right', 70);
         
         // add the columns to the DataGrid
         $this->datagrid->addColumn($numeroItem);
         $this->datagrid->addColumn($descricaoSumaria);
-        $this->datagrid->addColumn($fabricante);
+        $this->datagrid->addColumn($quantidade);
         $this->datagrid->addColumn($unidadeMedida);
         $this->datagrid->addColumn($valorUnitario);
         
@@ -152,7 +152,7 @@ class ItemSeek extends TWindow{
             TTransaction::setLogger(new TLoggerTXT('C:\array\log.txt'));
             
             $repository = new TRepository('Item');
-            $limit = 1;
+            $limit = 10;
             $criteria = new TCriteria();
             
             $criteria->setProperties($param);
@@ -161,14 +161,17 @@ class ItemSeek extends TWindow{
             //filtro do numero srp
             if (TSession::getValue('ItemList_filter_numeroItem')){
                 $criteria->add(TSession::getValue('ItemList_filter_numeroItem'));
+                TSession::setValue('ItemList_filter_numeroItem',NULL);
             }
             
             if (TSession::getValue('ItemList_filter_descricaoSumaria')){
                 $criteria->add(TSession::getValue('ItemList_filter_descricaoSumaria'));
+                TSession::setValue('ItemList_filter_descricaoSumaria',NULL);
             }
             
             if (TSession::getValue('ItemList_filter_fabricante')){
                 $criteria->add(TSession::getValue('ItemList_filter_fabricante'));
+                TSession::setValue('ItemList_filter_fabricante',NULL);
             }
 
             $itens = $repository->load($criteria);

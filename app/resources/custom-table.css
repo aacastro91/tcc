@@ -1,65 +1,64 @@
 .customized-table .tdatagrid_col, .tdatagrid_action
 {
-    background-color: #5C9735 !important;
-    padding-left: 2px  !important;
+  background-color: #5C9735 !important;
 }
 
 .customized-table .tdatagrid_col_over
 {
-    border-top     : 1px solid orange;
-    cursor         : pointer;
-    background-color: #EEEEFF;
-    -moz-user-select:none;
-    user-select     : none;
-    padding-bottom : 9px;
+  border-top     : 1px solid orange;
+  cursor         : pointer;
+  background-color: #EEEEFF;
+  -moz-user-select:none;
+  user-select     : none;
+  padding-bottom : 9px;
 }
 
 .customized-table .tdatagrid_col:hover, .tdatagrid_action:hover
 {
-    background-color: #8CB6E2;
-    text-shadow: 0 1px 0 black;
+  background-color: #8CB6E2;
+  text-shadow: 0 1px 0 black;
 }
 
 .customized-table .tdatagrid_row_even:hover, .customized-table .tdatagrid_row_odd:hover
 {
-    background-color: #FFC86F;
+  background-color: #FFC86F;
 }
 
 .customized-table thead td
 {
-	font-size : 10pt;
-    border-top     : 0;
-    border-bottom  : 1px solid #dddddd;;
-	background-color: white;
-	color: white;
-	-moz-user-select: none;
-	user-select: none;
-	cursor: default;
-	text-shadow: 0 1px 0 black;
-	
-	font-weight: bold;
-	padding-top: 10px;
-	padding-bottom: 10px;
+  font-size : 10pt;
+  border-top     : 0;
+  border-bottom  : 1px solid #dddddd;;
+  background-color: white;
+  color: white;
+  -moz-user-select: none;
+  user-select: none;
+  cursor: default;
+  text-shadow: 0 1px 0 black;
+
+  font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .customized-table .tdatagrid_row_even
 {
-    background-color: #ffffff;
-    height: 35px;
+  background-color: #ffffff;
+  height: 35px;
 }
 
 .customized-table .tdatagrid_row_odd
 {
-    background-color: #fafafa;
-    height: 35px;
+  background-color: #fafafa;
+  height: 35px;
 }
 
 .customized-table .tdatagrid_row_sel
 {
-    background-color: #FFEFBC;
+  background-color: #FFEFBC;
 }
 
 .customized-table tbody tr
 {
-    height: 35px;
+  height: 35px;
 }
