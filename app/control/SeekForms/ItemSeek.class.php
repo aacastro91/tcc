@@ -11,6 +11,7 @@ use Adianti\Registry\TSession;
 use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TEntry;
@@ -42,6 +43,8 @@ class ItemSeek extends TWindow{
         $descricaoSumaria               = new TEntry('descricaoSumaria');
         $fabricante                     = new TEntry('fabricante');
         
+        
+        
         //valors da sessao
         $descricaoSumaria->setValue(TSession::getValue('item_descricaoSumaria'));
         
@@ -64,18 +67,18 @@ class ItemSeek extends TWindow{
         $this->datagrid->setHeight(300);
         
         //criar as colunas da datagrid 
-        $numeroItem       = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
-        $descricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição Sumária', 'left', 500);
-        $quantidade       = new TDataGridColumn('quantidadeDisponivel', 'Quantidade', 'right', 70);
-        $unidadeMedida    = new TDataGridColumn('unidadeMedida', 'Unidade', 'left', 50);
-        $valorUnitario    = new TDataGridColumn('valorUnitario', 'Valor Unit.', 'right', 70);
+        $GnumeroItem       = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
+        $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição Sumária', 'left', 500);
+        $Gquantidade       = new TDataGridColumn('quantidadeDisponivel', 'Quantidade', 'right', 70);
+        $GunidadeMedida    = new TDataGridColumn('unidadeMedida', 'Unidade', 'left', 50);
+        $GvalorUnitario    = new TDataGridColumn('valorUnitario', 'Valor Unit.', 'right', 70);
         
         // add the columns to the DataGrid
-        $this->datagrid->addColumn($numeroItem);
-        $this->datagrid->addColumn($descricaoSumaria);
-        $this->datagrid->addColumn($quantidade);
-        $this->datagrid->addColumn($unidadeMedida);
-        $this->datagrid->addColumn($valorUnitario);
+        $this->datagrid->addColumn($GnumeroItem);
+        $this->datagrid->addColumn($GdescricaoSumaria);
+        $this->datagrid->addColumn($Gquantidade);
+        $this->datagrid->addColumn($GunidadeMedida);
+        $this->datagrid->addColumn($GvalorUnitario);
         
         //criar acao da coluna
         $action = new TDataGridAction(array($this, 'onSelect'));
@@ -154,6 +157,10 @@ class ItemSeek extends TWindow{
             $repository = new TRepository('Item');
             $limit = 10;
             $criteria = new TCriteria();
+            
+            if (TSession::getValue('SRP_id')){
+                $criteria->add(new TFilter('srp_id', '=', TSession::getValue('SRP_id')));
+            }
             
             $criteria->setProperties($param);
             $criteria->setProperty('limit', $limit);

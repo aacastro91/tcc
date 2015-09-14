@@ -49,7 +49,7 @@ class RequisicaoForm extends TPage{
         $this->form = new TForm('requisicao_form');
         $this->form->class = 'tform'; // CSS class
         //parent::include_css('app/resources/custom-frame.css');
-
+        
         $table_master = new TTable;
         $table_master->width = '100%';
 
@@ -78,8 +78,8 @@ class RequisicaoForm extends TPage{
         $nome          = new TEntry('nome');
         $nroProcesso   = new TEntry('numeroProcesso');
         $uasg          = new TEntry('uasg');
-        $validadeAta   = new TDate('validade');
-        $aprovado      = new TCombo('aprovado');
+        $validadeAta   = new TEntry('validade');
+        //$aprovado      = new TCombo('aprovado');
 
         // detail fields
         $item_id          = new TSeekButton('item_id');
@@ -88,18 +88,22 @@ class RequisicaoForm extends TPage{
         $quantidade       = new TEntry('quantidade');
         $prazoEntrega     = new TEntry('prazoEntrega');
         $justificativa    = new TEntry('justificativa');
-        $total            = new TEntry('total');
+        //$total            = new TEntry('total');
 
         //ações
         $numeroSRP->setAction(new TAction(array(new SrpSeek(), 'onReload')));
-        $item_id->setAction(new TAction(array(new ItemSeek(), 'onReload')));
+        //$numeroSRP->setAction($ac);
+        
+        $ac = new TAction(array(new ItemSeek(), 'onReload'));
+        $ac->setParameter('sro', $numeroSRP->getValue());
+        $item_id->setAction($ac);
         $item_id->setExitAction(new TAction(array($this, 'onProductChange')));
 
         //tamanho
         $numeroSRP->setSize(80);
         $nroProcesso->setSize(100);
         $uasg->setSize(70);
-        $validadeAta->setSize(78);
+        $validadeAta->setSize(85);
         $nome->setSize('95%');
         
         $item_id->setSize(60);
@@ -112,6 +116,7 @@ class RequisicaoForm extends TPage{
         $nome->setEditable(false);
         $nroProcesso->setEditable(false);
         $uasg->setEditable(false);
+        $validadeAta->setEditable(false);
         $valorUnitario->setEditable(false);                
         
         //mask
@@ -129,13 +134,7 @@ class RequisicaoForm extends TPage{
         //outras propriedades
         $nome->setProperty("style", "min-width : 200px");
         $prazoEntrega->setValue('60 Dias');
-        //
-        $itens = array();
-        $itens['1'] = 'Sim';
-        $itens['0'] = 'Não';
-        $aprovado->addItems($itens);
-        $aprovado->setValue('1');
-        $aprovado->setDefaultOption(false);
+        
 
         // pedido
         $row = $table_general->addRow();
@@ -144,7 +143,7 @@ class RequisicaoForm extends TPage{
         $row->addCell(new TLabel('Nome Licitação:'))->width = '150px';
         $row->addCell($nome);
         $table_general->addRowSet(new TLabel('Proc. Orig:'), $nroProcesso, new TLabel('UASG:'), $uasg);
-        $table_general->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Pendente:'), $aprovado);
+        $table_general->addRowSet(new TLabel('Validade da Ata:'), $validadeAta);
         
         // products
         $frame_product = new TFrame();
@@ -188,7 +187,7 @@ class RequisicaoForm extends TPage{
         
         $Gedit    = new TDataGridColumn('edit', '', 'left', 30);
         $Gdelete  = new TDataGridColumn('delete', '', 'left', 30);
-        $Gid      = new TDataGridColumn('id', 'ID', 'center', 120);
+        //$Gid      = new TDataGridColumn('id', 'ID', 'center', 120);
         $Gitem_id = new TDataGridColumn('item_id', 'Item', 'center', 120);
         $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição', 'left', 500);
         $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left', 150);
@@ -199,7 +198,7 @@ class RequisicaoForm extends TPage{
         
         $this->product_list->addColumn($Gedit);
         $this->product_list->addColumn($Gdelete);
-        $this->product_list->addColumn($Gid);
+        //$this->product_list->addColumn($Gid);
         $this->product_list->addColumn($Gitem_id);
         $this->product_list->addColumn($GdescricaoSumaria);
         $this->product_list->addColumn($Gquantidade);
@@ -222,7 +221,7 @@ class RequisicaoForm extends TPage{
         $new_button->setImage('ico_new.png');
 
         // define form fields
-        $this->formFields = array( $numeroSRP, $nome, $nroProcesso, $uasg, $validadeAta, $aprovado, $item_id,$descricaoSumaria,$prazoEntrega, $valorUnitario,$quantidade,$total, $add_product, $save_button, $new_button);
+        $this->formFields = array( $numeroSRP, $nome, $nroProcesso, $uasg, $validadeAta, $item_id, $descricaoSumaria,$prazoEntrega, $valorUnitario,$quantidade, $add_product, $save_button, $new_button);
         $this->form->setFields($this->formFields);
 
         $table_master->addRowSet(array($save_button, $new_button), '', '')->class = 'tformaction'; // CSS class
@@ -272,7 +271,7 @@ class RequisicaoForm extends TPage{
         try {
             TTransaction::open('saciq');
             $data = $this->form->getData();
-            
+            $this->form->validate();
             
             //if ((!$data->item_id) || (!$data->valorUnitario) || (!$data->quantidade) || (!$data->prazoEntrega) || (!$data->justificativa)) {
             //    throw new Exception('Ver');

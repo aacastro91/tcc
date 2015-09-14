@@ -1,339 +1,367 @@
-CREATE DATABASE  IF NOT EXISTS `saciq` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `saciq`;
+-- MySQL Workbench Forward Engineering
 
--- MySQL dump 10.13  Distrib 5.6.17, for Win32 (x86)
---
--- Host: 127.0.0.1    Database: saciq
--- ------------------------------------------------------
--- Server version	5.6.23-log
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+03:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema saciq
+-- -----------------------------------------------------
 
---
--- Table structure for table `campus`
---
+-- -----------------------------------------------------
+-- Schema saciq
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `saciq` DEFAULT CHARACTER SET utf8 ;
+USE `saciq` ;
 
-DROP TABLE IF EXISTS `campus`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `campus` (
-  `id` int(11) NOT NULL,
-  `uasg` varchar(10) DEFAULT NULL,
-  `nome` varchar(50) DEFAULT NULL,
-  `sigla` varchar(3) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `saciq`.`campus`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`campus` ;
 
---
--- Table structure for table `cessao`
---
+CREATE TABLE IF NOT EXISTS `saciq`.`campus` (
+  `id` INT(11) NOT NULL,
+  `uasg` VARCHAR(10) NULL DEFAULT NULL,
+  `nome` VARCHAR(50) NULL DEFAULT NULL,
+  `sigla` VARCHAR(3) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
-DROP TABLE IF EXISTS `cessao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cessao` (
-  `id` int(11) NOT NULL,
-  `numeroCessao` varchar(30) DEFAULT NULL,
-  `data` date DEFAULT NULL,
-  `aprovado` tinyint(1) DEFAULT NULL,
-  `campus_id` int(11) NOT NULL,
+
+-- -----------------------------------------------------
+-- Table `saciq`.`cessao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`cessao` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`cessao` (
+  `id` INT(11) NOT NULL,
+  `numeroCessao` VARCHAR(30) NULL DEFAULT NULL,
+  `data` DATE NULL DEFAULT NULL,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL,
+  `campus_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_cessao_campus1_idx` (`campus_id`),
-  CONSTRAINT `fk_cessao_campus1` FOREIGN KEY (`campus_id`) REFERENCES `campus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  INDEX `fk_cessao_campus1_idx` (`campus_id` ASC),
+  CONSTRAINT `fk_cessao_campus1`
+    FOREIGN KEY (`campus_id`)
+    REFERENCES `saciq`.`campus` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `fornecedor`
---
 
-DROP TABLE IF EXISTS `fornecedor`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fornecedor` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(150) DEFAULT NULL,
-  `cnpj` char(14) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `saciq`.`fornecedor`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`fornecedor` ;
 
---
--- Table structure for table `funcionalidade`
---
+CREATE TABLE IF NOT EXISTS `saciq`.`fornecedor` (
+  `id` INT(11) NOT NULL,
+  `nome` VARCHAR(150) NULL DEFAULT NULL,
+  `cnpj` CHAR(14) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
-DROP TABLE IF EXISTS `funcionalidade`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `funcionalidade` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) DEFAULT NULL,
-  `classe` varchar(100) DEFAULT NULL,
+
+-- -----------------------------------------------------
+-- Table `saciq`.`funcionalidade`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`funcionalidade` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`funcionalidade` (
+  `id` INT(11) NOT NULL,
+  `nome` VARCHAR(100) NULL DEFAULT NULL,
+  `classe` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `classe_UNIQUE` (`classe`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `classe_UNIQUE` (`classe` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `grupo`
---
 
-DROP TABLE IF EXISTS `grupo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `grupo` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(45) DEFAULT NULL,
-  `sigla` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `saciq`.`grupo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`grupo` ;
 
---
--- Table structure for table `grupo_funcionalidade`
---
+CREATE TABLE IF NOT EXISTS `saciq`.`grupo` (
+  `id` INT(11) NOT NULL,
+  `nome` VARCHAR(45) NULL DEFAULT NULL,
+  `sigla` VARCHAR(10) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
-DROP TABLE IF EXISTS `grupo_funcionalidade`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `grupo_funcionalidade` (
-  `id` int(11) NOT NULL,
-  `grupo_id` int(11) NOT NULL,
-  `funcionalidade_id` int(11) NOT NULL,
+
+-- -----------------------------------------------------
+-- Table `saciq`.`grupo_funcionalidade`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`grupo_funcionalidade` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`grupo_funcionalidade` (
+  `id` INT(11) NOT NULL,
+  `grupo_id` INT(11) NOT NULL,
+  `funcionalidade_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `grupo_funcionalidade_unique` (`grupo_id`,`funcionalidade_id`),
-  KEY `fk_grupo_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id`),
-  KEY `fk_grupo_has_funcionalidade_grupo1_idx` (`grupo_id`),
-  CONSTRAINT `fk_grupo_has_funcionalidade_funcionalidade1` FOREIGN KEY (`funcionalidade_id`) REFERENCES `funcionalidade` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_grupo_has_funcionalidade_grupo1` FOREIGN KEY (`grupo_id`) REFERENCES `grupo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `grupo_funcionalidade_unique` (`grupo_id` ASC, `funcionalidade_id` ASC),
+  INDEX `fk_grupo_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id` ASC),
+  INDEX `fk_grupo_has_funcionalidade_grupo1_idx` (`grupo_id` ASC),
+  CONSTRAINT `fk_grupo_has_funcionalidade_funcionalidade1`
+    FOREIGN KEY (`funcionalidade_id`)
+    REFERENCES `saciq`.`funcionalidade` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_grupo_has_funcionalidade_grupo1`
+    FOREIGN KEY (`grupo_id`)
+    REFERENCES `saciq`.`grupo` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `item`
---
 
-DROP TABLE IF EXISTS `item`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `item` (
-  `id` int(11) NOT NULL,
-  `numeroItem` int(11) NOT NULL,
-  `descricaoSumaria` varchar(150) DEFAULT NULL,
-  `descricaoCompleta` text,
-  `descricaoPosLicitacao` text,
-  `unidadeMedida` varchar(30) DEFAULT NULL,
-  `marca` varchar(80) DEFAULT NULL,
-  `valorUnitario` decimal(14,2) DEFAULT NULL,
-  `quantidadeDisponivel` int(11) DEFAULT NULL,
-  `fabricante` varchar(50) DEFAULT NULL,
-  `fornecedor_id` int(11) NOT NULL,
-  `subelemento_id` int(11) NOT NULL,
-  `srp_id` int(11) NOT NULL,
+-- -----------------------------------------------------
+-- Table `saciq`.`natureza`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`natureza` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`natureza` (
+  `id` INT(11) NOT NULL,
+  `descricao` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `saciq`.`srp`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`srp` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`srp` (
+  `id` INT(11) NOT NULL,
+  `numeroSRP` VARCHAR(10) NULL DEFAULT NULL,
+  `numeroIRP` VARCHAR(10) NULL DEFAULT NULL,
+  `numeroProcesso` VARCHAR(20) NULL DEFAULT NULL,
+  `uasg` INT(11) NULL DEFAULT NULL,
+  `validade` DATE NULL DEFAULT NULL,
+  `nome` VARCHAR(300) NULL DEFAULT NULL,
+  `natureza_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_unique1` (`numeroItem`,`srp_id`),
-  KEY `fk_item_fornecedor1_idx` (`fornecedor_id`),
-  KEY `fk_item_subelemento1_idx` (`subelemento_id`),
-  KEY `fk_item_srp1_idx` (`srp_id`),
-  CONSTRAINT `fk_item_fornecedor1` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_item_srp1` FOREIGN KEY (`srp_id`) REFERENCES `srp` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_item_subelemento1` FOREIGN KEY (`subelemento_id`) REFERENCES `subelemento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  INDEX `fk_srp_natureza_idx` (`natureza_id` ASC),
+  UNIQUE INDEX `numeroSRP_UNIQUE` (`numeroSRP` ASC),
+  CONSTRAINT `fk_srp_natureza`
+    FOREIGN KEY (`natureza_id`)
+    REFERENCES `saciq`.`natureza` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `item_cessao`
---
 
-DROP TABLE IF EXISTS `item_cessao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `item_cessao` (
-  `id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `cessao_id` int(11) NOT NULL,
-  `quantidade` int(11) DEFAULT NULL,
+-- -----------------------------------------------------
+-- Table `saciq`.`subelemento`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`subelemento` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`subelemento` (
+  `id` INT(11) NOT NULL,
+  `descricao` VARCHAR(150) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `saciq`.`item`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`item` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`item` (
+  `id` INT(11) NOT NULL,
+  `numeroItem` INT(11) NOT NULL,
+  `descricaoSumaria` VARCHAR(150) NULL DEFAULT NULL,
+  `descricaoCompleta` TEXT NULL DEFAULT NULL,
+  `descricaoPosLicitacao` TEXT NULL DEFAULT NULL,
+  `unidadeMedida` VARCHAR(30) NULL DEFAULT NULL,
+  `marca` VARCHAR(80) NULL DEFAULT NULL,
+  `valorUnitario` DECIMAL(14,2) NULL DEFAULT NULL,
+  `quantidadeDisponivel` INT(11) NULL DEFAULT NULL,
+  `fabricante` VARCHAR(50) NULL DEFAULT NULL,
+  `fornecedor_id` INT(11) NOT NULL,
+  `subelemento_id` INT(11) NOT NULL,
+  `srp_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_unique1` (`item_id`,`cessao_id`),
-  KEY `fk_item_has_cessao_cessao1_idx` (`cessao_id`),
-  KEY `fk_item_has_cessao_item1_idx` (`item_id`),
-  CONSTRAINT `fk_item_has_cessao_cessao1` FOREIGN KEY (`cessao_id`) REFERENCES `cessao` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_item_has_cessao_item1` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `idx_unique1` (`numeroItem` ASC, `srp_id` ASC),
+  INDEX `fk_item_fornecedor1_idx` (`fornecedor_id` ASC),
+  INDEX `fk_item_subelemento1_idx` (`subelemento_id` ASC),
+  INDEX `fk_item_srp1_idx` (`srp_id` ASC),
+  CONSTRAINT `fk_item_fornecedor1`
+    FOREIGN KEY (`fornecedor_id`)
+    REFERENCES `saciq`.`fornecedor` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_item_srp1`
+    FOREIGN KEY (`srp_id`)
+    REFERENCES `saciq`.`srp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_item_subelemento1`
+    FOREIGN KEY (`subelemento_id`)
+    REFERENCES `saciq`.`subelemento` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `item_requisicao`
---
 
-DROP TABLE IF EXISTS `item_requisicao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `item_requisicao` (
-  `id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `requisicao_id` int(11) NOT NULL,
-  `justificativa` varchar(100) DEFAULT NULL,
-  `quantidade` int(11) DEFAULT NULL,
-  `prazoEntrega` int(11) DEFAULT NULL,
+-- -----------------------------------------------------
+-- Table `saciq`.`item_cessao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`item_cessao` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`item_cessao` (
+  `id` INT(11) NOT NULL,
+  `item_id` INT(11) NOT NULL,
+  `cessao_id` INT(11) NOT NULL,
+  `quantidade` INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_unique1` (`item_id`,`requisicao_id`),
-  KEY `fk_item_has_requisicao_requisicao1_idx` (`requisicao_id`),
-  KEY `fk_item_has_requisicao_item1_idx` (`item_id`),
-  CONSTRAINT `fk_item_has_requisicao_item1` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_item_has_requisicao_requisicao1` FOREIGN KEY (`requisicao_id`) REFERENCES `requisicao` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `idx_unique1` (`item_id` ASC, `cessao_id` ASC),
+  INDEX `fk_item_has_cessao_cessao1_idx` (`cessao_id` ASC),
+  INDEX `fk_item_has_cessao_item1_idx` (`item_id` ASC),
+  CONSTRAINT `fk_item_has_cessao_cessao1`
+    FOREIGN KEY (`cessao_id`)
+    REFERENCES `saciq`.`cessao` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_item_has_cessao_item1`
+    FOREIGN KEY (`item_id`)
+    REFERENCES `saciq`.`item` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `natureza`
---
 
-DROP TABLE IF EXISTS `natureza`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `natureza` (
-  `id` int(11) NOT NULL,
-  `descricao` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `saciq`.`requisicao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`requisicao` ;
 
---
--- Table structure for table `requisicao`
---
+CREATE TABLE IF NOT EXISTS `saciq`.`requisicao` (
+  `id` INT(11) NOT NULL,
+  `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL,
+  `data` DATE NULL DEFAULT NULL,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
-DROP TABLE IF EXISTS `requisicao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `requisicao` (
-  `id` int(11) NOT NULL,
-  `numeroProcesso` varchar(30) DEFAULT NULL,
-  `data` date DEFAULT NULL,
-  `aprovado` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `srp`
---
+-- -----------------------------------------------------
+-- Table `saciq`.`item_requisicao`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`item_requisicao` ;
 
-DROP TABLE IF EXISTS `srp`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `srp` (
-  `id` int(11) NOT NULL,
-  `numeroSRP` varchar(10) DEFAULT NULL,
-  `numeroIRP` varchar(10) DEFAULT NULL,
-  `numeroProcesso` varchar(20) DEFAULT NULL,
-  `uasg` int(11) DEFAULT NULL,
-  `validade` date DEFAULT NULL,
-  `nome` varchar(300) DEFAULT NULL,
-  `natureza_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `saciq`.`item_requisicao` (
+  `id` INT(11) NOT NULL,
+  `item_id` INT(11) NOT NULL,
+  `requisicao_id` INT(11) NOT NULL,
+  `justificativa` VARCHAR(100) NULL DEFAULT NULL,
+  `quantidade` INT(11) NULL DEFAULT NULL,
+  `prazoEntrega` VARCHAR(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `numeroSRP_UNIQUE` (`numeroSRP`),
-  KEY `fk_srp_natureza_idx` (`natureza_id`),
-  CONSTRAINT `fk_srp_natureza` FOREIGN KEY (`natureza_id`) REFERENCES `natureza` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `idx_unique1` (`item_id` ASC, `requisicao_id` ASC),
+  INDEX `fk_item_has_requisicao_requisicao1_idx` (`requisicao_id` ASC),
+  INDEX `fk_item_has_requisicao_item1_idx` (`item_id` ASC),
+  CONSTRAINT `fk_item_has_requisicao_item1`
+    FOREIGN KEY (`item_id`)
+    REFERENCES `saciq`.`item` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_item_has_requisicao_requisicao1`
+    FOREIGN KEY (`requisicao_id`)
+    REFERENCES `saciq`.`requisicao` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `subelemento`
---
 
-DROP TABLE IF EXISTS `subelemento`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `subelemento` (
-  `id` int(11) NOT NULL,
-  `descricao` varchar(150) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `saciq`.`usuario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`usuario` ;
 
---
--- Table structure for table `usuario`
---
-
-DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `usuario` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(60) DEFAULT NULL,
-  `prontuario` varchar(10) DEFAULT NULL,
-  `senha` varchar(32) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
+CREATE TABLE IF NOT EXISTS `saciq`.`usuario` (
+  `id` INT(11) NOT NULL,
+  `nome` VARCHAR(60) NULL DEFAULT NULL,
+  `prontuario` VARCHAR(10) NULL DEFAULT NULL,
+  `senha` VARCHAR(32) NULL DEFAULT NULL,
+  `email` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `prontuario_UNIQUE` (`prontuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `prontuario_UNIQUE` (`prontuario` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `usuario_funcionalidade`
---
 
-DROP TABLE IF EXISTS `usuario_funcionalidade`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `usuario_funcionalidade` (
-  `id` int(11) NOT NULL,
-  `usuario_id` int(11) NOT NULL,
-  `funcionalidade_id` int(11) NOT NULL,
+-- -----------------------------------------------------
+-- Table `saciq`.`usuario_funcionalidade`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`usuario_funcionalidade` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`usuario_funcionalidade` (
+  `id` INT(11) NOT NULL,
+  `usuario_id` INT(11) NOT NULL,
+  `funcionalidade_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `usuario_funcionalidade` (`usuario_id`,`funcionalidade_id`),
-  KEY `fk_usuario_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id`),
-  KEY `fk_usuario_has_funcionalidade_usuario1_idx` (`usuario_id`),
-  CONSTRAINT `fk_usuario_has_funcionalidade_funcionalidade1` FOREIGN KEY (`funcionalidade_id`) REFERENCES `funcionalidade` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_usuario_has_funcionalidade_usuario1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `usuario_funcionalidade` (`usuario_id` ASC, `funcionalidade_id` ASC),
+  INDEX `fk_usuario_has_funcionalidade_funcionalidade1_idx` (`funcionalidade_id` ASC),
+  INDEX `fk_usuario_has_funcionalidade_usuario1_idx` (`usuario_id` ASC),
+  CONSTRAINT `fk_usuario_has_funcionalidade_funcionalidade1`
+    FOREIGN KEY (`funcionalidade_id`)
+    REFERENCES `saciq`.`funcionalidade` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usuario_has_funcionalidade_usuario1`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `saciq`.`usuario` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Table structure for table `usuario_grupo`
---
 
-DROP TABLE IF EXISTS `usuario_grupo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `usuario_grupo` (
-  `id` int(11) NOT NULL,
-  `usuario_id` int(11) NOT NULL,
-  `grupo_id` int(11) NOT NULL,
+-- -----------------------------------------------------
+-- Table `saciq`.`usuario_grupo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `saciq`.`usuario_grupo` ;
+
+CREATE TABLE IF NOT EXISTS `saciq`.`usuario_grupo` (
+  `id` INT(11) NOT NULL,
+  `usuario_id` INT(11) NOT NULL,
+  `grupo_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_usuario_has_grupo_grupo1_idx` (`grupo_id`),
-  KEY `fk_usuario_has_grupo_usuario1_idx` (`usuario_id`),
-  CONSTRAINT `fk_usuario_has_grupo_grupo1` FOREIGN KEY (`grupo_id`) REFERENCES `grupo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_usuario_has_grupo_usuario1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  INDEX `fk_usuario_has_grupo_grupo1_idx` (`grupo_id` ASC),
+  INDEX `fk_usuario_has_grupo_usuario1_idx` (`usuario_id` ASC),
+  CONSTRAINT `fk_usuario_has_grupo_grupo1`
+    FOREIGN KEY (`grupo_id`)
+    REFERENCES `saciq`.`grupo` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usuario_has_grupo_usuario1`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `saciq`.`usuario` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
---
--- Dumping events for database 'saciq'
---
 
---
--- Dumping routines for database 'saciq'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2015-09-06 16:28:51
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

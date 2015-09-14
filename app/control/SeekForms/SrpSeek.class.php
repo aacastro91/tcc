@@ -199,6 +199,8 @@ class SrpSeek extends TWindow{
             
             TTransaction::close();
             
+            TSession::setValue('SRP_id', $srp->id);
+            
             $obj = new stdClass();
             $obj->numeroSRP = $srp->numeroSRP;
             $obj->nome = $srp->nome;
