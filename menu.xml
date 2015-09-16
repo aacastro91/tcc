@@ -37,10 +37,6 @@
                 <icon></icon>
                 <action>FornecedorList</action>
             </menuitem>
-            <menuitem label='SRP/Quantitativos'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
         </menu>
     </menuitem> 
     <menuitem label='Importação de dados'>
@@ -49,7 +45,7 @@
     </menuitem>    
     <menuitem label='Requisição de Quantitativo'>
         <icon></icon>
-        <action>RequisicaoForm</action>
+        <action>RequisicaoList</action>
     </menuitem>
     <menuitem label='Cessão de Quantitativo'>
         <icon></icon>

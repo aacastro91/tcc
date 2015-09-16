@@ -30,7 +30,7 @@ class SrpSeek extends TWindow{
     
     function __construct() {
         parent::__construct();
-        parent::setSize(650, 400);
+        parent::setSize(850, 500);
         parent::setTitle('Busca de SRP');
         new TSession;
                 
@@ -152,7 +152,6 @@ class SrpSeek extends TWindow{
             if (TSession::getValue('srp_nome_filter')){
                 $criteria->add(TSession::getValue('srp_nome_filter'));
             }
-            var_dump($criteria);
             $srps = $repository->load($criteria);
             
             $this->datagrid->clear();
@@ -183,8 +182,13 @@ class SrpSeek extends TWindow{
     
     public function onSelect($param){
         try{
-            
+            //var_dump($param);
             $key = $param['key'];
+            
+            if (!$key)
+                return;
+            
+            
             TTransaction::open('saciq');
             //$srp = new Srp($key);
             
@@ -206,9 +210,10 @@ class SrpSeek extends TWindow{
             $obj->nome = $srp->nome;
             $obj->numeroProcesso = $srp->numeroProcesso;
             $obj->uasg = $srp->uasg;
-            $obj->validade = TDate::date2br($srp->validade);                       
-            TForm::sendData('requisicao_form', $obj);
-            TTransaction::close();
+            $obj->validade = TDate::date2br($srp->validade);            
+            TForm::sendData('form_requisicao', $obj);
+            TSession::setValue('form_requisicao', $obj);
+            //TTransaction::close();
             parent::closeWindow();
             
         } catch (Exception $ex) {
