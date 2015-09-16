@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS `saciq`.`cessao` ;
 CREATE TABLE IF NOT EXISTS `saciq`.`cessao` (
   `id` INT(11) NOT NULL,
   `numeroCessao` VARCHAR(30) NULL DEFAULT NULL,
-  `data` DATE NULL DEFAULT NULL,
+  `emissao` DATE NULL DEFAULT NULL,
   `aprovado` TINYINT(1) NULL DEFAULT NULL,
   `campus_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -255,7 +255,7 @@ DROP TABLE IF EXISTS `saciq`.`requisicao` ;
 CREATE TABLE IF NOT EXISTS `saciq`.`requisicao` (
   `id` INT(11) NOT NULL,
   `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL,
-  `data` DATE NULL DEFAULT NULL,
+  `emissao` DATE NULL DEFAULT NULL,
   `aprovado` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB

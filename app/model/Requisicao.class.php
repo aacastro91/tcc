@@ -19,7 +19,7 @@ class Requisicao extends TRecord
     {
         parent::__construct($id, $callObjectLoad);
         parent::addAttribute('numeroProcesso');
-        parent::addAttribute('data');
+        parent::addAttribute('emissao');
         parent::addAttribute('aprovado');
     }
 

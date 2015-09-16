@@ -20,7 +20,7 @@ class Cessao extends TRecord
     {
         parent::__construct($id, $callObjectLoad);
         parent::addAttribute('numeroCessao');
-        parent::addAttribute('data');
+        parent::addAttribute('emissao');
         parent::addAttribute('aprovado');
         parent::addAttribute('campus_id');
     }
