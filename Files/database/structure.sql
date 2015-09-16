@@ -38,16 +38,23 @@ DEFAULT CHARACTER SET = utf8;
 DROP TABLE IF EXISTS `saciq`.`cessao` ;
 
 CREATE TABLE IF NOT EXISTS `saciq`.`cessao` (
-  `id` INT(11) NOT NULL,
-  `numeroCessao` VARCHAR(30) NULL DEFAULT NULL,
-  `emissao` DATE NULL DEFAULT NULL,
-  `aprovado` TINYINT(1) NULL DEFAULT NULL,
-  `campus_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_cessao_campus1_idx` (`campus_id` ASC),
+  `id` INT(11) NOT NULL ,
+  `numeroCessao` VARCHAR(30) NULL DEFAULT NULL ,
+  `emissao` DATE NULL DEFAULT NULL ,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL ,
+  `campus_id` INT(11) NOT NULL ,
+  `srp_id` INT(11) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_cessao_campus1_idx` (`campus_id` ASC) ,
+  INDEX `fk_cessao_srp1` (`srp_id` ASC) ,
   CONSTRAINT `fk_cessao_campus1`
-    FOREIGN KEY (`campus_id`)
-    REFERENCES `saciq`.`campus` (`id`)
+    FOREIGN KEY (`campus_id` )
+    REFERENCES `saciq`.`campus` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cessao_srp1`
+    FOREIGN KEY (`srp_id` )
+    REFERENCES `saciq`.`srp` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -253,11 +260,18 @@ DEFAULT CHARACTER SET = utf8;
 DROP TABLE IF EXISTS `saciq`.`requisicao` ;
 
 CREATE TABLE IF NOT EXISTS `saciq`.`requisicao` (
-  `id` INT(11) NOT NULL,
-  `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL,
-  `emissao` DATE NULL DEFAULT NULL,
-  `aprovado` TINYINT(1) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `id` INT(11) NOT NULL ,
+  `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL ,
+  `emissao` DATE NULL DEFAULT NULL ,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL ,
+  `srp_id` INT(11) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_requisicao_srp1` (`srp_id` ASC) ,
+  CONSTRAINT `fk_requisicao_srp1`
+    FOREIGN KEY (`srp_id` )
+    REFERENCES `saciq`.`srp` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 

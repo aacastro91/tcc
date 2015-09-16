@@ -11,6 +11,7 @@ class Requisicao extends TRecord
     
     
     private $items;
+    private $srp;
 
     /**
      * Constructor method
@@ -21,6 +22,7 @@ class Requisicao extends TRecord
         parent::addAttribute('numeroProcesso');
         parent::addAttribute('emissao');
         parent::addAttribute('aprovado');
+        parent::addAttribute('srp_id');
     }
 
     
@@ -42,6 +44,32 @@ class Requisicao extends TRecord
     public function getItems()
     {
         return $this->items;
+    }
+    
+    /**
+     * Method set_srp
+     * Sample of usage: $requisicao->srp = $object;
+     * @param $object Instance of Srp
+     */
+    public function set_srp(Srp $object)
+    {
+        $this->srp = $object;
+        $this->srp_id = $object->id;
+    }
+    
+    /**
+     * Method get_srp
+     * Sample of usage: $requisicao->srp->attribute;
+     * @returns Srp instance
+     */
+    public function get_srp()
+    {
+        // loads the associated object
+        if (empty($this->srp))
+            $this->srp = new Srp($this->srp_id);
+    
+        // returns the associated object
+        return $this->srp;
     }
 
     /**

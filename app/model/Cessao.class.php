@@ -12,6 +12,7 @@ class Cessao extends TRecord
     
     private $campus;
     private $items;
+    private $srp;
 
     /**
      * Constructor method
@@ -23,6 +24,7 @@ class Cessao extends TRecord
         parent::addAttribute('emissao');
         parent::addAttribute('aprovado');
         parent::addAttribute('campus_id');
+        parent::addAttribute('srp_id');
     }
 
     
@@ -71,6 +73,32 @@ class Cessao extends TRecord
     public function getItems()
     {
         return $this->items;
+    }
+    
+    /**
+     * Method set_srp
+     * Sample of usage: $cessao->srp = $object;
+     * @param $object Instance of Srp
+     */
+    public function set_srp(Srp $object)
+    {
+        $this->srp = $object;
+        $this->srp_id = $object->id;
+    }
+    
+    /**
+     * Method get_srp
+     * Sample of usage: $cessao->srp->attribute;
+     * @returns Srp instance
+     */
+    public function get_srp()
+    {
+        // loads the associated object
+        if (empty($this->srp))
+            $this->srp = new Srp($this->srp_id);
+    
+        // returns the associated object
+        return $this->srp;
     }
 
     /**
