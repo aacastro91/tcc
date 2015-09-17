@@ -93,7 +93,7 @@ class ItemSeek extends TWindow {
         $action = new TDataGridAction(array($this, 'onSelect'));
         $action->setLabel('Select');
         $action->setImage('ico_apply.png');
-        $action->setField('id');
+        $action->setField('numeroItem');
         $this->datagrid->addAction($action);
 
         //cria o modelo
@@ -228,6 +228,9 @@ class ItemSeek extends TWindow {
 
     public function onSelect($param) {
         try {
+            
+            if (!$param['key'])
+                return;
 
             if ((!TSession::getValue('SRP_id')) && (!$this->continue)) {
                 $this->closeWindow();
@@ -238,11 +241,12 @@ class ItemSeek extends TWindow {
 
             $key = $param['key'];
             TTransaction::open('saciq');
+            TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
 
             $repository = new TRepository('Item');
             $criteria = new TCriteria();
             
-            $criteria->add(new TFilter('id', '=', $key));
+            $criteria->add(new TFilter('numeroItem', '=', $key));
             if (TSession::getValue('SRP_id')) {
                 $criteria->add(new TFilter('srp_id', '=', TSession::getValue('SRP_id')));
             }
@@ -260,6 +264,7 @@ class ItemSeek extends TWindow {
                     $item->descricaoSumaria = str_replace('–','-',$item->descricaoSumaria);
                     $item->store();
                 }
+                $obj->numeroItem = $item->numeroItem;
                 $obj->descricaoSumaria = $item->descricaoSumaria;
                 $obj->valorUnitario = $item->valorUnitario;
                 TForm::sendData('form_itens', $obj);
@@ -268,9 +273,10 @@ class ItemSeek extends TWindow {
             else{
                 $obj = new stdClass();
                 $obj->item_id = '';
+                $obj->numeroItem = '';
                 $obj->descricaoSumaria = '';
                 $obj->valorUnitario = '';
-                $obj->quantidade = '';
+                //$obj->quantidade = '';
                 $obj->prazoEntrega = '60 Dias';
                 $obj->justificativa = '';
                 TForm::sendData('form_itens', $obj);

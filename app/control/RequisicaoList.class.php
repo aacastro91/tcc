@@ -106,13 +106,15 @@ class RequisicaoList extends TPage
         
 
         // creates the datagrid columns
-        $id   = new TDataGridColumn('id', 'ID', 'right', 80);
-        $numeroProcesso   = new TDataGridColumn('numeroProcesso','Nº do processo', 'left', 250);
-        $data   = new TDataGridColumn('emissao', 'Data', 'left', 100);
+        $id             = new TDataGridColumn('id', 'ID', 'right', 80);
+        $srp            = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
+        $numeroProcesso = new TDataGridColumn('numeroProcesso','Nº do processo', 'left', 250);
+        $data           = new TDataGridColumn('emissao', 'Data', 'left', 100);
 
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
+        $this->datagrid->addColumn($srp);
         $this->datagrid->addColumn($numeroProcesso);
         $this->datagrid->addColumn($data);
 
@@ -148,39 +150,6 @@ class RequisicaoList extends TPage
         // create the page container
         $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
         parent::add($container);
-    }
-    
-    /**
-     * method onInlineEdit()
-     * Inline record editing
-     * @param $param Array containing:
-     *              key: object ID value
-     *              field name: object attribute to be updated
-     *              value: new attribute content 
-     */
-    function onInlineEdit($param)
-    {
-        try
-        {
-            // get the parameter $key
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('saciq'); // open a transaction with database
-            $object = new Requisicao($key); // instantiates the Active Record
-            $object->{$field} = $value;
-            $object->store(); // update the object in the database
-            TTransaction::close(); // close the transaction
-            
-            $this->onReload($param); // reload the listing
-            new TMessage('info', "Record Updated");
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
-        }
     }
     
     /**
@@ -223,7 +192,7 @@ class RequisicaoList extends TPage
         {
             // open a transaction with database 'saciq'
             TTransaction::open('saciq');
-            TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
+            //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
             
             // creates a repository for Requisicao
             $repository = new TRepository('requisicao');
@@ -256,6 +225,7 @@ class RequisicaoList extends TPage
                 foreach ($objects as $object)
                 {
                     $object->emissao = TDate::date2br($object->emissao);
+                    $object->numeroSRP = $object->srp->numeroSRP;
                     
                     
                     $this->datagrid->addItem($object);

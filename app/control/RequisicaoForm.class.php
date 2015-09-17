@@ -4,6 +4,7 @@ use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
+use Adianti\Validator\TMinValueValidator;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
@@ -15,6 +16,7 @@ use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\THidden;
 use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Form\TSeekButton;
 
@@ -55,7 +57,8 @@ class RequisicaoForm extends TPage {
         $validadeAta = new TEntry('validade');
 
         //campos do itens
-        $item_id = new TSeekButton('item_id');
+        $numeroItem = new TSeekButton('numeroItem');
+        $item_id = new THidden('item_id');
         $descricaoSumaria = new TEntry('descricaoSumaria');
         $valorUnitario = new TEntry('valorUnitario');
         $quantidade = new TEntry('quantidade');
@@ -66,12 +69,11 @@ class RequisicaoForm extends TPage {
 
         //ações dos campos
         $numeroSRP->setAction(new TAction(array(new SrpSeek(), 'onReload')));
-        $item_id->setAction(new TAction(array(new ItemSeek(), 'onReload')));
+        $numeroItem->setAction(new TAction(array(new ItemSeek(), 'onReload')));
         $numeroSRP->setExitAction(new TAction(array($this, 'onExitSRP')));
 
         $addItem->setAction(new TAction(array($this, 'onAddItem')), 'Adicionar');
         $addItem->setImage('fa:save');
-
 
         //$onProductChange = new TAction(array($this, 'onProductChange'));
         //$item_id->setExitAction($onProductChange);
@@ -80,9 +82,10 @@ class RequisicaoForm extends TPage {
 
         //validadores
         $numeroSRP->addValidation('Nº SRP', new TRequiredValidator());
-        $item_id->addValidation('Item', new TRequiredValidator());
+        $numeroItem->addValidation('Item', new TRequiredValidator());
         $valorUnitario->addValidation('Preço', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
+        $quantidade->addValidation('Quantidade', new TMinValueValidator(), array(1));
         $justificativa->addValidation('Justificativa', new TRequiredValidator());
         $prazoEntrega->addValidation('Prazo de entrega', new TRequiredValidator());
 
@@ -99,7 +102,7 @@ class RequisicaoForm extends TPage {
         $numeroProcesso->setSize(160);
         $uasg->setSize(70);
         $validadeAta->setSize(85);
-        $item_id->setSize(60);
+        $numeroItem->setSize(60);
         $descricaoSumaria->setSize(490);
         $descricaoSumaria->setProperty('style', 'margin-right: 10px', false);
         $prazoEntrega->setSize(90);
@@ -130,9 +133,9 @@ class RequisicaoForm extends TPage {
         $row = $table_itens->addRow();
         $row->addCell(new TLabel('Item:'));
         $box = new THBox();
-        $box->add($item_id);
+        $box->add($numeroItem);
         $box->add($descricaoSumaria)->style = 'width : 75%;display:inline-block;';
-        $row->addCell($box); //->style = 'width : 85%';
+        $row->addCell($box); //->style = 'width : 85%';        
         $table_itens->addRowSet(new TLabel('Preço:'), $valorUnitario);
         $table_itens->addRowSet(new TLabel('Quantidade:'), $quantidade);
         $table_itens->addRowSet(new TLabel('Prazo de entrega:'), $prazoEntrega);
@@ -178,7 +181,7 @@ class RequisicaoForm extends TPage {
 
         $this->form_requisicao->setFields(array($numeroSRP, $nome, $numeroProcesso, $uasg, $validadeAta));
 
-        $this->form_itens->setFields(array($item_id, $descricaoSumaria, $valorUnitario, $quantidade, $prazoEntrega, $justificativa, $addItem));
+        $this->form_itens->setFields(array($item_id, $numeroItem, $descricaoSumaria, $valorUnitario, $quantidade, $prazoEntrega, $justificativa, $addItem));
 
         $vbox = new TVBox;
         $vbox->add($this->form_requisicao);
@@ -224,23 +227,36 @@ class RequisicaoForm extends TPage {
             $this->onReload($param); // reload the sale items
         } catch (Exception $e) {
             $this->form_itens->setData($this->form_itens->getData());
-            $this->form_requisicao->setData($this->form_requisicao->getData());
+            $this->form_requisicao->setData($requisicao);
             new TMessage('error', $e->getMessage());
         }
     }
 
     static public function onValidaQuantidade($param) {
-        $quantidade = $param['quantidade'];
-        $item_id = $param['item_id'];
-        $data = new stdClass();
 
-        if (!$item_id) {
+        $quantidade = $param['quantidade'];
+        $numeroItem = $param['numeroItem'];
+        //$data = new stdClass();
+
+        if ((!$numeroItem) || (!TSession::getValue('SRP_id'))) {
+            return;
+        }
+        
+
+        if (!is_numeric($quantidade)) {
+            new TMessage('error', 'Digite um número inteiro no campo quantidade');
             return;
         }
 
+        if ($quantidade <= 0) {
+            //$data->quantidade = 0;
+            new TMessage('error', 'Quantidade inválida');
+            return;
+        }
+        
         try {
             TTransaction::open('saciq');
-            $item = new Item($item_id);            
+            $item = new Item($numeroItem);
             TTransaction::close();
         } catch (Exception $ex) {
             TTransaction::rollback();
@@ -249,17 +265,12 @@ class RequisicaoForm extends TPage {
         if (!isset($item) && (!$item)) {
             return;
         }
-
-        if (!is_numeric($quantidade)) {
-            new TMessage('error', 'Digite um número inteiro no campo quantidade');
+        
+        if ($item->quantidadeDisponivel < $quantidade){
+            new TMessage('error', 'Quantidade Indisponível. <br>Disponível: '.$item->quantidadeDisponivel);
             return;
         }
-
-        if ($quantidade <= 0) {
-            $data->quantidade = 0;
-            new TMessage('error', 'Quantidade inválida');
-            return;
-        }
+        
     }
 
     static public function onExitSRP($param) {
@@ -282,55 +293,56 @@ class RequisicaoForm extends TPage {
     }
 
     public function onReload($param) {
+
         var_dump($param);
         // read session items
-        $requisicao_itens = TSession::getValue('requisicao_itens');
+        /* $requisicao_itens = TSession::getValue('requisicao_itens');
 
-        $this->datagrid->clear(); // clear product list
-        $data = $this->form->getData();
+          $this->datagrid->clear(); // clear product list
+          $data = $this->form->getData();
 
-        if ($requisicao_itens) {
-            $cont = 1;
-            foreach ($requisicao_itens as $requisicao_itens_id => $itens) {
-                $item_name = 'prod_' . $cont++;
-                $item = new StdClass;
+          if ($requisicao_itens) {
+          $cont = 1;
+          foreach ($requisicao_itens as $requisicao_itens_id => $itens) {
+          $item_name = 'prod_' . $cont++;
+          $item = new StdClass;
 
-                // create action buttons
-                $action_del = new TAction(array($this, 'onDeleteItem'));
-                $action_del->setParameter('items_item_id', $requisicao_itens_id);
+          // create action buttons
+          $action_del = new TAction(array($this, 'onDeleteItem'));
+          $action_del->setParameter('items_item_id', $requisicao_itens_id);
 
-                $action_edi = new TAction(array($this, 'onEditItemProduto'));
-                $action_edi->setParameter('items_item_id', $requisicao_itens_id);
+          $action_edi = new TAction(array($this, 'onEditItemProduto'));
+          $action_edi->setParameter('items_item_id', $requisicao_itens_id);
 
-                $button_del = new TButton('delete_product' . $cont);
-                $button_del->class = 'btn btn-default btn-sm';
-                $button_del->setAction($action_del, '');
-                $button_del->setImage('fa:trash-o');
+          $button_del = new TButton('delete_product' . $cont);
+          $button_del->class = 'btn btn-default btn-sm';
+          $button_del->setAction($action_del, '');
+          $button_del->setImage('fa:trash-o');
 
-                $button_edi = new TButton('edit_product' . $cont);
-                $button_edi->class = 'btn btn-default btn-sm';
-                $button_edi->setAction($action_edi, '');
-                $button_edi->setImage('fa:edit');
+          $button_edi = new TButton('edit_product' . $cont);
+          $button_edi->class = 'btn btn-default btn-sm';
+          $button_edi->setAction($action_edi, '');
+          $button_edi->setImage('fa:edit');
 
-                $item->edit = $button_edi;
-                $item->delete = $button_del;
+          $item->edit = $button_edi;
+          $item->delete = $button_del;
 
-                $this->formFields[$item_name . '_edit'] = $item->edit;
-                $this->formFields[$item_name . '_delete'] = $item->delete;
-                $item->id = -1;
-                $item->item_id = $itens['item_id'];
-                $item->descricaoSumaria = $itens['descricaoSumaria'];
-                $item->quantidade = $itens['quantidade'];
-                $item->valorUnitario = $itens['valorUnitario'];
-                $item->total = $itens['total'];
+          $this->formFields[$item_name . '_edit'] = $item->edit;
+          $this->formFields[$item_name . '_delete'] = $item->delete;
+          $item->id = -1;
+          $item->item_id = $itens['item_id'];
+          $item->descricaoSumaria = $itens['descricaoSumaria'];
+          $item->quantidade = $itens['quantidade'];
+          $item->valorUnitario = $itens['valorUnitario'];
+          $item->total = $itens['total'];
 
-                $row = $this->product_list->addItem($item);
-                $row->onmouseover = '';
-                $row->onmouseout = '';
-            }
+          $row = $this->product_list->addItem($item);
+          $row->onmouseover = '';
+          $row->onmouseout = '';
+          }
 
-            $this->form->setFields($this->formFields);
-        }
+          $this->form->setFields($this->formFields);
+          } */
 
         $this->loaded = TRUE;
     }
