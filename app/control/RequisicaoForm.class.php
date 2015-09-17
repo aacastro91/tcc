@@ -30,7 +30,7 @@ class RequisicaoForm extends TPage {
     private $form_requisicao;
     private $form_itens;
     private $datagrid;
-    private $formFields;
+    private $loaded;
 
     function __construct() {
         parent::__construct();
@@ -135,7 +135,8 @@ class RequisicaoForm extends TPage {
         $box = new THBox();
         $box->add($numeroItem);
         $box->add($descricaoSumaria)->style = 'width : 75%;display:inline-block;';
-        $row->addCell($box); //->style = 'width : 85%';        
+        $row->addCell($box); //->style = 'width : 85%';
+        $table_itens->addRowSet($item_id);
         $table_itens->addRowSet(new TLabel('Preço:'), $valorUnitario);
         $table_itens->addRowSet(new TLabel('Quantidade:'), $quantidade);
         $table_itens->addRowSet(new TLabel('Prazo de entrega:'), $prazoEntrega);
@@ -151,27 +152,27 @@ class RequisicaoForm extends TPage {
         $this->datagrid->disableDefaultClick();
 
 
-        $Gitem_id = new TDataGridColumn('item_id', 'Item', 'center', 50);
-        $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição', 'left', 240);
+        $GnumeroItem = new TDataGridColumn('numeroItem', 'Item', 'center', 50);
+        $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição', 'left', 230);
         $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left', 110);
         $GvalorUnitario = new TDataGridColumn('valorUnitario', 'Preço', 'right', 110);
         $Gtotal = new TDataGridColumn('total', 'Total', 'right', 160);
 
 
-        $edit = new TDataGridAction(array($this, 'onEdit'));
+        $edit = new TDataGridAction(array($this, 'onEditItem'));
         $edit->setLabel('Editar');
         $edit->setImage('ico_edit.png');
-        $edit->setField('id');
+        $edit->setField('numeroItem');
 
-        $delete = new TDataGridAction(array($this, 'onDelete'));
+        $delete = new TDataGridAction(array($this, 'onDeleteItem'));
         $delete->setLabel('Deletar');
         $delete->setImage('ico_delete.png');
-        $delete->setField('id');
+        $delete->setField('numeroItem');
 
         $this->datagrid->addAction($edit);
         $this->datagrid->addAction($delete);
 
-        $this->datagrid->addColumn($Gitem_id);
+        $this->datagrid->addColumn($GnumeroItem);
         $this->datagrid->addColumn($GdescricaoSumaria);
         $this->datagrid->addColumn($Gquantidade);
         $this->datagrid->addColumn($GvalorUnitario);
@@ -203,19 +204,16 @@ class RequisicaoForm extends TPage {
             $item = new Item($itens->item_id);
 
             $requisicao_itens = TSession::getValue('requisicao_itens');
-            $key = (int) $itens->item_id;
-            $requisicao_itens[$key] = array('item_id' => $itens->item_id,
-                'descricaoSumaria' => $item->descricaoSumaria,
-                'quantidade' => $itens->quantidade,
-                'valorUnitario' => $itens->valorUnitario,
-                'prazoEntrega' => $itens->prazoEntrega,
-                'justificativa' => $itens->justificativa,
-                'total' => $itens->quantidade * $itens->valorUnitario);
+            $key = (int) $itens->numeroItem;
+            $itens->total = $itens->quantidade * $itens->valorUnitario;
+            $requisicao_itens[$key] = $itens;
 
             TSession::setValue('requisicao_itens', $requisicao_itens);
 
             // clear product form fields after add
+            $itens = new stdClass();
             $itens->item_id = '';
+            $itens->numeroItem = '';
             $itens->descricaoSumaria = '';
             $itens->quantidade = '';
             $itens->valorUnitario = '';
@@ -235,10 +233,10 @@ class RequisicaoForm extends TPage {
     static public function onValidaQuantidade($param) {
 
         $quantidade = $param['quantidade'];
-        $numeroItem = $param['numeroItem'];
+        $item_id = $param['item_id'];
         //$data = new stdClass();
 
-        if ((!$numeroItem) || (!TSession::getValue('SRP_id'))) {
+        if ((!$item_id) || (!TSession::getValue('SRP_id'))) {
             return;
         }
         
@@ -256,7 +254,7 @@ class RequisicaoForm extends TPage {
         
         try {
             TTransaction::open('saciq');
-            $item = new Item($numeroItem);
+            $item = new Item($item_id);
             TTransaction::close();
         } catch (Exception $ex) {
             TTransaction::rollback();
@@ -274,6 +272,7 @@ class RequisicaoForm extends TPage {
     }
 
     static public function onExitSRP($param) {
+        TSession::delValue('requisicao_itens');
         $obj = new stdClass();
         $obj->item_id = '';
         $obj->descricaoSumaria = '';
@@ -281,70 +280,52 @@ class RequisicaoForm extends TPage {
         $obj->quantidade = '';
         $obj->prazoEntrega = '60 Dias';
         $obj->justificativa = '';
-        TForm::sendData('form_itens', $obj);
+        TForm::sendData('form_itens', $obj);        
     }
 
-    public function onDelete($param) {
+    public function onDeleteItem($param) {
+        // get the cart objects from session
+        $data = $this->form_itens->getData();
+        $this->form_itens->setData( $data );
+        $items = TSession::getValue('requisicao_itens');
+        unset($items[ $param['key'] ]); // remove the product from the array
+        TSession::setValue('requisicao_itens', $items); // put the array back to the session
+        
+        // reload datagrid
+        $this->onReload( func_get_arg(0) );
+    }
+    
+    public function onEdit($param){
         
     }
 
-    public function onEdit($param) {
+    public function onEditItem($param) {
         
     }
 
     public function onReload($param) {
 
-        var_dump($param);
-        // read session items
-        /* $requisicao_itens = TSession::getValue('requisicao_itens');
-
-          $this->datagrid->clear(); // clear product list
-          $data = $this->form->getData();
-
-          if ($requisicao_itens) {
-          $cont = 1;
-          foreach ($requisicao_itens as $requisicao_itens_id => $itens) {
-          $item_name = 'prod_' . $cont++;
-          $item = new StdClass;
-
-          // create action buttons
-          $action_del = new TAction(array($this, 'onDeleteItem'));
-          $action_del->setParameter('items_item_id', $requisicao_itens_id);
-
-          $action_edi = new TAction(array($this, 'onEditItemProduto'));
-          $action_edi->setParameter('items_item_id', $requisicao_itens_id);
-
-          $button_del = new TButton('delete_product' . $cont);
-          $button_del->class = 'btn btn-default btn-sm';
-          $button_del->setAction($action_del, '');
-          $button_del->setImage('fa:trash-o');
-
-          $button_edi = new TButton('edit_product' . $cont);
-          $button_edi->class = 'btn btn-default btn-sm';
-          $button_edi->setAction($action_edi, '');
-          $button_edi->setImage('fa:edit');
-
-          $item->edit = $button_edi;
-          $item->delete = $button_del;
-
-          $this->formFields[$item_name . '_edit'] = $item->edit;
-          $this->formFields[$item_name . '_delete'] = $item->delete;
-          $item->id = -1;
-          $item->item_id = $itens['item_id'];
-          $item->descricaoSumaria = $itens['descricaoSumaria'];
-          $item->quantidade = $itens['quantidade'];
-          $item->valorUnitario = $itens['valorUnitario'];
-          $item->total = $itens['total'];
-
-          $row = $this->product_list->addItem($item);
-          $row->onmouseover = '';
-          $row->onmouseout = '';
-          }
-
-          $this->form->setFields($this->formFields);
-          } */
-
-        $this->loaded = TRUE;
+        try
+        {
+            $requisicao = TSession::getValue('form_requisicao');
+            $this->form_requisicao->sendData('form_requisicao', $requisicao);
+            $this->datagrid->clear(); // clear datagrid
+            $items = TSession::getValue('requisicao_itens');
+            var_dump($param);
+            if ($items)
+            {
+                foreach ($items as $object)
+                {
+                    // add the item inside the datagrid
+                    $this->datagrid->addItem($object);
+                }
+            }
+            $this->loaded = true;
+        }
+        catch (Exception $e) // in case of exception
+        {
+            new TMessage('error', '<b>Error</b> ' . $e);
+        }
     }
 
     /* static public function onProductChange($params){
