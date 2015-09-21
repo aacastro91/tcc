@@ -189,7 +189,7 @@ class RequisicaoList extends TPage
             //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
             
             // creates a repository for Requisicao
-            $repository = new TRepository('requisicao');
+            $repository = new TRepository('Requisicao');
             $limit = 10;
             // creates a criteria
             $criteria = new TCriteria;

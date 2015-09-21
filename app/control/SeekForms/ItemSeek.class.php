@@ -159,11 +159,12 @@ class ItemSeek extends TWindow {
     function onReload($param = null) {
         if ($this->message === false)
             return;
+        
         try {
 
             //inicia uma transacao no banco
             TTransaction::open('saciq');
-            TTransaction::setLogger(new TLoggerTXT('C:\array\log.txt'));
+            //TTransaction::setLogger(new TLoggerTXT('C:\array\log.txt'));
 
             $repository = new TRepository('Item');
             $limit = 10;
@@ -241,7 +242,7 @@ class ItemSeek extends TWindow {
 
             $key = $param['key'];
             TTransaction::open('saciq');
-            TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
+            //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
 
             $repository = new TRepository('Item');
             $criteria = new TCriteria();

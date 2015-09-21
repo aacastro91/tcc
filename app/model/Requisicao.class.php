@@ -97,6 +97,10 @@ class Requisicao extends TRecord
             foreach ($requisicao_items as $requisicao_item)
             {
                 $item = new Item( $requisicao_item->item_id );
+                $item->justificativa = $requisicao_item->justificativa;
+                $item->quantidade = $requisicao_item->quantidade;
+                $item->prazoEntrega = $requisicao_item->prazoEntrega;
+                $item->total = $item->quantidade * $item->valorUnitario;                
                 $this->addItem($item);
             }
         }
@@ -126,6 +130,9 @@ class Requisicao extends TRecord
                 $requisicao_item = new ItemRequisicao;
                 $requisicao_item->item_id = $item->id;
                 $requisicao_item->requisicao_id = $this->id;
+                $requisicao_item->justificativa = $item->justificativa;
+                $requisicao_item->quantidade = $item->quantidade;
+                $requisicao_item->prazoEntrega = $item->prazoEntrega;                
                 $requisicao_item->store();
             }
         }
