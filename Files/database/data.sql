@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `funcionalidade` WRITE;
 /*!40000 ALTER TABLE `funcionalidade` DISABLE KEYS */;
-INSERT INTO `funcionalidade` VALUES (1,'Lista de Funcionalidades','FuncionalidadeList'),(2,'Lista de Usuários','UsuarioList'),(3,'Lista de Grupos','GrupoList'),(4,'Cadastro de Funcionalidades','FuncionalidadeForm'),(5,'Cadastro de Grupos','GrupoForm'),(6,'Cadastro de Usuários','UsuarioForm'),(7,'Pagina padrao - somente pra teste','CommonPage'),(8,'Cadastro de Campus','CampusForm'),(9,'Lista de Campus','CampusList'),(10,'Relatório Campus','CampusReport'),(11,'Importar tabela','ImportForm'),(12,'Consulta SRP','SrpSeek'),(13,'Formulario de Requisicao','RequisicaoForm'),(14,'Consulta Item','ItemSeek'),(15,'Lista Natureza','NaturezaList'),(16,'Lista Subelemento','SubelementoList'),(17,'Lista Fornecedor','FornecedorList'),(18,'Lista Requisicao','RequisicaoList');
+INSERT INTO `funcionalidade` VALUES (1,'Lista de Funcionalidades','FuncionalidadeList'),(2,'Lista de Usuários','UsuarioList'),(3,'Lista de Grupos','GrupoList'),(4,'Cadastro de Funcionalidades','FuncionalidadeForm'),(5,'Cadastro de Grupos','GrupoForm'),(6,'Cadastro de Usuários','UsuarioForm'),(7,'Pagina padrao - somente pra teste','CommonPage'),(8,'Cadastro de Campus','CampusForm'),(9,'Lista de Campus','CampusList'),(10,'Relatório Campus','CampusReport'),(11,'Importar tabela','ImportForm'),(12,'Consulta SRP','SrpSeek'),(13,'Formulario de Requisicao','RequisicaoForm'),(14,'Consulta Item','ItemSeek'),(15,'Lista Natureza','NaturezaList'),(16,'Lista Subelemento','SubelementoList'),(17,'Lista Fornecedor','FornecedorList'),(18,'Lista Requisicao','RequisicaoList'),(19,'Aprovação de requisição','AprovarRequisicaoList'),(20,'Desaprovar Requisição','DesaprovarRequisicaoList');
 /*!40000 ALTER TABLE `funcionalidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +70,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `grupo_funcionalidade` WRITE;
 /*!40000 ALTER TABLE `grupo_funcionalidade` DISABLE KEYS */;
-INSERT INTO `grupo_funcionalidade` VALUES (1,1,1),(2,1,2),(3,1,3),(4,1,4),(5,1,5),(6,1,6),(7,1,7),(8,1,8),(9,1,9),(10,1,10),(11,1,11),(12,1,12),(13,1,13),(14,1,14),(15,1,15),(16,1,16),(17,1,17),(18,1,18);
+INSERT INTO `grupo_funcionalidade` VALUES (1,1,1),(2,1,2),(3,1,3),(4,1,4),(5,1,5),(6,1,6),(7,1,7),(8,1,8),(9,1,9),(10,1,10),(11,1,11),(12,1,12),(13,1,13),(14,1,14),(15,1,15),(16,1,16),(17,1,17),(18,1,18),(19,1,19),(20,1,20);
 /*!40000 ALTER TABLE `grupo_funcionalidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -99,7 +99,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `item_requisicao` WRITE;
 /*!40000 ALTER TABLE `item_requisicao` DISABLE KEYS */;
-INSERT INTO `item_requisicao` VALUES (1,1,1,'asdf asdf asdfasdf',1,'61 Dias'),(2,42,2,'1',1,'60 Dias'),(3,52,2,'2',1,'60 Dias'),(4,33,2,'111',1,'60 Dias');
+INSERT INTO `item_requisicao` VALUES (6,42,2,'1',1,'60 Dias'),(7,52,2,'2',1,'60 Dias'),(8,33,2,'111',1,'60 Dias'),(9,1,1,'asdf asdf asdfasdf',1,'61 Dias');
 /*!40000 ALTER TABLE `item_requisicao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `requisicao` WRITE;
 /*!40000 ALTER TABLE `requisicao` DISABLE KEYS */;
-INSERT INTO `requisicao` VALUES (1,'23059.002635/2012-13','2015-09-19',0,1),(2,'1234567889','2015-09-20',0,3);
+INSERT INTO `requisicao` VALUES (1,'23059.002635/2012-13','2015-09-19',0,1),(2,'1234567889','2015-09-20',1,3);
 /*!40000 ALTER TABLE `requisicao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +129,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `srp` WRITE;
 /*!40000 ALTER TABLE `srp` DISABLE KEYS */;
-INSERT INTO `srp` VALUES (1,'210/2013','07/2013','2319/2013-73',158154,'2014-11-21','MOBILIÁRIO EM GERAL',1),(2,'26/2013','02/2013','23059.002635/2012-13',158154,'2014-11-21','EQUIPAMENTOS DE PROC. DE DADOS',1),(3,'27/2013','03/2013','23059.002626/2012-22',158154,'2014-09-01','MATERIAL PROC. DADOS',2);
+INSERT INTO `srp` VALUES (1,'210/2013','07/2013','2319/2013-73','158154','2014-11-21','MOBILIÁRIO EM GERAL',1),(2,'26/2013','02/2013','23059.002635/2012-13','158154','2014-11-21','EQUIPAMENTOS DE PROC. DE DADOS',1),(3,'27/2013','03/2013','23059.002626/2012-22','158154','2014-09-01','MATERIAL PROC. DADOS',2);
 /*!40000 ALTER TABLE `srp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +159,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `usuario_funcionalidade` WRITE;
 /*!40000 ALTER TABLE `usuario_funcionalidade` DISABLE KEYS */;
-INSERT INTO `usuario_funcionalidade` VALUES (1,1,1);
 /*!40000 ALTER TABLE `usuario_funcionalidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -182,4 +181,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-21 23:54:38
+-- Dump completed on 2015-09-22 18:40:55
