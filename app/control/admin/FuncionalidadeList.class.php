@@ -82,7 +82,7 @@ class FuncionalidadeList extends TPage
         $container = new THBox;
         $container->add($find_button);
         $container->add($new_button);
-        $container->style = "float: right";
+        //$container->style = "float: right";
 
         $row=$table->addRow();
         $row->class = 'tformaction';

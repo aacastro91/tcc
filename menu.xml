@@ -1,79 +1,91 @@
 <menu>
-    <menuitem label='Home'>
+  <menuitem label='Home'>
+    <icon></icon>
+    <action>CommonPage</action>
+  </menuitem>
+  <menuitem label='Cadastros'>
+    <menu>
+      <menuitem label='Funcionalidades'>
+        <icon>fa:file-code-o fa-fw white</icon>
+        <action>FuncionalidadeList</action>
+      </menuitem>
+      <menuitem label='Grupos'>
+        <icon>fa:users fa-fw white</icon>
+        <action>GrupoList</action>
+      </menuitem>
+      <menuitem label='Usuários'>
+        <icon>fa:user fa-fw white</icon>
+        <action>UsuarioList</action>
+      </menuitem>
+      <menuitem label='Campus'>
+        <icon>fa:university fa-fw white</icon>
+        <action>CampusList</action>
+      </menuitem>            
+    </menu>
+  </menuitem>
+  <menuitem label='Consulta'>
+    <menu>
+      <menuitem label='Natureza'>
         <icon></icon>
-        <action>CommonPage</action>
-    </menuitem>
-    <menuitem label='Cadastros'>
-        <menu>
-            <menuitem label='Funcionalidades'>
-                <icon>fa:file-code-o fa-fw white</icon>
-                <action>FuncionalidadeList</action>
-            </menuitem>
-            <menuitem label='Grupos'>
-                <icon>fa:users fa-fw white</icon>
-                <action>GrupoList</action>
-            </menuitem>
-            <menuitem label='Usuários'>
-                <icon>fa:user fa-fw white</icon>
-                <action>UsuarioList</action>
-            </menuitem>
-            <menuitem label='Campus'>
-                <icon></icon>
-                <action>CampusList</action>
-            </menuitem>            
-        </menu>
-    </menuitem>
-    <menuitem label='Consulta'>
-        <menu>
-            <menuitem label='Natureza'>
-                <icon></icon>
-                <action>NaturezaList</action>
-            </menuitem>
-            <menuitem label='SubElemento'>
-                <icon></icon>
-                <action>SubelementoList</action>
-            </menuitem>
-            <menuitem label='Fornecedor'>
-                <icon></icon>
-                <action>FornecedorList</action>
-            </menuitem>
-        </menu>
-    </menuitem> 
-    <menuitem label='Importação de dados'>
+        <action>NaturezaList</action>
+      </menuitem>
+      <menuitem label='SubElemento'>
         <icon></icon>
-        <action>ImportForm</action>
-    </menuitem>    
-    <menuitem label='Requisição de Quantitativo'>
+        <action>SubelementoList</action>
+      </menuitem>
+      <menuitem label='Fornecedor'>
         <icon></icon>
+        <action>FornecedorList</action>
+      </menuitem>
+    </menu>
+  </menuitem> 
+  <menuitem label='Importação de dados'>
+    <icon>fa:file-excel-o fa-fw white</icon>
+    <action>ImportForm</action>
+  </menuitem>    
+  <menuitem label='Requisição'>
+    <menu>
+      <menuitem label='Requisição de Quantitativo'>
+        <icon>fa:pencil fa-fw white</icon>
         <action>RequisicaoList</action>
-    </menuitem>
-    <menuitem label='Cessão de Quantitativo'>
+      </menuitem>
+      <menuitem label='Aprovar Requisição'>
+        <icon>fa:check fa-fw white</icon>
+        <action>AprovarRequisicaoList</action>
+      </menuitem>
+      <menuitem label='Desaprovar Requisição'>
+        <icon>fa:history fa-fw white</icon>
+        <action>RequisicaoList</action>
+      </menuitem>
+    </menu>
+  </menuitem>
+  <menuitem label='Cessão de Quantitativo'>
+    <icon></icon>
+    <action>CommonPage</action>
+  </menuitem>
+  <menuitem label='Relatórios'>
+    <menu>
+      <menuitem label='Itens requeridos'>
         <icon></icon>
         <action>CommonPage</action>
-    </menuitem>
-    <menuitem label='Relatórios'>
-        <menu>
-            <menuitem label='Itens requeridos'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
-            <menuitem label='Itens cedidos'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
+      </menuitem>
+      <menuitem label='Itens cedidos'>
+        <icon></icon>
+        <action>CommonPage</action>
+      </menuitem>
             
-            <menuitem label='SRPs'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
-        </menu>
-    </menuitem>    
-    <menuitem label='Logout'>
-        <menu>
-            <menuitem label='Logout'>
-                <icon></icon>
-                <action>LoginForm#method=onLogout#static=1</action>
-            </menuitem>
-        </menu>
-    </menuitem>
+      <menuitem label='SRPs'>
+        <icon></icon>
+        <action>CommonPage</action>
+      </menuitem>
+    </menu>
+  </menuitem>    
+  <menuitem label='Logout'>
+    <menu>
+      <menuitem label='Logout'>
+        <icon></icon>
+        <action>LoginForm#method=onLogout#static=1</action>
+      </menuitem>
+    </menu>
+  </menuitem>
 </menu>
