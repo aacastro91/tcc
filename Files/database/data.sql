@@ -99,7 +99,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `item_requisicao` WRITE;
 /*!40000 ALTER TABLE `item_requisicao` DISABLE KEYS */;
-INSERT INTO `item_requisicao` VALUES (1,1,1,'asdf',1,'60 dias');
+INSERT INTO `item_requisicao` VALUES (1,1,1,'asdf asdf asdfasdf',1,'61 Dias'),(2,42,2,'1',1,'60 Dias'),(3,52,2,'2',1,'60 Dias'),(4,33,2,'111',1,'60 Dias');
 /*!40000 ALTER TABLE `item_requisicao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `requisicao` WRITE;
 /*!40000 ALTER TABLE `requisicao` DISABLE KEYS */;
-INSERT INTO `requisicao` VALUES (1,'23059.002635/2012-13','2015-01-01',0,1);
+INSERT INTO `requisicao` VALUES (1,'23059.002635/2012-13','2015-09-19',0,1),(2,'1234567889','2015-09-20',0,3);
 /*!40000 ALTER TABLE `requisicao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -182,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-16  2:36:35
+-- Dump completed on 2015-09-21 23:54:38

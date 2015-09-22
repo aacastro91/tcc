@@ -202,6 +202,7 @@ class RequisicaoList extends TPage
             }
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
+            $criteria->add(new TFilter('aprovado', '=', '0'));
             
 
             if (TSession::getValue('RequisicaoList_filter_numeroProcesso')) {
