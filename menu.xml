@@ -55,7 +55,7 @@
       </menuitem>
       <menuitem label='Desaprovar Requisição'>
         <icon>fa:history fa-fw white</icon>
-        <action>RequisicaoList</action>
+        <action>DesaprovarRequisicaoList</action>
       </menuitem>
     </menu>
   </menuitem>

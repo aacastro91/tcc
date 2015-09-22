@@ -1,27 +1,5 @@
 <?php
 
-use Adianti\Control\TAction;
-use Adianti\Control\TPage;
-use Adianti\Database\TCriteria;
-use Adianti\Database\TFilter;
-use Adianti\Database\TRepository;
-use Adianti\Database\TTransaction;
-use Adianti\Registry\TSession;
-use Adianti\Widget\Container\THBox;
-use Adianti\Widget\Container\TTable;
-use Adianti\Widget\Container\TVBox;
-use Adianti\Widget\Datagrid\TDataGrid;
-use Adianti\Widget\Datagrid\TDataGridAction;
-use Adianti\Widget\Datagrid\TDataGridColumn;
-use Adianti\Widget\Datagrid\TPageNavigation;
-use Adianti\Widget\Dialog\TMessage;
-use Adianti\Widget\Dialog\TQuestion;
-use Adianti\Widget\Form\TButton;
-use Adianti\Widget\Form\TDate;
-use Adianti\Widget\Form\TEntry;
-use Adianti\Widget\Form\TForm;
-use Adianti\Widget\Form\TLabel;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -29,11 +7,11 @@ use Adianti\Widget\Form\TLabel;
  */
 
 /**
- * Description of AprovarRequisicaoList
+ * Description of DesaprovarRequisicaoList
  *
  * @author Anderson
  */
-class AprovarRequisicaoList extends TPage
+class DesaprovarRequisicaoList extends TPage
 {
     private $form;     // registration form
     private $datagrid; // listing
@@ -49,7 +27,7 @@ class AprovarRequisicaoList extends TPage
         parent::__construct();
         
         // creates the form
-        $this->form = new TForm('form_Aprovar_Requisicao');
+        $this->form = new TForm('form_Desaprovar_Requisicao');
         $this->form->class = 'tform'; // CSS class
         
         // creates a table
@@ -60,7 +38,7 @@ class AprovarRequisicaoList extends TPage
         // add a row for the form title
         $row = $table->addRow();
         $row->class = 'tformtitle'; // CSS class
-        $row->addCell( new TLabel('Aprovar Requisicao') )->colspan = 2;
+        $row->addCell( new TLabel('Desaprovar Requisicao') )->colspan = 2;
         
 
         // create the form fields
@@ -121,8 +99,8 @@ class AprovarRequisicaoList extends TPage
         
         // creates two datagrid actions
         $action1 = new TDataGridAction(array($this, 'onQuestionAprovarRequisicao'));
-        $action1->setLabel('Aprovar Requisicao');
-        $action1->setImage('fa:check fa-fw');
+        $action1->setLabel('Desaprovar Requisicao');
+        $action1->setImage('fa:history fa-fw');
         $action1->setField('id');
        
         
@@ -160,15 +138,15 @@ class AprovarRequisicaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Requisicao = new Requisicao($key);
-            if ($Requisicao->aprovado){
-                new TMessage('error', 'Requisição já aprovada');
+            if (!$Requisicao->aprovado){
+                new TMessage('error', 'Requisição já Desaprovada');
                 $this->onReload();
                 return;
             }
-            $Requisicao->aprovado = TRUE;
+            $Requisicao->aprovado = FALSE;
             $Requisicao->store();            
             TTransaction::close();
-            new TMessage('info', 'Requisição Aprovada com sucesso!');
+            new TMessage('info', 'Requisição Desaprovada com sucesso!');
             $this->onReload();
         } catch (Exception $ex) {
             new TMessage('error', $ex->getMessage());
@@ -191,7 +169,7 @@ class AprovarRequisicaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Requisicao = new Requisicao($key);
-            $pergunta = 'Voce realmente quer aprovar a seguinte Requisição?<br>'.
+            $pergunta = 'Voce realmente quer Desaprovar a seguinte Requisição?<br>'.
                     'SRP: ' . $Requisicao->srp->numeroSRP .'<br>'.
                     'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.
                     'Emissão: ' . TDate::date2br($Requisicao->emissao);
@@ -273,7 +251,7 @@ class AprovarRequisicaoList extends TPage
             }
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
-            $criteria->add(new TFilter('aprovado', '=', '0'));
+            $criteria->add(new TFilter('aprovado', '=', '1'));
             
 
             if (TSession::getValue('RequisicaoList_filter_numeroProcesso')) {
