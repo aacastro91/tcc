@@ -23,7 +23,7 @@ use Adianti\Widget\Wrapper\TQuickForm;
  *
  * @author Anderson
  */
-class ItemSeek extends TWindow {
+class ItemSeekCessao extends TWindow {
 
     private $form; // form de busca
     private $datagrid; //listagem
@@ -278,8 +278,8 @@ class ItemSeek extends TWindow {
                 $obj->descricaoSumaria = '';
                 $obj->valorUnitario = '';
                 //$obj->quantidade = '';
-                $obj->prazoEntrega = '60 Dias';
-                $obj->justificativa = '';
+                //$obj->prazoEntrega = '60 Dias';
+                //$obj->justificativa = '';
                 TForm::sendData('form_itens', $obj);
                 parent::closeWindow();
             }
@@ -290,8 +290,8 @@ class ItemSeek extends TWindow {
             $obj->descricaoSumaria = '';
             $obj->valorUnitario = '';
             $obj->quantidade = '';
-            $obj->prazoEntrega = '60 Dias';
-            $obj->justificativa = '';
+            //$obj->prazoEntrega = '60 Dias';
+            //$obj->justificativa = '';
             TForm::sendData('form_itens', $obj);
             TTransaction::rollback();
         }

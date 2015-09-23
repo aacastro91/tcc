@@ -59,9 +59,21 @@
       </menuitem>
     </menu>
   </menuitem>
-  <menuitem label='Cessão de Quantitativo'>
-    <icon></icon>
-    <action>CommonPage</action>
+  <menuitem label='Cessão'>
+    <menu>
+      <menuitem label='Cessão de Quantitativo'>
+        <icon>fa:pencil fa-fw white</icon>
+        <action>CessaoList</action>
+      </menuitem>
+      <menuitem label='Aprovar Cessão'>
+        <icon>fa:check fa-fw white</icon>
+        <action>AprovarCessaoList</action>
+      </menuitem>
+      <menuitem label='Desaprovar Cessão'>
+        <icon>fa:history fa-fw white</icon>
+        <action>DesaprovarCessaoList</action>
+      </menuitem>
+    </menu>
   </menuitem>
   <menuitem label='Relatórios'>
     <menu>
@@ -73,7 +85,6 @@
         <icon></icon>
         <action>CommonPage</action>
       </menuitem>
-            
       <menuitem label='SRPs'>
         <icon></icon>
         <action>CommonPage</action>

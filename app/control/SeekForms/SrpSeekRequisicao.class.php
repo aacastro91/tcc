@@ -23,7 +23,7 @@ use Adianti\Widget\Wrapper\TQuickGrid;
  *
  * @author Anderson
  */
-class SrpSeek extends TWindow {
+class SrpSeekRequisicao extends TWindow {
 
     private $form; // form de busca
     private $datagrid; //listagem
