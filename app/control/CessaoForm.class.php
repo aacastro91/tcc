@@ -20,6 +20,7 @@ use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\THidden;
 use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Form\TSeekButton;
+use Adianti\Widget\Wrapper\TDBSeekButton;
 
 /**
  * Description of CessaoForm
@@ -57,6 +58,8 @@ class CessaoForm extends TPage {
         $uasg = new TEntry('uasg');
         $validadeAta = new TEntry('validade');
         $numeroCessao = new TEntry('numeroCessao');
+        $campusID = new TDBSeekButton('campusID', 'SACIQ', 'form_cessao', 'Campus', 'nome', 'campusID', 'campusNome');
+        $campusNome = new TEntry('campusNome');
 
         //campos do itens
         $numeroItem = new TSeekButton('numeroItem');
@@ -75,6 +78,7 @@ class CessaoForm extends TPage {
         //ações dos campos
         $numeroSRP->setAction(new TAction(array(new SrpSeekCessao(), 'onReload')));
         $numeroCessao->setExitAction(new TAction(array($this, 'onExitNumeroProcesso')));
+        $campusID->setExitAction(new TAction(array($this, 'onExitCampus')));
         $numeroItem->setAction(new TAction(array(new ItemSeekCessao(), 'onReload')));
 
 
@@ -87,11 +91,9 @@ class CessaoForm extends TPage {
         $new->setAction(new TAction(array($this, 'onEdit')), 'Novo');
         $new->setImage('ico_new.png');
 
-        $list->setAction(new TAction(array('CessaoList', 'onReload')), 'Listar');
+        $list->setAction(new TAction(array('CessaoList', 'onReload')), 'Voltar para a listagem');
         $list->setImage('ico_datagrid.png');
 
-        //$onProductChange = new TAction(array($this, 'onProductChange'));
-        //$item_id->setExitAction($onProductChange);
         $quantidade->setExitAction(new TAction(array($this, 'onValidaQuantidade')));
 
 
@@ -101,9 +103,8 @@ class CessaoForm extends TPage {
         $valorUnitario->addValidation('Preço', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TMinValueValidator(), array(1));
-        //$justificativa->addValidation('Justificativa', new TRequiredValidator());
-        //$prazoEntrega->addValidation('Prazo de entrega', new TRequiredValidator());
         $numeroCessao->addValidation('Nº Cessão', new TRequiredValidator());
+        $campusID->addValidation('Campus', new TRequiredValidator());
 
         //outras propriedades
         $descricaoSumaria->setEditable(false);
@@ -119,10 +120,12 @@ class CessaoForm extends TPage {
         $uasg->setSize(70);
         $validadeAta->setSize(85);
         $numeroItem->setSize(60);
-        $descricaoSumaria->setSize(490);
+        $descricaoSumaria->setSize('100%');
         $descricaoSumaria->setProperty('style', 'margin-right: 10px', false);
-        //$prazoEntrega->setSize(90);
-        //$justificativa->setSize(400);
+        $numeroCessao->setSize(230);
+        $campusID->setSize(50);
+        $campusNome->setSize('100%');
+        $campusNome->setEditable(false);
         $validadeAta->setMask('dd/mm/yyyy');
         $quantidade->class = 'frm_number_only';
         //$prazoEntrega->setValue('60 Dias');
@@ -130,7 +133,7 @@ class CessaoForm extends TPage {
 
         $row = $table_cessao->addRow();
         $row->class = 'tformtitle'; // CSS class
-        $cell = $row->addCell(new TLabel('Requisição de quantitativo'));
+        $cell = $row->addCell(new TLabel('Cessão de quantitativo'));
         $cell->colspan = 4;
         $row = $table_cessao->addRow();
         $row->addCell(new TLabel('Nº SRP:'))->width = '150px';
@@ -139,7 +142,13 @@ class CessaoForm extends TPage {
         $row->addCell($nome);
         $table_cessao->addRowSet(new TLabel('Proc. Orig:'), $numeroProcessoOrigem, new TLabel('UASG:'), $uasg);
         $table_cessao->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Nº Cessão:'), $numeroCessao);
-
+        $row = $table_cessao->addRow();
+        $row->addCell(new TLabel('Campus:'));
+        $box = new THBox();
+        $box->add($campusID);
+        $box->add($campusNome)->style = 'width: 75%; display : inline-block;';
+        $row->addCell($box)->colspan = 3;
+        
         $row = $table_itens->addRow();
         $row->class = 'tformtitle'; // CSS class
         $cell = $row->addCell(new TLabel('Itens'));
@@ -198,12 +207,8 @@ class CessaoForm extends TPage {
         $this->datagrid->addColumn($Gtotal);
         $this->datagrid->createModel();
 
-
-        $this->form_cessao->setFields(array($numeroSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroCessao, $new, $save, $list));
-
+        $this->form_cessao->setFields(array($numeroSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroCessao, $campusID, $campusNome, $new, $save, $list));
         $this->form_itens->setFields(array($item_id, $numeroItem, $descricaoSumaria, $valorUnitario, $quantidade, $addItem));
-
-
 
         $hbox = new THBox();
         $hbox->add($save);
@@ -219,7 +224,7 @@ class CessaoForm extends TPage {
         $vbox->add(new TLabel('&nbsp;'));
         $vbox->add($hbox);
         parent::add($vbox);
-    }
+    }    
 
     public function onAddItem($param) {
         $cessao = TSession::getValue('form_cessao');
@@ -251,8 +256,6 @@ class CessaoForm extends TPage {
             $form_item->descricaoSumaria = '';
             $form_item->quantidade = '';
             $form_item->valorUnitario = '';
-            //$form_item->justificativa = '';
-            //$form_item->prazoEntrega = '60 Dias';
             $form_item->total = '';
             TTransaction::close();
             $this->form_itens->setData($form_item);
@@ -262,6 +265,17 @@ class CessaoForm extends TPage {
             $this->form_itens->setData($this->form_itens->getData());
             $this->form_cessao->setData($cessao);
             new TMessage('error', $e->getMessage());
+        }
+    }
+    
+    static public function onExitCampus($param){        
+        $campusID = $param['campusID'];
+        $campusNome = $param['campusNome'];
+        if (TSession::getValue('form_cessao')!== NULL && $campusID) {
+            $form_cessao = TSession::getValue('form_cessao');
+            $form_cessao->campusID = $campusID;
+            $form_cessao->campusNome = $campusNome;            
+            TSession::setValue('form_cessao', $form_cessao);
         }
     }
 
@@ -340,6 +354,9 @@ class CessaoForm extends TPage {
             $form_cessao->validade = '';
             $form_cessao->nome = '';
             $form_cessao->uasg = '';
+            $form_cessao->campusID = '';
+            $form_cessao->campusNome = '';
+            
             TSession::delValue('cessao_itens');
             TSession::delValue('form_cessao');
             TForm::sendData('form_cessao', $form_cessao);
@@ -353,25 +370,25 @@ class CessaoForm extends TPage {
             $form_cessao = new stdClass();
             $form_cessao->id = $key;
             $form_cessao->numeroSRP = $cessao->srp->numeroSRP;
-            $form_cessao->numeroProcessoOrigem = $cessao->srp->numeroCessao;
+            $form_cessao->numeroProcessoOrigem = $cessao->srp->numeroProcesso;
             $form_cessao->numeroCessao = $cessao->numeroCessao;
             $form_cessao->validade = TDate::date2br($cessao->srp->validade);
             $form_cessao->nome = $cessao->srp->nome;
-            $form_cessao->uasg = $cessao->srp->uasg;
+            $form_cessao->uasg       = $cessao->srp->uasg;
+            $form_cessao->campusID   = $cessao->campus->id;
+            $form_cessao->campusNome = $cessao->campus->nome;
 
             TSession::delValue('cessao_itens');
             TSession::setValue('SRP_id', $cessao->srp->id);
 
             foreach ($cessao->getItems() as $item_cessao) {
                 $item = new stdClass();
-                $item->item_id = $item_cessao->id;
-                $item->numeroItem = $item_cessao->numeroItem;
-                $item->descricaoSumaria = $item_cessao->descricaoSumaria;
-                $item->quantidade = $item_cessao->quantidade;
-                $item->valorUnitario = $item_cessao->valorUnitario;
-                //$item->justificativa = $item_cessao->justificativa;
-                //$item->prazoEntrega = $item_cessao->prazoEntrega;
-                $item->total = $item_cessao->total;
+                $item->item_id            = $item_cessao->id;
+                $item->numeroItem         = $item_cessao->numeroItem;
+                $item->descricaoSumaria   = $item_cessao->descricaoSumaria;
+                $item->quantidade         = $item_cessao->quantidade;
+                $item->valorUnitario      = $item_cessao->valorUnitario;
+                $item->total              = $item_cessao->total;
                 $itens[$item->numeroItem] = $item;
             }
 
@@ -409,6 +426,8 @@ class CessaoForm extends TPage {
                 $form_cessao->validade = '';
                 $form_cessao->nome = '';
                 $form_cessao->uasg = '';
+                $form_cessao->campusID = '';
+                $form_cessao->campusNome = '';
             }
             $this->form_cessao->sendData('form_cessao', $form_cessao);
             $this->datagrid->clear(); // clear datagrid
@@ -433,6 +452,8 @@ class CessaoForm extends TPage {
 
             $form_cessao = TSession::getValue('form_cessao');
             $form_cessao->numeroCessao = $form_cessao_data->numeroCessao;
+            $form_cessao->campusID = $form_cessao_data->campusID;
+            $form_cessao->campusNome = $form_cessao_data->campusNome;
 
 
             $cessao_itens = TSession::getValue('cessao_itens');
@@ -449,6 +470,7 @@ class CessaoForm extends TPage {
                 $cessao->clearParts();
                 
                 $cessao->numeroCessao = $form_cessao->numeroCessao;
+                $cessao->campus = new Campus($form_cessao->campusID);
                 if (!$cessao->emissao){
                     $cessao->emissao = date("Y-m-d");
                 }
@@ -457,9 +479,7 @@ class CessaoForm extends TPage {
                 $cessao->srp = new Srp(TSession::getValue('SRP_id'));
                 foreach ($cessao_itens as $item) {
                     $item_cessao = new Item($item->item_id);
-                    //$item_cessao->justificativa = $item->justificativa;
                     $item_cessao->quantidade = $item->quantidade;
-                    //$item_cessao->prazoEntrega = $item->prazoEntrega;
                     $item_cessao->quantidade = str_replace('.', '', $item->quantidade);
                     $item_cessao->quantidade = str_replace(',', '.', $item->quantidade);
                     $cessao->addItem($item_cessao); // add the item to the Sale
@@ -470,7 +490,7 @@ class CessaoForm extends TPage {
                 TSession::delValue('form_cessao'); 
                 TSession::delValue('SRP_id');                
 
-                new TMessage('info', 'Requisição salva');
+                new TMessage('info', 'Cessão salva');
             }
             TTransaction::close();
             $this->onReload();

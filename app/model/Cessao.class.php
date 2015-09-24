@@ -126,6 +126,8 @@ class Cessao extends TRecord
             foreach ($cessao_items as $cessao_item)
             {
                 $item = new Item( $cessao_item->item_id );
+                $item->quantidade = $cessao_item->quantidade;
+                $item->total = $item->quantidade * $item->valorUnitario;
                 $this->addItem($item);
             }
         }
@@ -155,6 +157,7 @@ class Cessao extends TRecord
                 $cessao_item = new ItemCessao;
                 $cessao_item->item_id = $item->id;
                 $cessao_item->cessao_id = $this->id;
+                $cessao_item->quantidade = $item->quantidade;
                 $cessao_item->store();
             }
         }
