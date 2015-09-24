@@ -18,26 +18,26 @@ CREATE SCHEMA IF NOT EXISTS `saciq` DEFAULT CHARACTER SET utf8 ;
 USE `saciq` ;
 
 -- -----------------------------------------------------
--- Table `saciq`.`campus`
+-- Table `campus`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`campus` ;
+DROP TABLE IF EXISTS `campus` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`campus` (
+CREATE TABLE IF NOT EXISTS `campus` (
   `id` INT(11) NOT NULL,
   `uasg` VARCHAR(10) NULL DEFAULT NULL,
   `nome` VARCHAR(50) NULL DEFAULT NULL,
   `sigla` VARCHAR(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`cessao`
+-- Table `cessao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`cessao` ;
+DROP TABLE IF EXISTS `cessao` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`cessao` (
+CREATE TABLE IF NOT EXISTS `cessao` (
   `id` INT(11) NOT NULL ,
   `numeroCessao` VARCHAR(30) NULL DEFAULT NULL ,
   `emissao` DATE NULL DEFAULT NULL ,
@@ -49,67 +49,67 @@ CREATE TABLE IF NOT EXISTS `saciq`.`cessao` (
   INDEX `fk_cessao_srp1` (`srp_id` ASC) ,
   CONSTRAINT `fk_cessao_campus1`
     FOREIGN KEY (`campus_id` )
-    REFERENCES `saciq`.`campus` (`id` )
+    REFERENCES `campus` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_cessao_srp1`
     FOREIGN KEY (`srp_id` )
-    REFERENCES `saciq`.`srp` (`id` )
+    REFERENCES `srp` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`fornecedor`
+-- Table `fornecedor`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`fornecedor` ;
+DROP TABLE IF EXISTS `fornecedor` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`fornecedor` (
+CREATE TABLE IF NOT EXISTS `fornecedor` (
   `id` INT(11) NOT NULL,
   `nome` VARCHAR(150) NULL DEFAULT NULL,
   `cnpj` CHAR(14) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`funcionalidade`
+-- Table `funcionalidade`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`funcionalidade` ;
+DROP TABLE IF EXISTS `funcionalidade` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`funcionalidade` (
+CREATE TABLE IF NOT EXISTS `funcionalidade` (
   `id` INT(11) NOT NULL,
   `nome` VARCHAR(100) NULL DEFAULT NULL,
   `classe` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `classe_UNIQUE` (`classe` ASC))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`grupo`
+-- Table `grupo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`grupo` ;
+DROP TABLE IF EXISTS `grupo` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`grupo` (
+CREATE TABLE IF NOT EXISTS `grupo` (
   `id` INT(11) NOT NULL,
   `nome` VARCHAR(45) NULL DEFAULT NULL,
   `sigla` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`grupo_funcionalidade`
+-- Table `grupo_funcionalidade`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`grupo_funcionalidade` ;
+DROP TABLE IF EXISTS `grupo_funcionalidade` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`grupo_funcionalidade` (
+CREATE TABLE IF NOT EXISTS `grupo_funcionalidade` (
   `id` INT(11) NOT NULL,
   `grupo_id` INT(11) NOT NULL,
   `funcionalidade_id` INT(11) NOT NULL,
@@ -119,37 +119,37 @@ CREATE TABLE IF NOT EXISTS `saciq`.`grupo_funcionalidade` (
   INDEX `fk_grupo_has_funcionalidade_grupo1_idx` (`grupo_id` ASC),
   CONSTRAINT `fk_grupo_has_funcionalidade_funcionalidade1`
     FOREIGN KEY (`funcionalidade_id`)
-    REFERENCES `saciq`.`funcionalidade` (`id`)
+    REFERENCES `funcionalidade` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_grupo_has_funcionalidade_grupo1`
     FOREIGN KEY (`grupo_id`)
-    REFERENCES `saciq`.`grupo` (`id`)
+    REFERENCES `grupo` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`natureza`
+-- Table `natureza`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`natureza` ;
+DROP TABLE IF EXISTS `natureza` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`natureza` (
+CREATE TABLE IF NOT EXISTS `natureza` (
   `id` INT(11) NOT NULL,
   `descricao` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`srp`
+-- Table `srp`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`srp` ;
+DROP TABLE IF EXISTS `srp` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`srp` (
+CREATE TABLE IF NOT EXISTS `srp` (
   `id` INT(11) NOT NULL,
   `numeroSRP` VARCHAR(10) NULL DEFAULT NULL,
   `numeroIRP` VARCHAR(10) NULL DEFAULT NULL,
@@ -163,32 +163,32 @@ CREATE TABLE IF NOT EXISTS `saciq`.`srp` (
   UNIQUE INDEX `numeroSRP_UNIQUE` (`numeroSRP` ASC),
   CONSTRAINT `fk_srp_natureza`
     FOREIGN KEY (`natureza_id`)
-    REFERENCES `saciq`.`natureza` (`id`)
+    REFERENCES `natureza` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`subelemento`
+-- Table `subelemento`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`subelemento` ;
+DROP TABLE IF EXISTS `subelemento` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`subelemento` (
+CREATE TABLE IF NOT EXISTS `subelemento` (
   `id` INT(11) NOT NULL,
   `descricao` VARCHAR(150) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`item`
+-- Table `item`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`item` ;
+DROP TABLE IF EXISTS `item` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`item` (
+CREATE TABLE IF NOT EXISTS `item` (
   `id` INT(11) NOT NULL,
   `numeroItem` INT(11) NOT NULL,
   `descricaoSumaria` VARCHAR(150) NULL DEFAULT NULL,
@@ -209,29 +209,29 @@ CREATE TABLE IF NOT EXISTS `saciq`.`item` (
   INDEX `fk_item_srp1_idx` (`srp_id` ASC),
   CONSTRAINT `fk_item_fornecedor1`
     FOREIGN KEY (`fornecedor_id`)
-    REFERENCES `saciq`.`fornecedor` (`id`)
+    REFERENCES `fornecedor` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_item_srp1`
     FOREIGN KEY (`srp_id`)
-    REFERENCES `saciq`.`srp` (`id`)
+    REFERENCES `srp` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_item_subelemento1`
     FOREIGN KEY (`subelemento_id`)
-    REFERENCES `saciq`.`subelemento` (`id`)
+    REFERENCES `subelemento` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`item_cessao`
+-- Table `item_cessao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`item_cessao` ;
+DROP TABLE IF EXISTS `item_cessao` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`item_cessao` (
+CREATE TABLE IF NOT EXISTS `item_cessao` (
   `id` INT(11) NOT NULL,
   `item_id` INT(11) NOT NULL,
   `cessao_id` INT(11) NOT NULL,
@@ -242,24 +242,24 @@ CREATE TABLE IF NOT EXISTS `saciq`.`item_cessao` (
   INDEX `fk_item_has_cessao_item1_idx` (`item_id` ASC),
   CONSTRAINT `fk_item_has_cessao_cessao1`
     FOREIGN KEY (`cessao_id`)
-    REFERENCES `saciq`.`cessao` (`id`)
+    REFERENCES `cessao` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_item_has_cessao_item1`
     FOREIGN KEY (`item_id`)
-    REFERENCES `saciq`.`item` (`id`)
+    REFERENCES `item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`requisicao`
+-- Table `requisicao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`requisicao` ;
+DROP TABLE IF EXISTS `requisicao` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`requisicao` (
+CREATE TABLE IF NOT EXISTS `requisicao` (
   `id` INT(11) NOT NULL ,
   `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL ,
   `emissao` DATE NULL DEFAULT NULL ,
@@ -269,19 +269,19 @@ CREATE TABLE IF NOT EXISTS `saciq`.`requisicao` (
   INDEX `fk_requisicao_srp1` (`srp_id` ASC) ,
   CONSTRAINT `fk_requisicao_srp1`
     FOREIGN KEY (`srp_id` )
-    REFERENCES `saciq`.`srp` (`id` )
+    REFERENCES `srp` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`item_requisicao`
+-- Table `item_requisicao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`item_requisicao` ;
+DROP TABLE IF EXISTS `item_requisicao` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`item_requisicao` (
+CREATE TABLE IF NOT EXISTS `item_requisicao` (
   `id` INT(11) NOT NULL,
   `item_id` INT(11) NOT NULL,
   `requisicao_id` INT(11) NOT NULL,
@@ -294,24 +294,24 @@ CREATE TABLE IF NOT EXISTS `saciq`.`item_requisicao` (
   INDEX `fk_item_has_requisicao_item1_idx` (`item_id` ASC),
   CONSTRAINT `fk_item_has_requisicao_item1`
     FOREIGN KEY (`item_id`)
-    REFERENCES `saciq`.`item` (`id`)
+    REFERENCES `item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_item_has_requisicao_requisicao1`
     FOREIGN KEY (`requisicao_id`)
-    REFERENCES `saciq`.`requisicao` (`id`)
+    REFERENCES `requisicao` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`usuario`
+-- Table `usuario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`usuario` ;
+DROP TABLE IF EXISTS `usuario` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`usuario` (
+CREATE TABLE IF NOT EXISTS `usuario` (
   `id` INT(11) NOT NULL,
   `nome` VARCHAR(60) NULL DEFAULT NULL,
   `prontuario` VARCHAR(10) NULL DEFAULT NULL,
@@ -319,16 +319,16 @@ CREATE TABLE IF NOT EXISTS `saciq`.`usuario` (
   `email` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `prontuario_UNIQUE` (`prontuario` ASC))
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`usuario_funcionalidade`
+-- Table `usuario_funcionalidade`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`usuario_funcionalidade` ;
+DROP TABLE IF EXISTS `usuario_funcionalidade` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`usuario_funcionalidade` (
+CREATE TABLE IF NOT EXISTS `usuario_funcionalidade` (
   `id` INT(11) NOT NULL,
   `usuario_id` INT(11) NOT NULL,
   `funcionalidade_id` INT(11) NOT NULL,
@@ -338,24 +338,24 @@ CREATE TABLE IF NOT EXISTS `saciq`.`usuario_funcionalidade` (
   INDEX `fk_usuario_has_funcionalidade_usuario1_idx` (`usuario_id` ASC),
   CONSTRAINT `fk_usuario_has_funcionalidade_funcionalidade1`
     FOREIGN KEY (`funcionalidade_id`)
-    REFERENCES `saciq`.`funcionalidade` (`id`)
+    REFERENCES `funcionalidade` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_usuario_has_funcionalidade_usuario1`
     FOREIGN KEY (`usuario_id`)
-    REFERENCES `saciq`.`usuario` (`id`)
+    REFERENCES `usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `saciq`.`usuario_grupo`
+-- Table `usuario_grupo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `saciq`.`usuario_grupo` ;
+DROP TABLE IF EXISTS `usuario_grupo` ;
 
-CREATE TABLE IF NOT EXISTS `saciq`.`usuario_grupo` (
+CREATE TABLE IF NOT EXISTS `usuario_grupo` (
   `id` INT(11) NOT NULL,
   `usuario_id` INT(11) NOT NULL,
   `grupo_id` INT(11) NOT NULL,
@@ -364,15 +364,15 @@ CREATE TABLE IF NOT EXISTS `saciq`.`usuario_grupo` (
   INDEX `fk_usuario_has_grupo_usuario1_idx` (`usuario_id` ASC),
   CONSTRAINT `fk_usuario_has_grupo_grupo1`
     FOREIGN KEY (`grupo_id`)
-    REFERENCES `saciq`.`grupo` (`id`)
+    REFERENCES `grupo` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_usuario_has_grupo_usuario1`
     FOREIGN KEY (`usuario_id`)
-    REFERENCES `saciq`.`usuario` (`id`)
+    REFERENCES `usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+
 DEFAULT CHARACTER SET = utf8;
 
 

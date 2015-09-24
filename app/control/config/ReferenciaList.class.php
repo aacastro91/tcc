@@ -6,7 +6,6 @@ use Adianti\Database\TCriteria;
 use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
-use Adianti\Log\TLoggerTXT;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
@@ -18,7 +17,6 @@ use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Dialog\TQuestion;
 use Adianti\Widget\Form\TButton;
-use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
@@ -42,11 +40,11 @@ use Adianti\Widget\Form\TLabel;
  */
 
 /**
- * Description of RequisicaoList
+ * Description of ReferenciaList
  *
  * @author Anderson
  */
-class RequisicaoList extends TPage
+class ReferenciaList extends TPage
 {
     private $form;     // registration form
     private $datagrid; // listing
@@ -60,9 +58,10 @@ class RequisicaoList extends TPage
     public function __construct()
     {
         parent::__construct();
+        parent::include_css('app/resources/custom-table.css');
         
         // creates the form
-        $this->form = new TForm('form_search_Requisicao');
+        $this->form = new TForm('form_search_Referencia');
         $this->form->class = 'tform'; // CSS class
         
         // creates a table
@@ -73,37 +72,40 @@ class RequisicaoList extends TPage
         // add a row for the form title
         $row = $table->addRow();
         $row->class = 'tformtitle'; // CSS class
-        $row->addCell( new TLabel('Consulta Requisicao') )->colspan = 2;
+        $row->addCell( new TLabel('Referencia') )->colspan = 2;
         
 
         // create the form fields
-        $numeroProcesso                 = new TEntry('numeroProcesso');
+        $nome                           = new TEntry('nome');
+        $referencia                     = new TEntry('referencia');
 
 
         // define the sizes
-        $numeroProcesso->setSize(200);
+        $nome->setSize(200);
+        $referencia->setSize(200);
 
 
         // add one row for each form field
-        $table->addRowSet( new TLabel('Nº do Processo:'), $numeroProcesso );
+        $table->addRowSet( new TLabel('Nome:'), $nome );
+        $table->addRowSet( new TLabel('Referência:'), $referencia );
 
 
-        $this->form->setFields(array($numeroProcesso));
+        $this->form->setFields(array($nome,$referencia));
 
 
         // keep the form filled during navigation with session data
-        $this->form->setData( TSession::getValue('Requisicao_filter_data') );
+        $this->form->setData( TSession::getValue('Referencia_filter_data') );
         
         // create two action buttons to the form
         $find_button = TButton::create('find', array($this, 'onSearch'), 'Buscar', 'ico_find.png');
-        $new_button  = TButton::create('new',  array('RequisicaoForm', 'onEdit'), 'Novo', 'ico_new.png');
+        //$new_button  = TButton::create('new',  array('ReferenciaForm', 'onEdit'), 'Novo', 'ico_new.png');
         
         $this->form->addField($find_button);
-        $this->form->addField($new_button);
+        //$this->form->addField($new_button);
         
         $buttons_box = new THBox;
         $buttons_box->add($find_button);
-        $buttons_box->add($new_button);
+        //$buttons_box->add($new_button);
         
         // add a row for the form action
         $row = $table->addRow();
@@ -111,28 +113,42 @@ class RequisicaoList extends TPage
         $row->addCell($buttons_box)->colspan = 2;
         
         // creates a Datagrid
-        parent::include_css('app/resources/custom-table.css');
         $this->datagrid = new TDataGrid;
-        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         
 
         // creates the datagrid columns
-        $id             = new TDataGridColumn('id', 'ID', 'right', 80);
-        $srp            = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
-        $numeroProcesso = new TDataGridColumn('numeroProcesso','Nº do processo', 'left', 250);
-        $data           = new TDataGridColumn('emissao', 'Data', 'left', 100);
+        $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
+        $referencia   = new TDataGridColumn('referencia', 'Referência', 'left', 300);
 
 
         // add the columns to the DataGrid
-        $this->datagrid->addColumn($id);
-        $this->datagrid->addColumn($srp);
-        $this->datagrid->addColumn($numeroProcesso);
-        $this->datagrid->addColumn($data);
+        $this->datagrid->addColumn($nome);
+        $this->datagrid->addColumn($referencia);
+
+
+        // creates the datagrid column actions
+        $order_nome= new TAction(array($this, 'onReload'));
+        $order_nome->setParameter('order', 'nome');
+        $nome->setAction($order_nome);
+
+        $order_referencia= new TAction(array($this, 'onReload'));
+        $order_referencia->setParameter('order', 'referencia');
+        $referencia->setAction($order_referencia);
+
+
+
+        // inline editing
+        $referencia_edit = new TDataGridAction(array($this, 'onInlineEdit'));
+        $referencia_edit->setField('id');
+        $referencia->setEditAction($referencia_edit);
+
 
         
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array('RequisicaoForm', 'onEdit'));
+        /*
+        $action1 = new TDataGridAction(array('ReferenciaForm', 'onEdit'));
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
@@ -141,10 +157,11 @@ class RequisicaoList extends TPage
         $action2->setLabel(_t('Delete'));
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
+        */
         
         // add the actions to the datagrid
-        $this->datagrid->addAction($action1);
-        $this->datagrid->addAction($action2);
+        //$this->datagrid->addAction($action1);
+        //$this->datagrid->addAction($action2);
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -154,14 +171,42 @@ class RequisicaoList extends TPage
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        //limpar a sessao com detalhes de itens e requisicao
-        TSession::delValue('requisicao_itens');
-        TSession::delValue('SRP_id');
-        TSession::delValue('form_requisicao');
-        
         // create the page container
         $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
         parent::add($container);
+    }
+    
+    /**
+     * method onInlineEdit()
+     * Inline record editing
+     * @param $param Array containing:
+     *              key: object ID value
+     *              field name: object attribute to be updated
+     *              value: new attribute content 
+     */
+    function onInlineEdit($param)
+    {
+        try
+        {
+            // get the parameter $key
+            $field = $param['field'];
+            $key   = $param['key'];
+            $value = $param['value'];
+            
+            TTransaction::open('config'); // open a transaction with database
+            $object = new Referencia($key); // instantiates the Active Record
+            $object->{$field} = $value;
+            $object->store(); // update the object in the database
+            TTransaction::close(); // close the transaction
+            
+            $this->onReload($param); // reload the listing
+            new TMessage('info', "Registro atualizado");
+        }
+        catch (Exception $e) // in case of exception
+        {
+            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
+            TTransaction::rollback(); // undo all pending operations
+        }
     }
     
     /**
@@ -174,11 +219,18 @@ class RequisicaoList extends TPage
         $data = $this->form->getData();
         
         // clear session filters
-        TSession::setValue('RequisicaoList_filter_numeroProcesso',   NULL);
+        TSession::setValue('ReferenciaList_filter_nome',   NULL);
+        TSession::setValue('ReferenciaList_filter_referencia',   NULL);
 
-        if (isset($data->numeroProcesso) AND ($data->numeroProcesso)) {
-            $filter = new TFilter('numeroProcesso', 'like', "%{$data->numeroProcesso}%"); // create the filter
-            TSession::setValue('RequisicaoList_filter_numeroProcesso',   $filter); // stores the filter in the session
+        if (isset($data->nome) AND ($data->nome)) {
+            $filter = new TFilter('nome', 'like', "%{$data->nome}%"); // create the filter
+            TSession::setValue('ReferenciaList_filter_nome',   $filter); // stores the filter in the session
+        }
+
+
+        if (isset($data->referencia) AND ($data->referencia)) {
+            $filter = new TFilter('referencia', 'like', "%{$data->referencia}%"); // create the filter
+            TSession::setValue('ReferenciaList_filter_referencia',   $filter); // stores the filter in the session
         }
 
         
@@ -186,7 +238,7 @@ class RequisicaoList extends TPage
         $this->form->setData($data);
         
         // keep the search data in the session
-        TSession::setValue('Requisicao_filter_data', $data);
+        TSession::setValue('Referencia_filter_data', $data);
         
         $param=array();
         $param['offset']    =0;
@@ -202,12 +254,11 @@ class RequisicaoList extends TPage
     {
         try
         {
-            // open a transaction with database 'saciq'
-            TTransaction::open('saciq');
-            //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
+            // open a transaction with database 'config'
+            TTransaction::open('config');
             
-            // creates a repository for Requisicao
-            $repository = new TRepository('Requisicao');
+            // creates a repository for Referencia
+            $repository = new TRepository('Referencia');
             $limit = 10;
             // creates a criteria
             $criteria = new TCriteria;
@@ -220,11 +271,15 @@ class RequisicaoList extends TPage
             }
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
-            $criteria->add(new TFilter('aprovado', '=', '0'));
             
 
-            if (TSession::getValue('RequisicaoList_filter_numeroProcesso')) {
-                $criteria->add(TSession::getValue('RequisicaoList_filter_numeroProcesso')); // add the session filter
+            if (TSession::getValue('ReferenciaList_filter_nome')) {
+                $criteria->add(TSession::getValue('ReferenciaList_filter_nome')); // add the session filter
+            }
+
+
+            if (TSession::getValue('ReferenciaList_filter_referencia')) {
+                $criteria->add(TSession::getValue('ReferenciaList_filter_referencia')); // add the session filter
             }
 
             
@@ -237,10 +292,7 @@ class RequisicaoList extends TPage
                 // iterate the collection of active records
                 foreach ($objects as $object)
                 {
-                    $object->emissao = TDate::date2br($object->emissao);
-                    $object->numeroSRP = $object->srp->numeroSRP;
-                    
-                    
+                    // add the object inside the datagrid
                     $this->datagrid->addItem($object);
                 }
             }
@@ -291,8 +343,8 @@ class RequisicaoList extends TPage
         try
         {
             $key=$param['key']; // get the parameter $key
-            TTransaction::open('saciq'); // open a transaction with database
-            $object = new Requisicao($key, FALSE); // instantiates the Active Record
+            TTransaction::open('config'); // open a transaction with database
+            $object = new Referencia($key, FALSE); // instantiates the Active Record
             $object->delete(); // deletes the object from the database
             TTransaction::close(); // close the transaction
             $this->onReload( $param ); // reload the listing

@@ -26,7 +26,7 @@ class UsuarioList extends TPage
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel('Usuários'), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Consulta Usuários'), '' )->class = 'tformtitle';
         
         // adiciona a tabela no form
         $this->form->add($table);

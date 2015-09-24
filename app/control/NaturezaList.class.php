@@ -68,7 +68,7 @@ class NaturezaList extends TPage
         $table-> width = '100%';
         
         // add a row for the form title
-        $table->addRowSet( new TLabel('Natureza') ,'')->class = 'tformtitle'; // CSS class   
+        $table->addRowSet( new TLabel('Consulta Natureza') ,'')->class = 'tformtitle'; // CSS class   
         
         $this->form->add($table);
         

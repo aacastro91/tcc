@@ -1,5 +1,9 @@
 <?php
 
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Widget\Dialog\TMessage;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,7 +15,7 @@
  *
  * @author Anderson
  */
-include_once ('app/lib/include/excel/Classes/PHPExcel.php');
+include_once('app/lib/excel/Classes/PHPExcel.php');
 
 class Importar {
 
@@ -19,10 +23,33 @@ class Importar {
     private $activeRow = 3;
     private $objReader = null;
     public $dataFile;
+    private $referencia;
 
     public function __construct() {
         $this->objReader = new PHPExcel_Reader_Excel2007();
         $this->objReader->setReadDataOnly(true);
+        
+        TTransaction::open('config');
+        try {
+            $this->referencia = array();
+            $rep = new TRepository('Referencia');
+            $import_name = $rep->load();
+            if ($import_name){
+                foreach ($import_name as $value) {
+                    $this->referencia[$value->nome] = $value->referencia;
+                }
+            }
+            else
+            {
+                throw new Exception('Arquivo de configuração inválido');
+            }
+            
+            TTransaction::close();
+        } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
+            TTransaction::rollback();
+        }        
+        
         //$objReader->setReadDataOnly(true);
     }
 
@@ -63,9 +90,43 @@ class Importar {
     
     public function isValidFile(){
         if ($this->getNaturezaDespesa()== '')
-            return false;
+            return 'Referencia do campo "NATUREZA DE DESPESA" não encontrada no arquivo';
         if ($this->getNomeProcesso() == '')
-            return false;
+            return 'Referencia do campo "NOME DO PROCESSO" não encontrada no arquivo';
+        if ($this->getNumeroSubElemento() == '')
+            return 'Referencia do campo "NÚMERO SUBELEMENTO" não encontrada no arquivo';
+        if ($this->getDescricaoSubElemento() == '')
+            return 'Referencia do campo "DESCRIÇÃO SUBELEMENTO" não encontrada no arquivo';
+        if ($this->getNroIRP() == '')
+            return 'Referencia do campo "Nº IRP" não encontrada no arquivo';
+        if ($this->getNroSRP() == '')
+            return 'Referencia do campo "Nº SRP" não encontrada no arquivo';
+        if ($this->getNumeroProcesso() == '')
+            return 'Referencia do campo "NÚMERO DO PROCESSO" não encontrada no arquivo';
+        if ($this->getUasgGerenciadora() == '')
+            return 'Referencia do campo "UASG GERENCIADORA" não encontrada no arquivo';
+        if ($this->getValidadeAta() == '')
+            return 'Referencia do campo "VALIDADE DA ATA" não encontrada no arquivo';
+        if ($this->getItem() == '')
+            return 'Referencia do campo "ITEM" não encontrada no arquivo';
+        if ($this->getDescricaoSumaria() == '')
+            return 'Referencia do campo "DESCRIÇÃO SUMÁRIA" não encontrada no arquivo';
+        if ($this->getDescricaoCompleta() == '')
+            return 'Referencia do campo "DESCRIÇÃO COMPLETA" não encontrada no arquivo';
+        if ($this->getDescricaoPosLicitacao() == '')
+            return 'Referencia do campo "DESCRIÇÃO PÓS-LICITAÇÃO" não encontrada no arquivo';
+        if ($this->getUnidadeDeMedida() == '')
+            return 'Referencia do campo "UNIDADE DE MEDIDA" não encontrada no arquivo';
+        if ($this->getValorUnitarioLicitado() == '')
+            return 'Referencia do campo "VALOR UNITÁRIO LICITADO" não encontrada no arquivo';
+        if ($this->getFornecedor() == '')
+            return 'Referencia do campo "FORNECEDOR" não encontrada no arquivo';
+        if ($this->getCNPJ() == '')
+            return 'Referencia do campo "CNPJ" não encontrada no arquivo';
+        if ($this->getFabricante() == '')
+            return 'Referencia do campo "FABRICANTE" não encontrada no arquivo';
+        if ($this->getMarca() == '')
+            return 'Referencia do campo "MARCA" não encontrada no arquivo';
         
         return true;
     }
@@ -99,9 +160,10 @@ class Importar {
     }
 
     private function getColumnByName($name) {
+        $nomeArquivo = $this->referencia[$name];
         $row = $this->getRowArray(2);
         for ($i = 0; $i < count($row) - 1; $i++) {
-            if ($row[$i] == $name) {
+            if ($row[$i] == $nomeArquivo) {
                 return $this->dataFile[$i][$this->activeRow-1];
             }
         }

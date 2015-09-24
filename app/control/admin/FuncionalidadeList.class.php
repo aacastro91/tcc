@@ -47,7 +47,7 @@ class FuncionalidadeList extends TPage
         $table = new TTable;
         $table->style = 'width:100%';
         
-        $table->addRowSet( new TLabel('Funcionalidades'), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Consulta Funcionalidades'), '' )->class = 'tformtitle';
 
         // adiciona a tabela no form
         $this->form->add($table);

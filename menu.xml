@@ -20,7 +20,11 @@
       <menuitem label='Campus'>
         <icon>fa:university fa-fw white</icon>
         <action>CampusList</action>
-      </menuitem>            
+      </menuitem>
+      <menuitem label='Referencia da planilha'>
+        <icon>fa:cog fa-fw white</icon>
+        <action>ReferenciaList</action>
+      </menuitem>
     </menu>
   </menuitem>
   <menuitem label='Consulta'>

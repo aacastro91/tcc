@@ -50,7 +50,7 @@ class GrupoList extends TPage
         $table->style = 'width:100%';
         
         //cria o titulo
-        $table->addRowSet( new TLabel('Grupos'), '' )->class = 'tformtitle';
+        $table->addRowSet( new TLabel('Consulta Grupos'), '' )->class = 'tformtitle';
         
         // Adiciona a tabela no form
         $this->form->add($table);

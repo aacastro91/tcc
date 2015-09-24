@@ -156,8 +156,9 @@ class ImportForm extends TPage {
 
         //$finfo = new finfo(FILEINFO_MIME_TYPE);
     if (file_exists($source_file)){ //AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            if (file_exists($target_file))
-                unlink ($target_file);
+        if (file_exists($target_file)) {
+                unlink($target_file);
+            }
             rename($source_file, $target_file);
         } else {
             new TMessage('error', 'Arquivo não suportado');
@@ -250,8 +251,9 @@ class ImportForm extends TPage {
 
         $this->importacao = new Importar();
         $this->importacao->loadFile($file);
-        if (!$this->importacao->isValidFile()){
-            new TMessage('error', '<b>Error</b>: <br> Arquivo fora do padrão');
+        $mes = $this->importacao->isValidFile();
+        if ($mes){
+            new TMessage('error', '<b>Error</b>: <br> Arquivo fora do padrão<br>'.$mes);
             return;
         }
         

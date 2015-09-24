@@ -48,7 +48,7 @@ class FornecedorList extends TPage
         $this->form->add($table);
         
         // add a row for the form title
-        $table->addRowSet( new TLabel('Fornecedor') ,'')->class = 'tformtitle'; // CSS class  
+        $table->addRowSet( new TLabel('Consulta Fornecedor') ,'')->class = 'tformtitle'; // CSS class  
         
 
         // create the form fields

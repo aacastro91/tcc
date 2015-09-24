@@ -70,7 +70,7 @@ class SubelementoList extends TPage
         $this->form->add($table);
         
         // add a row for the form title
-        $table->addRowSet( new TLabel('SubElemento') ,'')->class = 'tformtitle'; // CSS class  
+        $table->addRowSet( new TLabel('Consulta SubElemento') ,'')->class = 'tformtitle'; // CSS class  
         
 
         // create the form fields
