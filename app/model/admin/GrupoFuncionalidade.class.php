@@ -1,7 +1,7 @@
 <?php
 /**
  * System_group_program Active Record
- * @author  <your-name-here>
+ * @author  Anderson
  */
 class GrupoFuncionalidade extends TRecord
 {

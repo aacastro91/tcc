@@ -7,7 +7,7 @@ use Adianti\Database\TRepository;
 
 /**
  * System_user Active Record
- * @author  <your-name-here>
+ * @author  Anderson
  */
 class Usuario extends TRecord
 {

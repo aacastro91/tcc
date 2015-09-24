@@ -15,7 +15,7 @@ use Adianti\Widget\Form\TPassword;
 
 /**
  * LoginForm Registration
- * @author  <your name here>
+ * @author  Anderson
  */
 class LoginForm extends TPage {
 

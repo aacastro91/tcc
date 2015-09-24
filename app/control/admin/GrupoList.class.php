@@ -22,7 +22,7 @@ use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * GrupoList Listing
- * @author  <your nome here>
+ * @author  Anderson
  */
 class GrupoList extends TPage
 {

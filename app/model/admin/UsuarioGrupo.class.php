@@ -1,7 +1,7 @@
 <?php
 /**
  * System_user_group Active Record
- * @author  <your-name-here>
+ * @author  Anderson
  */
 class UsuarioGrupo extends TRecord
 {

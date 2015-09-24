@@ -7,7 +7,7 @@ use Adianti\Database\TRepository;
 use Adianti\Registry\TSession;
 /**
  * System_group Active Record
- * @author  <your-name-here>
+ * @author  Anderson
  */
 class Grupo extends TRecord
 {

@@ -1,9 +1,43 @@
 <?php
 
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TDate;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015 Anderson
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /**

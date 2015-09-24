@@ -22,7 +22,7 @@ use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * FuncionalidadeList Listing
- * @author  <your nome here>
+ * @author  Anderson
  */
 class FuncionalidadeList extends TPage
 {

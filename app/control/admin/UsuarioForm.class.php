@@ -22,7 +22,7 @@ use Adianti\Widget\Wrapper\TDBCheckGroup;
 use Adianti\Widget\Wrapper\TDBSeekButton;
 /**
  * UsuarioForm Registration
- * @author  <your nome here>
+ * @author  Anderson
  */
 class UsuarioForm extends TPage
 {

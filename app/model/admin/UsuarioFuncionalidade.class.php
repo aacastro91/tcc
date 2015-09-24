@@ -1,7 +1,7 @@
 <?php
 /**
  * System_user_program Active Record
- * @author  <your-name-here>
+ * @author  Anderson
  */
 class UsuarioFuncionalidade extends TRecord
 {

@@ -19,7 +19,7 @@ use Adianti\Widget\Wrapper\TDBSeekButton;
 
 /**
  * GrupoForm Registration
- * @author  <your nome here>
+ * @author  Anderson
  */
 class GrupoForm extends TPage {
 

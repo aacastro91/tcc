@@ -23,17 +23,29 @@ use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015 Anderson
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /**
- * Description of AprovarCessaoList
+ * Description of AprovarRequisicaoList
  *
  * @author Anderson
  */
-class AprovarCessaoList extends TPage
+class AprovarRequisicaoList extends TPage
 {
     private $form;     // registration form
     private $datagrid; // listing
@@ -49,7 +61,7 @@ class AprovarCessaoList extends TPage
         parent::__construct();
         
         // creates the form
-        $this->form = new TForm('form_Aprovar_Cessao');
+        $this->form = new TForm('form_Aprovar_Requisicao');
         $this->form->class = 'tform'; // CSS class
         
         // creates a table
@@ -60,30 +72,30 @@ class AprovarCessaoList extends TPage
         // add a row for the form title
         $row = $table->addRow();
         $row->class = 'tformtitle'; // CSS class
-        $row->addCell( new TLabel('Aprovar Cessao') )->colspan = 2;
+        $row->addCell( new TLabel('Aprovar Requisicao') )->colspan = 2;
         
 
         // create the form fields
-        $numeroCessao                 = new TEntry('numeroCessao');
+        $numeroProcesso                 = new TEntry('numeroProcesso');
 
 
         // define the sizes
-        $numeroCessao->setSize(200);
+        $numeroProcesso->setSize(200);
 
 
         // add one row for each form field
-        $table->addRowSet( new TLabel('Nº da Cessão:'), $numeroCessao );
+        $table->addRowSet( new TLabel('Nº do Processo:'), $numeroProcesso );
 
 
-        $this->form->setFields(array($numeroCessao));
+        $this->form->setFields(array($numeroProcesso));
 
 
         // keep the form filled during navigation with session data
-        $this->form->setData( TSession::getValue('Cessao_filter_data') );
+        $this->form->setData( TSession::getValue('Requisicao_filter_data') );
         
         // create two action buttons to the form
         $find_button = TButton::create('find', array($this, 'onSearch'), 'Buscar', 'ico_find.png');
-        //$new_button  = TButton::create('new',  array('CessaoForm', 'onEdit'), 'Novo', 'ico_new.png');
+        //$new_button  = TButton::create('new',  array('RequisicaoForm', 'onEdit'), 'Novo', 'ico_new.png');
         
         $this->form->addField($find_button);
         //$this->form->addField($new_button);
@@ -108,20 +120,20 @@ class AprovarCessaoList extends TPage
         // creates the datagrid columns
         $id             = new TDataGridColumn('id', 'ID', 'right', 80);
         $srp            = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
-        $numeroCessao   = new TDataGridColumn('numeroCessao','Nº da cessão', 'left', 250);
+        $numeroProcesso = new TDataGridColumn('numeroProcesso','Nº do processo', 'left', 250);
         $data           = new TDataGridColumn('emissao', 'Data', 'left', 100);
 
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
         $this->datagrid->addColumn($srp);
-        $this->datagrid->addColumn($numeroCessao);
+        $this->datagrid->addColumn($numeroProcesso);
         $this->datagrid->addColumn($data);
 
         
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array($this, 'onQuestionAprovarCessao'));
-        $action1->setLabel('Aprovar Cessao');
+        $action1 = new TDataGridAction(array($this, 'onQuestionAprovarRequisicao'));
+        $action1->setLabel('Aprovar Requisicao');
         $action1->setImage('fa:check fa-fw');
         $action1->setField('id');
        
@@ -137,10 +149,10 @@ class AprovarCessaoList extends TPage
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        //limpar a sessao com detalhes de itens e cessao
-        TSession::delValue('cessao_itens');
+        //limpar a sessao com detalhes de itens e requisicao
+        TSession::delValue('requisicao_itens');
         TSession::delValue('SRP_id');
-        TSession::delValue('form_cessao');
+        TSession::delValue('form_requisicao');
         
         // create the page container
         $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
@@ -152,23 +164,23 @@ class AprovarCessaoList extends TPage
             return;
         }
         
-        $key = $param['cessao'];
+        $key = $param['requisicao'];
         if (!isset($key) || !$key){
             return;
         }
         
         try{
             TTransaction::open('saciq');
-            $Cessao = new Cessao($key);
-            if ($Cessao->aprovado){
-                new TMessage('error', 'Cessão já aprovada');
+            $Requisicao = new Requisicao($key);
+            if ($Requisicao->aprovado){
+                new TMessage('error', 'Requisição já aprovada');
                 $this->onReload();
                 return;
             }
-            $Cessao->aprovado = TRUE;
-            $Cessao->store();            
+            $Requisicao->aprovado = TRUE;
+            $Requisicao->store();            
             TTransaction::close();
-            new TMessage('info', 'Cessão Aprovada com sucesso!');
+            new TMessage('info', 'Requisição Aprovada com sucesso!');
             $this->onReload();
         } catch (Exception $ex) {
             new TMessage('error', $ex->getMessage());
@@ -177,7 +189,7 @@ class AprovarCessaoList extends TPage
         }
     }
     
-    function onQuestionAprovarCessao($param){
+    function onQuestionAprovarRequisicao($param){
         
         if (!isset($param)){
             return;
@@ -190,11 +202,11 @@ class AprovarCessaoList extends TPage
         
         try{
             TTransaction::open('saciq');
-            $Cessao = new Cessao($key);
-            $pergunta = 'Voce realmente quer aprovar a seguinte Cessão?<br>'.
-                    'SRP: ' . $Cessao->srp->numeroSRP .'<br>'.
-                    'Nº Cessão: '. $Cessao->numeroCessao .'<br>'.
-                    'Emissão: ' . TDate::date2br($Cessao->emissao);
+            $Requisicao = new Requisicao($key);
+            $pergunta = 'Voce realmente quer aprovar a seguinte Requisição?<br>'.
+                    'SRP: ' . $Requisicao->srp->numeroSRP .'<br>'.
+                    'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.
+                    'Emissão: ' . TDate::date2br($Requisicao->emissao);
             TTransaction::close();            
         } catch (Exception $ex) {
             new TMessage('error', $ex->getMessage());
@@ -211,7 +223,7 @@ class AprovarCessaoList extends TPage
         //$nao = new TAction(array($this, 'onAction2'));
 
         // define os parâmetros de cada ação
-        $sim->setParameter('cessao', $key);
+        $sim->setParameter('requisicao', $key);
         
         // shows the question dialog
         new TQuestion($pergunta, $sim);
@@ -227,11 +239,11 @@ class AprovarCessaoList extends TPage
         $data = $this->form->getData();
         
         // clear session filters
-        TSession::setValue('CessaoList_filter_numeroCessao',   NULL);
+        TSession::setValue('RequisicaoList_filter_numeroProcesso',   NULL);
 
-        if (isset($data->numeroCessao) AND ($data->numeroCessao)) {
-            $filter = new TFilter('numeroCessao', 'like', "%{$data->numeroCessao}%"); // create the filter
-            TSession::setValue('CessaoList_filter_numeroCessao',   $filter); // stores the filter in the session
+        if (isset($data->numeroProcesso) AND ($data->numeroProcesso)) {
+            $filter = new TFilter('numeroProcesso', 'like', "%{$data->numeroProcesso}%"); // create the filter
+            TSession::setValue('RequisicaoList_filter_numeroProcesso',   $filter); // stores the filter in the session
         }
 
         
@@ -239,7 +251,7 @@ class AprovarCessaoList extends TPage
         $this->form->setData($data);
         
         // keep the search data in the session
-        TSession::setValue('Cessao_filter_data', $data);
+        TSession::setValue('Requisicao_filter_data', $data);
         
         $param=array();
         $param['offset']    =0;
@@ -259,8 +271,8 @@ class AprovarCessaoList extends TPage
             TTransaction::open('saciq');
             //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
             
-            // creates a repository for Cessao
-            $repository = new TRepository('Cessao');
+            // creates a repository for Requisicao
+            $repository = new TRepository('Requisicao');
             $limit = 10;
             // creates a criteria
             $criteria = new TCriteria;
@@ -276,8 +288,8 @@ class AprovarCessaoList extends TPage
             $criteria->add(new TFilter('aprovado', '=', '0'));
             
 
-            if (TSession::getValue('CessaoList_filter_numeroCessao')) {
-                $criteria->add(TSession::getValue('CessaoList_filter_numeroCessao')); // add the session filter
+            if (TSession::getValue('RequisicaoList_filter_numeroProcesso')) {
+                $criteria->add(TSession::getValue('RequisicaoList_filter_numeroProcesso')); // add the session filter
             }
 
             
@@ -345,7 +357,7 @@ class AprovarCessaoList extends TPage
         {
             $key=$param['key']; // get the parameter $key
             TTransaction::open('saciq'); // open a transaction with database
-            $object = new Cessao($key, FALSE); // instantiates the Active Record
+            $object = new Requisicao($key, FALSE); // instantiates the Active Record
             $object->delete(); // deletes the object from the database
             TTransaction::close(); // close the transaction
             $this->onReload( $param ); // reload the listing

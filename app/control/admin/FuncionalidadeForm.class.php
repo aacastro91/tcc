@@ -1,7 +1,7 @@
 <?php
 /**
  * FuncionalidadeForm Registration
- * @author  <your nome here>
+ * @author  Anderson
  */
 class FuncionalidadeForm extends TPage
 {
