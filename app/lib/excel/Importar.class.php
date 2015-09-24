@@ -21,13 +21,13 @@ class Importar {
 
     private $activeSheet = null;
     private $activeRow = 3;
-    private $objReader = null;
+    //private $objReader = null;
     public $dataFile;
     private $referencia;
 
-    public function __construct() {
-        $this->objReader = new PHPExcel_Reader_Excel2007();
-        $this->objReader->setReadDataOnly(true);
+    public function __construct() {        
+        //$this->objReader = new PHPExcel_Reader_Excel2007();
+        //$this->objReader->setReadDataOnly(true);
         
         TTransaction::open('config');
         try {
@@ -54,7 +54,8 @@ class Importar {
     }
 
     public function loadFile($inputFileName) {
-        $this->activeSheet = $this->objReader->load($inputFileName)->getActiveSheet();
+        //$objPHPExcel = 
+        $this->activeSheet = PHPExcel_IOFactory::load($inputFileName)->getActiveSheet(); //$this->objReader->load($inputFileName)->getActiveSheet();
         $linha = 0;
         $coluna = 0;
         //echo '<table>' . "\n"; 
@@ -126,9 +127,8 @@ class Importar {
         if ($this->getFabricante() == '')
             return 'Referencia do campo "FABRICANTE" não encontrada no arquivo';
         if ($this->getMarca() == '')
-            return 'Referencia do campo "MARCA" não encontrada no arquivo';
-        
-        return true;
+            return 'Referencia do campo "MARCA" não encontrada no arquivo';        
+        return '';
     }
 
     private function getColumnCount() {
@@ -160,7 +160,11 @@ class Importar {
     }
 
     private function getColumnByName($name) {
-        $nomeArquivo = $this->referencia[$name];
+        if (isset($this->referencia[$name]))
+            $nomeArquivo = $this->referencia[$name];
+        else
+            $nomeArquivo = $name;
+        
         $row = $this->getRowArray(2);
         for ($i = 0; $i < count($row) - 1; $i++) {
             if ($row[$i] == $nomeArquivo) {

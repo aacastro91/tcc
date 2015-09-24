@@ -85,7 +85,7 @@ class ImportForm extends TPage {
         //criar campo da aba selecao
         $file = new TFile('file');
         $file->addValidation('Arquivo', new TRequiredValidator);
-        $file->setProperty("accept", ".xlsx");
+        $file->setProperty("accept", ".xlsx,.xls");
         $file->setSize('90%');
 
         // itens pagina 1
