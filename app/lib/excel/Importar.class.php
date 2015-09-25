@@ -29,7 +29,7 @@ class Importar {
         //$this->objReader = new PHPExcel_Reader_Excel2007();
         //$this->objReader->setReadDataOnly(true);
         
-        TTransaction::open('config');
+        TTransaction::open('saciq');
         try {
             $this->referencia = array();
             $rep = new TRepository('Referencia');

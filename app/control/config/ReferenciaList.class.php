@@ -193,7 +193,7 @@ class ReferenciaList extends TPage
             $key   = $param['key'];
             $value = $param['value'];
             
-            TTransaction::open('config'); // open a transaction with database
+            TTransaction::open('saciq'); // open a transaction with database
             $object = new Referencia($key); // instantiates the Active Record
             $object->{$field} = $value;
             $object->store(); // update the object in the database
@@ -254,8 +254,8 @@ class ReferenciaList extends TPage
     {
         try
         {
-            // open a transaction with database 'config'
-            TTransaction::open('config');
+            // open a transaction with database 'saciq'
+            TTransaction::open('saciq');
             
             // creates a repository for Referencia
             $repository = new TRepository('Referencia');
@@ -343,7 +343,7 @@ class ReferenciaList extends TPage
         try
         {
             $key=$param['key']; // get the parameter $key
-            TTransaction::open('config'); // open a transaction with database
+            TTransaction::open('saciq'); // open a transaction with database
             $object = new Referencia($key, FALSE); // instantiates the Active Record
             $object->delete(); // deletes the object from the database
             TTransaction::close(); // close the transaction

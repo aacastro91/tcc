@@ -5,17 +5,8 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
 -- Schema saciq
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema saciq
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `saciq` DEFAULT CHARACTER SET utf8 ;
-USE `saciq` ;
 
 -- -----------------------------------------------------
 -- Table `campus`
@@ -33,28 +24,67 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `natureza`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `natureza` ;
+
+CREATE TABLE IF NOT EXISTS `natureza` (
+  `id` INT(11) NOT NULL,
+  `descricao` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `srp`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `srp` ;
+
+CREATE TABLE IF NOT EXISTS `srp` (
+  `id` INT(11) NOT NULL,
+  `numeroSRP` VARCHAR(10) NULL DEFAULT NULL,
+  `numeroIRP` VARCHAR(10) NULL DEFAULT NULL,
+  `numeroProcesso` VARCHAR(20) NULL DEFAULT NULL,
+  `uasg` VARCHAR(10) NULL DEFAULT NULL,
+  `validade` DATE NULL DEFAULT NULL,
+  `nome` VARCHAR(300) NULL DEFAULT NULL,
+  `natureza_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_srp_natureza_idx` (`natureza_id` ASC),
+  UNIQUE INDEX `numeroSRP_UNIQUE` (`numeroSRP` ASC),
+  CONSTRAINT `fk_srp_natureza`
+    FOREIGN KEY (`natureza_id`)
+    REFERENCES `natureza` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `cessao`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `cessao` ;
 
 CREATE TABLE IF NOT EXISTS `cessao` (
-  `id` INT(11) NOT NULL ,
-  `numeroCessao` VARCHAR(30) NULL DEFAULT NULL ,
-  `emissao` DATE NULL DEFAULT NULL ,
-  `aprovado` TINYINT(1) NULL DEFAULT NULL ,
-  `campus_id` INT(11) NOT NULL ,
-  `srp_id` INT(11) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_cessao_campus1_idx` (`campus_id` ASC) ,
-  INDEX `fk_cessao_srp1` (`srp_id` ASC) ,
+  `id` INT(11) NOT NULL,
+  `numeroCessao` VARCHAR(30) NULL DEFAULT NULL,
+  `emissao` DATE NULL DEFAULT NULL,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL,
+  `campus_id` INT(11) NOT NULL,
+  `srp_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_cessao_campus1_idx` (`campus_id` ASC),
+  INDEX `fk_cessao_srp1` (`srp_id` ASC),
   CONSTRAINT `fk_cessao_campus1`
-    FOREIGN KEY (`campus_id` )
-    REFERENCES `campus` (`id` )
+    FOREIGN KEY (`campus_id`)
+    REFERENCES `campus` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_cessao_srp1`
-    FOREIGN KEY (`srp_id` )
-    REFERENCES `srp` (`id` )
+    FOREIGN KEY (`srp_id`)
+    REFERENCES `srp` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 
@@ -125,45 +155,6 @@ CREATE TABLE IF NOT EXISTS `grupo_funcionalidade` (
   CONSTRAINT `fk_grupo_has_funcionalidade_grupo1`
     FOREIGN KEY (`grupo_id`)
     REFERENCES `grupo` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `natureza`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `natureza` ;
-
-CREATE TABLE IF NOT EXISTS `natureza` (
-  `id` INT(11) NOT NULL,
-  `descricao` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`))
-
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `srp`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `srp` ;
-
-CREATE TABLE IF NOT EXISTS `srp` (
-  `id` INT(11) NOT NULL,
-  `numeroSRP` VARCHAR(10) NULL DEFAULT NULL,
-  `numeroIRP` VARCHAR(10) NULL DEFAULT NULL,
-  `numeroProcesso` VARCHAR(20) NULL DEFAULT NULL,
-  `uasg` VARCHAR(10) NULL DEFAULT NULL,
-  `validade` DATE NULL DEFAULT NULL,
-  `nome` VARCHAR(300) NULL DEFAULT NULL,
-  `natureza_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_srp_natureza_idx` (`natureza_id` ASC),
-  UNIQUE INDEX `numeroSRP_UNIQUE` (`numeroSRP` ASC),
-  CONSTRAINT `fk_srp_natureza`
-    FOREIGN KEY (`natureza_id`)
-    REFERENCES `natureza` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 
@@ -260,16 +251,16 @@ DEFAULT CHARACTER SET = utf8;
 DROP TABLE IF EXISTS `requisicao` ;
 
 CREATE TABLE IF NOT EXISTS `requisicao` (
-  `id` INT(11) NOT NULL ,
-  `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL ,
-  `emissao` DATE NULL DEFAULT NULL ,
-  `aprovado` TINYINT(1) NULL DEFAULT NULL ,
-  `srp_id` INT(11) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_requisicao_srp1` (`srp_id` ASC) ,
+  `id` INT(11) NOT NULL,
+  `numeroProcesso` VARCHAR(30) NULL DEFAULT NULL,
+  `emissao` DATE NULL DEFAULT NULL,
+  `aprovado` TINYINT(1) NULL DEFAULT NULL,
+  `srp_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_requisicao_srp1` (`srp_id` ASC),
   CONSTRAINT `fk_requisicao_srp1`
-    FOREIGN KEY (`srp_id` )
-    REFERENCES `srp` (`id` )
+    FOREIGN KEY (`srp_id`)
+    REFERENCES `srp` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 
@@ -374,6 +365,20 @@ CREATE TABLE IF NOT EXISTS `usuario_grupo` (
     ON UPDATE NO ACTION)
 
 DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `referencia`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `referencia` ;
+
+CREATE TABLE IF NOT EXISTS `referencia` (
+  `id` INT NOT NULL,
+  `nome` VARCHAR(100) NULL,
+  `referencia` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `referencia_UNIQUE` (`referencia` ASC));
+
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
