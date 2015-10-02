@@ -105,7 +105,7 @@ class RequisicaoForm extends TPage {
         $new->setAction(new TAction(array($this, 'onEdit')), 'Novo');
         $new->setImage('ico_new.png');
 
-        $list->setAction(new TAction(array('RequisicaoList', 'onReload')), 'Listar');
+        $list->setAction(new TAction(array('RequisicaoList', 'onReload')), 'Voltar para listagem');
         $list->setImage('ico_datagrid.png');
 
         //$onProductChange = new TAction(array($this, 'onProductChange'));
@@ -131,19 +131,26 @@ class RequisicaoForm extends TPage {
         $validadeAta->setEditable(false);
         $valorUnitario->setEditable(false);
         $numeroSRP->setSize(80);
+        $numeroSRP->setMaxLength(10);
         $nome->setSize(300);
         $nome->setProperty('style', 'margin-right: 10px', false);
         $numeroProcessoOrigem->setSize(160);
         $uasg->setSize(70);
         $validadeAta->setSize(85);
+        $numeroProcesso->setMaxLength(30);
         $numeroItem->setSize(60);
+        $numeroItem->setMaxLength(11);
         $descricaoSumaria->setSize(490);
         $descricaoSumaria->setProperty('style', 'margin-right: 10px', false);
         $prazoEntrega->setSize(90);
         $justificativa->setSize(400);
+        $justificativa->setMaxLength(100);
         $validadeAta->setMask('dd/mm/yyyy');
         $quantidade->class = 'frm_number_only';
+        $quantidade->setMaxLength(11);
         $prazoEntrega->setValue('60 Dias');
+        $prazoEntrega->setMaxLength(20);
+        
         $addItem->setProperty('style', 'margin: 0 0 10px 10px;', false);
 
         $row = $table_requisicao->addRow();
@@ -236,6 +243,7 @@ class RequisicaoForm extends TPage {
         $vbox->add($this->datagrid);
         $vbox->add(new TLabel('&nbsp;'));
         $vbox->add($hbox);
+        $vbox->add(new TLabel('&nbsp;'));
         parent::add($vbox);
     }
 

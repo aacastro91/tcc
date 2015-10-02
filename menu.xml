@@ -43,7 +43,7 @@
       </menuitem>
     </menu>
   </menuitem> 
-  <menuitem label='Importação de dados'>
+  <menuitem label='Importar planilha de quantitativos'>
     <icon>fa:file-excel-o fa-fw white</icon>
     <action>ImportForm</action>
   </menuitem>    
@@ -96,11 +96,7 @@
     </menu>
   </menuitem>    
   <menuitem label='Logout'>
-    <menu>
-      <menuitem label='Logout'>
-        <icon></icon>
-        <action>LoginForm#method=onLogout#static=1</action>
-      </menuitem>
-    </menu>
+    <icon>fa:power-off fa-fw white</icon>
+    <action>LoginForm#method=onLogout#static=1</action>
   </menuitem>
 </menu>

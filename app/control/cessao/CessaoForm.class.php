@@ -76,7 +76,7 @@ class CessaoForm extends TPage {
         $uasg = new TEntry('uasg');
         $validadeAta = new TEntry('validade');
         $numeroCessao = new TEntry('numeroCessao');
-        $campusID = new TDBSeekButton('campusID', 'SACIQ', 'form_cessao', 'Campus', 'nome', 'campusID', 'campusNome');
+        $campusID = new TDBSeekButton('campusID', 'saciq', 'form_cessao', 'Campus', 'nome', 'campusID', 'campusNome');
         $campusNome = new TEntry('campusNome');
 
         //campos do itens

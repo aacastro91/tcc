@@ -82,6 +82,8 @@ class RequisicaoList extends TPage
 
         // define the sizes
         $numeroProcesso->setSize(200);
+        
+        $numeroProcesso->setMaxLength(30);
 
 
         // add one row for each form field

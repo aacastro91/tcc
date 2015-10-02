@@ -158,8 +158,13 @@ class SrpSeekRequisicao extends TWindow {
 
             $this->datagrid->clear();
 
+            $hoje = date("Y-m-d");
+            
             if ($srps) {
                 foreach ($srps as $srp) {
+                    if ($srp->validade < $hoje)
+                        continue;
+                    $srp->validade = TDate::date2br($srp->validade);
                     $this->datagrid->addItem($srp);
                 }
             }
@@ -201,6 +206,12 @@ class SrpSeekRequisicao extends TWindow {
             if (count($srps) > 0) {
                 $srp = $srps[0];
             }
+            
+            $hoje = date("Y-m-d");
+            if ($srp->validade < $hoje){
+                new TMessage('error', 'SRP Vencida!');
+                return;
+            }
 
             //TTransaction::close();
 
@@ -233,7 +244,7 @@ class SrpSeekRequisicao extends TWindow {
             TForm::sendData('form_requisicao', $obj);
             TSession::setValue('form_requisicao', $obj);
             if (isset($reloadForm) && ($reloadForm)) {
-                TScript::create("__adianti_load_page2('engine?class=RequisicaoForm');");
+                TScript::create("__adianti_load_page2('engine.php?class=RequisicaoForm');");
                 //new TScript("__adianti_load_page('engine?class=RequisicaoForm');");
             }
             //AdiantiCoreApplication::executeMethod('RequisicaoForm','onReload');

@@ -255,6 +255,10 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[ty
     background-color: #65A63A !important;
 }
 
+.level-1 {
+	background-color: #4E7F2D !important;
+}
+
 #side-menu li a {
     color: white !important;
 }

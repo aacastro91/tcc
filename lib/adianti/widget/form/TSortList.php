@@ -54,6 +54,11 @@ class TSortList extends TField implements AdiantiWidgetInterface
         $this->itemIcon = $icon;
     }
     
+    public function setDefault(){
+        $this->initialItems = array();
+        $this->items = array();
+    }
+    
     /**
      * Define the list size
      */
