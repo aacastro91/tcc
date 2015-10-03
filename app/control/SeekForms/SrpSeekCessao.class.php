@@ -233,7 +233,7 @@ class SrpSeekCessao extends TWindow {
             TForm::sendData('form_cessao', $obj);
             TSession::setValue('form_cessao', $obj);
             if (isset($reloadForm) && ($reloadForm)) {
-                TScript::create("__adianti_load_page2('engine?class=CessaoForm');");
+                TScript::create("__adianti_load_page2('engine.php?class=CessaoForm');");
                 //new TScript("__adianti_load_page('engine?class=CessaoForm');");
             }
             //AdiantiCoreApplication::executeMethod('CessaoForm','onReload');

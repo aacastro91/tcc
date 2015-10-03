@@ -203,6 +203,12 @@ class AprovarRequisicaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Requisicao = new Requisicao($key);
+            $hoje = date("Y-m-d");
+            if ($Requisicao->srp->validade < $hoje){
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }            
+            
             $pergunta = 'Voce realmente quer aprovar a seguinte Requisição?<br>'.
                     'SRP: ' . $Requisicao->srp->numeroSRP .'<br>'.
                     'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.

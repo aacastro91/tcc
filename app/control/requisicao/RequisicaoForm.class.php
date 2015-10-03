@@ -368,14 +368,15 @@ class RequisicaoForm extends TPage {
             $form_requisicao->uasg = '';
             TSession::delValue('requisicao_itens');
             TSession::delValue('form_requisicao');
+            TSession::delValue('SRP_id');
             TForm::sendData('form_requisicao', $form_requisicao);
             $this->onReload();
             return;
         }
         try {
             TTransaction::open('saciq');
-
-            $requisicao = new Requisicao($key);
+            
+            $requisicao = new Requisicao($key);            
             $form_requisicao = new stdClass();
             $form_requisicao->id = $key;
             $form_requisicao->numeroSRP = $requisicao->srp->numeroSRP;

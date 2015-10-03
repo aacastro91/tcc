@@ -2,11 +2,11 @@
 
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
+use Adianti\Core\AdiantiCoreApplication;
 use Adianti\Database\TCriteria;
 use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
-use Adianti\Log\TLoggerTXT;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
@@ -134,13 +134,14 @@ class RequisicaoList extends TPage
 
         
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array('RequisicaoForm', 'onEdit'));
-        $action1->setLabel(_t('Edit'));
+        //$action1 = new TDataGridAction(array('RequisicaoForm', 'onEdit'));
+        $action1 = new TDataGridAction(array($this, 'onCheckValidadeSRP'));
+        $action1->setLabel('Editar');
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
+        $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
         
@@ -164,6 +165,32 @@ class RequisicaoList extends TPage
         // create the page container
         $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
         parent::add($container);
+    }
+    
+    function onCheckValidadeSRP($param){
+        
+        if (isset($param) && isset($param['key']))
+            $key = $param['key'];
+
+        if (!isset($key)) {            
+            return;
+        }
+        
+        try {
+            TTransaction::open('saciq');
+
+            $requisicao = new Requisicao($key);
+            $hoje = date("Y-m-d");
+            if ($requisicao->srp->validade < $hoje){
+                new TMessage('error', 'SRP Vencida!');
+                return;
+            } 
+            AdiantiCoreApplication::loadPage('RequisicaoForm','onEdit',array('key' => $key));
+            
+        } catch (Exception $ex) {
+            TTransaction::rollback();
+            new TMessage('error', 'Erro: ' . $ex->getMessage());
+        }
     }
     
     /**
