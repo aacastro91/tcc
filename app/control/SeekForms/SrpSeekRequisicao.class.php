@@ -213,8 +213,6 @@ class SrpSeekRequisicao extends TWindow {
                 return;
             }
 
-            //TTransaction::close();
-
             $oldSRP = NULL;
             if ($oldSRP != TSession::getValue('SRP_id'))
                 $oldSRP = TSession::getValue('SRP_id');

@@ -203,6 +203,12 @@ class AprovarCessaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Cessao = new Cessao($key);
+            $hoje = date("Y-m-d");
+            if ($Cessao->srp->validade < $hoje){
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }
+            
             $pergunta = 'Voce realmente quer aprovar a seguinte Cessão?<br>'.
                     'SRP: ' . $Cessao->srp->numeroSRP .'<br>'.
                     'Nº Cessão: '. $Cessao->numeroCessao .'<br>'.

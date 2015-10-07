@@ -14,7 +14,17 @@ class TApplication extends AdiantiCoreApplication
             {
                 $funcionalidades = (array)TSession::getValue('funcionalidades');
                 // $programs = (array) TSession::getValue('programs'); // programs with permission
-                $funcionalidades = array_merge($funcionalidades, array('Adianti\Base\TStandardSeek' => TRUE, 'LoginForm' => TRUE, 'AdiantiMultiSearchService' => TRUE, 'AdiantiUploaderService' => TRUE, 'EmptyPage' => TRUE)); // default programs
+                $funcionalidades = array_merge($funcionalidades, 
+                        array('Adianti\Base\TStandardSeek' => TRUE, 
+                            'LoginForm' => TRUE, 
+                            'AdiantiMultiSearchService' => TRUE, 
+                            'AdiantiUploaderService' => TRUE, 
+                            'EmptyPage' => TRUE,
+                            'ItemSeekRequisicao'=> TRUE,
+                            'ItemSeekCessao'=> TRUE,
+                            'SrpSeekRequisicao'=> TRUE,
+                            'SrpSeekCessao'=> TRUE
+                            )); // default programs
                 
                  if( isset($funcionalidades[$class]) )
                 {

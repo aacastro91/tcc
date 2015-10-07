@@ -257,6 +257,13 @@ class ImportForm extends TPage {
             return;
         }
         
+        $hoje = date("Y-m-d");
+        
+        if ($this->importacao->getValidadeAta() < $hoje){
+            new TMessage('error', 'SRP da planilha Vencida!');
+            return;
+        } 
+        
         $this->importacao->setActiveRow(3);
 
         $this->form->setData($data);

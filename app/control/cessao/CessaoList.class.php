@@ -135,7 +135,8 @@ class CessaoList extends TPage
 
         
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array('CessaoForm', 'onEdit'));
+        //$action1 = new TDataGridAction(array('CessaoForm', 'onEdit'));
+        $action1 = new TDataGridAction(array($this, 'onCheckValidadeSRP'));
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
@@ -165,6 +166,32 @@ class CessaoList extends TPage
         // create the page container
         $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
         parent::add($container);
+    }
+    
+    function onCheckValidadeSRP($param){
+        
+        if (isset($param) && isset($param['key']))
+            $key = $param['key'];
+
+        if (!isset($key)) {            
+            return;
+        }
+        
+        try {
+            TTransaction::open('saciq');
+
+            $cessao = new Cessao($key);
+            $hoje = date("Y-m-d");
+            if ($cessao->srp->validade < $hoje){
+                new TMessage('error', 'SRP Vencida!');
+                return;
+            } 
+            AdiantiCoreApplication::loadPage('CessaoForm','onEdit',array('key' => $key));
+            
+        } catch (Exception $ex) {
+            TTransaction::rollback();
+            new TMessage('error', 'Erro: ' . $ex->getMessage());
+        }
     }
     
     /**

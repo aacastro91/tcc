@@ -1,5 +1,27 @@
 <?php
 
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TDate;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+
 /*
  * Copyright (C) 2015 Anderson
  *
@@ -181,6 +203,11 @@ class DesaprovarCessaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Cessao = new Cessao($key);
+            $hoje = date("Y-m-d");
+            if ($Cessao->srp->validade < $hoje){
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }  
             $pergunta = 'Voce realmente quer Desaprovar a seguinte Cessão?<br>'.
                     'SRP: ' . $Cessao->srp->numeroSRP .'<br>'.
                     'Nº Cessão: '. $Cessao->numeroCessao .'<br>'.

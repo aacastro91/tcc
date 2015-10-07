@@ -5,10 +5,6 @@
   </menuitem>
   <menuitem label='Cadastros'>
     <menu>
-      <menuitem label='Funcionalidades'>
-        <icon>fa:file-code-o fa-fw white</icon>
-        <action>FuncionalidadeList</action>
-      </menuitem>
       <menuitem label='Grupos'>
         <icon>fa:users fa-fw white</icon>
         <action>GrupoList</action>
