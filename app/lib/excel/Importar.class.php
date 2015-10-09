@@ -54,19 +54,28 @@ class Importar {
     }
 
     public function loadFile($inputFileName) {
-        //$objPHPExcel = 
         $this->activeSheet = PHPExcel_IOFactory::load($inputFileName)->getActiveSheet(); //$this->objReader->load($inputFileName)->getActiveSheet();
         $linha = 0;
         $coluna = 0;
-        //echo '<table>' . "\n"; 
+        
         foreach ($this->activeSheet->getRowIterator() as $row) {
             //echo '<tr>' . "\n";	
             $coluna = 0;
             $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
+            $cellIterator->setIterateOnlyExistingCells();
             foreach ($cellIterator as $cell) {
-                $this->dataFile[$coluna][$linha] = $cell->getCalculatedValue();
+                if ($coluna == 0){
+                    $value = $cell->getCalculatedValue();
+                    if (!isset($value) || $value == ""){
+                        $fim = true;
+                        break;
+                    }
+                }
+                $this->dataFile[$coluna][$linha] = $cell->getCalculatedValue();                
                 $coluna++;
+            }
+            if (isset($fim) && $fim){
+                break;
             }
             $linha++;
         }
