@@ -335,7 +335,7 @@ class ImportForm extends TPage {
                     $subelemento->store();
                 }
 
-                $fornecedor = $this->LoadObjectByField('fornecedor', 'cnpj', $this->importacao->getCNPJ());
+                $fornecedor = $this->LoadObjectByField('Fornecedor', 'cnpj', $this->importacao->getCNPJ());
                 if (!isset($fornecedor)) {
                     $fornecedor = new Fornecedor();
                     $fornecedor->nome = $this->importacao->getFornecedor();
