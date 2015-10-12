@@ -45,7 +45,7 @@
   </menuitem>    
   <menuitem label='Requisição'>
     <menu>
-      <menuitem label='Requisição de Quantitativo'>
+      <menuitem label='Requisição de Quantitativos'>
         <icon>fa:pencil fa-fw white</icon>
         <action>RequisicaoList</action>
       </menuitem>
@@ -61,7 +61,7 @@
   </menuitem>
   <menuitem label='Cessão'>
     <menu>
-      <menuitem label='Cessão de Quantitativo'>
+      <menuitem label='Cessão de Quantitativos'>
         <icon>fa:pencil fa-fw white</icon>
         <action>CessaoList</action>
       </menuitem>
