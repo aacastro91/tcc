@@ -189,6 +189,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `marca` VARCHAR(80) NULL DEFAULT NULL,
   `valorUnitario` DECIMAL(14,2) NULL DEFAULT NULL,
   `quantidadeDisponivel` INT(11) NULL DEFAULT NULL,
+  `estoqueDisponivel` INT(11) NULL DEFAULT NULL,
   `fabricante` VARCHAR(50) NULL DEFAULT NULL,
   `fornecedor_id` INT(11) NOT NULL,
   `subelemento_id` INT(11) NOT NULL,
