@@ -6,7 +6,6 @@ use Adianti\Database\TCriteria;
 use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
-use Adianti\Log\TLoggerTXT;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
@@ -125,6 +124,7 @@ class CessaoList extends TPage
         $nomeCampus         = new TDataGridColumn('nomeCampus', 'Campus', 'left',250);
         $data           = new TDataGridColumn('emissao', 'Data', 'left', 50);
 
+        $id->setTransformer(array($this, 'rowFormat'));
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
@@ -140,6 +140,7 @@ class CessaoList extends TPage
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
+        $action1->setDisplayCondition(array($this, 'onDisplayConditionEdit'));
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
         $action2->setLabel(_t('Delete'));
@@ -168,6 +169,20 @@ class CessaoList extends TPage
         parent::add($container);
     }
     
+    public function rowFormat($id, $object, $row) {
+        if ($object->srp->estaVencida()) {
+            $row->style = "background: #FFDADE";
+        }
+        return $id;
+    }
+
+    public function onDisplayConditionEdit($object) {
+        if ($object->srp->estaVencida()) {
+            return false;
+        }
+        return true;
+    }
+    
     function onCheckValidadeSRP($param){
         
         if (isset($param) && isset($param['key']))
@@ -181,8 +196,7 @@ class CessaoList extends TPage
             TTransaction::open('saciq');
 
             $cessao = new Cessao($key);
-            $hoje = date("Y-m-d");
-            if ($cessao->srp->validade < $hoje){
+            if ($cessao->srp->estaVencida()){
                 new TMessage('error', 'SRP Vencida!');
                 return;
             } 

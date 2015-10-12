@@ -157,12 +157,10 @@ class SrpSeekCessao extends TWindow {
             $srps = $repository->load($criteria);
 
             $this->datagrid->clear();
-            
-            $hoje = date("Y-m-d");
 
             if ($srps) {
                 foreach ($srps as $srp) {
-                    if ($srp->validade < $hoje)
+                    if ($srp->estaVencida())
                         continue;
                     $srp->validade = TDate::date2br($srp->validade);
                     $this->datagrid->addItem($srp);
@@ -207,8 +205,7 @@ class SrpSeekCessao extends TWindow {
                 $srp = $srps[0];
             }
 
-            $hoje = date("Y-m-d");
-            if ($srp->validade < $hoje){
+            if ($srp->estaVencida()){
                 new TMessage('error', 'SRP Vencida!');
                 return;
             }

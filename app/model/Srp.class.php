@@ -149,4 +149,21 @@ class Srp extends TRecord {
         parent::delete($id);
     }
 
+    /**
+     * Retorna verdadeiro quando uma srp está vencida
+     * @return boolean True = srp vencida; False = srp dentro
+     *      do prazo de validade
+     */
+    public function estaVencida() {
+
+        if (isset($this->validade)) {
+            $hoje = date("Y-m-d");
+            if ($this->validade < $hoje) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
 }

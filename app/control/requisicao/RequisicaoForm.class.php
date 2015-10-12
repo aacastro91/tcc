@@ -194,7 +194,7 @@ class RequisicaoForm extends TPage {
 
         $GnumeroItem = new TDataGridColumn('numeroItem', 'Item', 'center', 50);
         $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição', 'left', 230);
-        $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left', 110);
+        $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'right', 110);
         $GvalorUnitario = new TDataGridColumn('valorUnitario', 'Preço', 'right', 110);
         $Gtotal = new TDataGridColumn('total', 'Total', 'right', 160);
 

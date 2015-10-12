@@ -177,6 +177,7 @@ class CessaoForm extends TPage {
         $box = new THBox();
         $box->add($numeroItem);
         $box->add($descricaoSumaria)->style = 'width : 75%;display:inline-block;';
+        $box->style = 'width : 600px';
         $row->addCell($box); //->style = 'width : 85%';
         $table_itens->addRowSet($item_id);
         $table_itens->addRowSet(new TLabel('Preço:'), $valorUnitario);
@@ -196,7 +197,7 @@ class CessaoForm extends TPage {
 
         $GnumeroItem = new TDataGridColumn('numeroItem', 'Item', 'center', 50);
         $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição', 'left', 230);
-        $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left', 110);
+        $Gquantidade = new TDataGridColumn('quantidade', 'Quantidade', 'right', 110);
         $GvalorUnitario = new TDataGridColumn('valorUnitario', 'Preço', 'right', 110);
         $Gtotal = new TDataGridColumn('total', 'Total', 'right', 160);
 

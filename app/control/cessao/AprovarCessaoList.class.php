@@ -203,8 +203,7 @@ class AprovarCessaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Cessao = new Cessao($key);
-            $hoje = date("Y-m-d");
-            if ($Cessao->srp->validade < $hoje){
+            if ($Cessao->srp->estaVencida()){
                 new TMessage('error', 'SRP já está vencida!');
                 return;
             }
@@ -308,10 +307,11 @@ class AprovarCessaoList extends TPage
                 // iterate the collection of active records
                 foreach ($objects as $object)
                 {
+                    if ($object->srp->estaVencida()){
+                        continue;
+                    } 
                     $object->emissao = TDate::date2br($object->emissao);
-                    $object->numeroSRP = $object->srp->numeroSRP;
-                    
-                    
+                    $object->numeroSRP = $object->srp->numeroSRP;                    
                     $this->datagrid->addItem($object);
                 }
             }

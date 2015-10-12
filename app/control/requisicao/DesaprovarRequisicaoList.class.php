@@ -203,8 +203,7 @@ class DesaprovarRequisicaoList extends TPage
         try{
             TTransaction::open('saciq');
             $Requisicao = new Requisicao($key);
-            $hoje = date("Y-m-d");
-            if ($Requisicao->srp->validade < $hoje){
+            if ($Requisicao->srp->estaVencida()){
                 new TMessage('error', 'SRP já está vencida!');
                 return;
             }  
@@ -299,14 +298,16 @@ class DesaprovarRequisicaoList extends TPage
 
             
             // load the objects according to criteria
-            $objects = $repository->load($criteria, FALSE);
-            
+            $objects = $repository->load($criteria, FALSE);;
             $this->datagrid->clear();
             if ($objects)
             {
                 // iterate the collection of active records
                 foreach ($objects as $object)
                 {
+                    if ($object->srp->estaVencida()){
+                        continue;
+                    }
                     $object->emissao = TDate::date2br($object->emissao);
                     $object->numeroSRP = $object->srp->numeroSRP;
                     
