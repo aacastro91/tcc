@@ -147,7 +147,7 @@ class CessaoForm extends TPage {
         $validadeAta->setMask('dd/mm/yyyy');
         $quantidade->class = 'frm_number_only';
         //$prazoEntrega->setValue('60 Dias');
-        $addItem->setProperty('style', 'margin: 0 0 10px 10px;', false);
+        //$addItem->setProperty('style', 'margin: 0 0 10px 10px;', false);
 
         $row = $table_cessao->addRow();
         $row->class = 'tformtitle'; // CSS class
@@ -184,7 +184,9 @@ class CessaoForm extends TPage {
         $table_itens->addRowSet(new TLabel('Quantidade:'), $quantidade);
         //$table_itens->addRowSet(new TLabel('Prazo de entrega:'), $prazoEntrega);
         //$table_itens->addRowSet(new TLabel('Justificativa:'), $justificativa);
-        $table_itens->addRowSet($addItem);
+        $row = $table_itens->addRow();
+        $row->class = 'tformaction';
+        $row->addCell($addItem)->colspan = 2;
 
         parent::include_css('app/resources/custom-table.css');
         $this->datagrid = new TDataGrid();
@@ -233,15 +235,19 @@ class CessaoForm extends TPage {
         $hbox->add($save);
         $hbox->add($new);
         $hbox->add($list);
+        
+        $table_grid = new TTable();
+        $table_grid->style = 'width: 100%;border-spacing: 0px;';
+        $table_grid->addRowSet($this->datagrid);
+        $row = $table_grid->addRow();
+        $row->class = 'tformaction'; // CSS class
+        $row->addCell($hbox)->colspan = 2;
 
         $vbox = new TVBox;
         $vbox->add($this->form_cessao);
-        //$vbox->add(new TLabel('&nbsp;'));
         $vbox->add($this->form_itens);
-        //$vbox->add(new TLabel('&nbsp;'));
-        $vbox->add($this->datagrid);
+        $vbox->add($table_grid);
         $vbox->add(new TLabel('&nbsp;'));
-        $vbox->add($hbox);
         parent::add($vbox);
     }    
 
@@ -255,8 +261,14 @@ class CessaoForm extends TPage {
 
             $item = new Item($form_item->item_id);
 
-            if ($item->quantidadeDisponivel < $form_item->quantidade) {
-                new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->quantidadeDisponivel);
+            $itens_o = TSession::getValue('cessao_itens_o');
+            if (isset($itens_o[$form_item->numeroItem])){
+                $object = $itens_o[$form_item->numeroItem];
+                $item->estoqueDisponivel = $item->estoqueDisponivel + $object->quantidade;
+            }
+            
+            if ($item->estoqueDisponivel < $form_item->quantidade) {
+                new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->estoqueDisponivel);
                 TTransaction::rollback();
                 return;
             }
@@ -345,9 +357,15 @@ class CessaoForm extends TPage {
         if (!isset($item) && (!$item)) {
             return;
         }
+        
+        $itens = TSession::getValue('cessao_itens_o');
+        if (isset($itens[$numeroItem])){
+            $object = $itens[$numeroItem];
+            $item->estoqueDisponivel = $item->estoqueDisponivel + $object->quantidade;
+        }
 
-        if ($item->quantidadeDisponivel < $quantidade) {
-            new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->quantidadeDisponivel);
+        if ($item->estoqueDisponivel < $quantidade) {
+            new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->estoqueDisponivel);
             return;
         }
     }
@@ -377,6 +395,7 @@ class CessaoForm extends TPage {
             $form_cessao->campusNome = '';
             
             TSession::delValue('cessao_itens');
+            TSession::delValue('cessao_itens_o');
             TSession::delValue('form_cessao');
             TForm::sendData('form_cessao', $form_cessao);
             $this->onReload();
@@ -398,6 +417,7 @@ class CessaoForm extends TPage {
             $form_cessao->campusNome = $cessao->campus->nome;
 
             TSession::delValue('cessao_itens');
+            TSession::delValue('cessao_itens_o');
             TSession::setValue('SRP_id', $cessao->srp->id);
 
             foreach ($cessao->getItems() as $item_cessao) {
@@ -410,8 +430,8 @@ class CessaoForm extends TPage {
                 $item->total              = $item_cessao->total;
                 $itens[$item->numeroItem] = $item;
             }
-
             TSession::setValue('cessao_itens', $itens);
+            TSession::setValue('cessao_itens_o', $itens);
             TSession::setValue('form_cessao', $form_cessao);
 
             TForm::sendData('form_cessao', $form_cessao);

@@ -151,7 +151,7 @@ class RequisicaoForm extends TPage {
         $prazoEntrega->setValue('60 Dias');
         $prazoEntrega->setMaxLength(20);
         
-        $addItem->setProperty('style', 'margin: 0 0 10px 10px;', false);
+        //$addItem->setProperty('style', 'margin: 0 0 10px 10px;', false);
 
         $row = $table_requisicao->addRow();
         $row->class = 'tformtitle'; // CSS class
@@ -181,7 +181,11 @@ class RequisicaoForm extends TPage {
         $table_itens->addRowSet(new TLabel('Quantidade:'), $quantidade);
         $table_itens->addRowSet(new TLabel('Prazo de entrega:'), $prazoEntrega);
         $table_itens->addRowSet(new TLabel('Justificativa:'), $justificativa);
-        $table_itens->addRowSet($addItem);
+        $row = $table_itens->addRow();
+        $row->class = 'tformaction';
+        $row->addCell($addItem)->colspan = 2;
+        
+        //$table_itens->addRowSet($addItem);
 
         parent::include_css('app/resources/custom-table.css');
         $this->datagrid = new TDataGrid();
@@ -234,15 +238,18 @@ class RequisicaoForm extends TPage {
         $hbox->add($save);
         $hbox->add($new);
         $hbox->add($list);
+        
+        $table_grid = new TTable();
+        $table_grid->style = 'width: 100%;border-spacing: 0px;';
+        $table_grid->addRowSet($this->datagrid);
+        $row = $table_grid->addRow();
+        $row->class = 'tformaction'; // CSS class
+        $row->addCell($hbox)->colspan = 2;
 
         $vbox = new TVBox;
         $vbox->add($this->form_requisicao);
-        //$vbox->add(new TLabel('&nbsp;'));
         $vbox->add($this->form_itens);
-        //$vbox->add(new TLabel('&nbsp;'));
-        $vbox->add($this->datagrid);
-        $vbox->add(new TLabel('&nbsp;'));
-        $vbox->add($hbox);
+        $vbox->add($table_grid);
         $vbox->add(new TLabel('&nbsp;'));
         parent::add($vbox);
     }
@@ -257,8 +264,14 @@ class RequisicaoForm extends TPage {
 
             $item = new Item($form_item->item_id);
 
-            if ($item->quantidadeDisponivel < $form_item->quantidade) {
-                new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->quantidadeDisponivel);
+            $itens_o = TSession::getValue('requisicao_itens_o');
+            if (isset($itens_o[$form_item->numeroItem])){
+                $object = $itens_o[$form_item->numeroItem];
+                $item->estoqueDisponivel = $item->estoqueDisponivel + $object->quantidade;
+            }
+        
+            if ($item->estoqueDisponivel < $form_item->quantidade) {
+                new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->estoqueDisponivel);
                 TTransaction::rollback();
                 return;
             }
@@ -338,9 +351,15 @@ class RequisicaoForm extends TPage {
         if (!isset($item) && (!$item)) {
             return;
         }
+        
+        $itens = TSession::getValue('requisicao_itens_o');
+        if (isset($itens[$numeroItem])){
+            $object = $itens[$numeroItem];
+            $item->estoqueDisponivel = $item->estoqueDisponivel + $object->quantidade;
+        }
 
-        if ($item->quantidadeDisponivel < $quantidade) {
-            new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->quantidadeDisponivel);
+        if ($item->estoqueDisponivel < $quantidade) {
+            new TMessage('error', 'Quantidade Indisponível. <br>Disponível: ' . $item->estoqueDisponivel);
             return;
         }
     }
@@ -367,6 +386,7 @@ class RequisicaoForm extends TPage {
             $form_requisicao->nome = '';
             $form_requisicao->uasg = '';
             TSession::delValue('requisicao_itens');
+            TSession::delValue('requisicao_itens_o');
             TSession::delValue('form_requisicao');
             TSession::delValue('SRP_id');
             TForm::sendData('form_requisicao', $form_requisicao);
@@ -387,6 +407,7 @@ class RequisicaoForm extends TPage {
             $form_requisicao->uasg = $requisicao->srp->uasg;
 
             TSession::delValue('requisicao_itens');
+            TSession::delValue('requisicao_itens_o');
             TSession::setValue('SRP_id', $requisicao->srp->id);
 
             foreach ($requisicao->getItems() as $item_requisicao) {
@@ -401,8 +422,8 @@ class RequisicaoForm extends TPage {
                 $item->total = $item_requisicao->total;
                 $itens[$item->numeroItem] = $item;
             }
-
             TSession::setValue('requisicao_itens', $itens);
+            TSession::setValue('requisicao_itens_o', $itens);
             TSession::setValue('form_requisicao', $form_requisicao);
 
             TForm::sendData('form_requisicao', $form_requisicao);
@@ -470,6 +491,7 @@ class RequisicaoForm extends TPage {
             }
 
             TTransaction::open('saciq');
+            //TTransaction::setLogger(new \Adianti\Log\TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
             if ($requisicao_itens) {
                 $id = isset($form_requisicao->id) ? $form_requisicao->id : NULL;
                 $requisicao = new Requisicao($id); // create a new Sale
@@ -481,7 +503,7 @@ class RequisicaoForm extends TPage {
                 }
                 //$requisicao->emissao = //TDate::date2us($form_requisicao->emissao);//date("Y-m-d");
                 $requisicao->aprovado = 0;
-                $requisicao->srp = new Srp(TSession::getValue('SRP_id'));
+                $requisicao->srp = new Srp(TSession::getValue("SRP_id"));
                 foreach ($requisicao_itens as $item) {
                     $item_requisicao = new Item($item->item_id);
                     $item_requisicao->justificativa = $item->justificativa;
@@ -492,7 +514,7 @@ class RequisicaoForm extends TPage {
                     $requisicao->addItem($item_requisicao); // add the item to the Sale
                 }
                 $requisicao->store(); // store the Sale
-
+                    
                 TSession::delValue('requisicao_itens');
                 TSession::delValue('form_requisicao');
                 TSession::delValue('SRP_id');                
