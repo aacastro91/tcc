@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `campus` (
   `nome` VARCHAR(50) NULL DEFAULT NULL,
   `sigla` VARCHAR(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `natureza` (
   `id` INT(11) NOT NULL,
   `descricao` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `srp` (
     REFERENCES `natureza` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `cessao` (
     REFERENCES `srp` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
   `nome` VARCHAR(150) NULL DEFAULT NULL,
   `cnpj` CHAR(14) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `funcionalidade` (
   `classe` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `classe_UNIQUE` (`classe` ASC))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `grupo` (
   `nome` VARCHAR(45) NULL DEFAULT NULL,
   `sigla` VARCHAR(10) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `grupo_funcionalidade` (
     REFERENCES `grupo` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `subelemento` (
   `id` INT(11) NOT NULL,
   `descricao` VARCHAR(150) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `marca` VARCHAR(80) NULL DEFAULT NULL,
   `valorUnitario` DECIMAL(14,2) NULL DEFAULT NULL,
   `quantidadeDisponivel` INT(11) NULL DEFAULT NULL,
-  `estoqueDisponivel` INT(11) NULL DEFAULT NULL,
+  `estoqueDisponivel` INT(11) NULL,
   `fabricante` VARCHAR(50) NULL DEFAULT NULL,
   `fornecedor_id` INT(11) NOT NULL,
   `subelemento_id` INT(11) NOT NULL,
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `item` (
     REFERENCES `subelemento` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `item_cessao` (
     REFERENCES `item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS `requisicao` (
     REFERENCES `srp` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `item_requisicao` (
     REFERENCES `requisicao` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -311,7 +311,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   `email` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `prontuario_UNIQUE` (`prontuario` ASC))
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -338,7 +338,7 @@ CREATE TABLE IF NOT EXISTS `usuario_funcionalidade` (
     REFERENCES `usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -364,7 +364,7 @@ CREATE TABLE IF NOT EXISTS `usuario_grupo` (
     REFERENCES `usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -378,9 +378,103 @@ CREATE TABLE IF NOT EXISTS `referencia` (
   `nome` VARCHAR(100) NULL,
   `referencia` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `referencia_UNIQUE` (`referencia` ASC));
+  UNIQUE INDEX `referencia_UNIQUE` (`referencia` ASC))
+ENGINE = InnoDB;
 
 
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS `item_cessao_BEFORE_DELETE` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_cessao_BEFORE_DELETE`
+BEFORE DELETE ON `saciq`.`item_cessao`
+FOR EACH ROW
+begin
+	set @quantidade = old.quantidade;
+	if (@quantidade <> 0) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` + @quantidade WHERE `id` = old.item_id;
+	end if;
+end$$
+
+
+DROP TRIGGER IF EXISTS `item_cessao_BEFORE_INSERT` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_cessao_BEFORE_INSERT`
+BEFORE INSERT ON `saciq`.`item_cessao`
+FOR EACH ROW
+begin
+	set @quantidade = NEW.quantidade;
+	if (@quantidade <> 0) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` - @quantidade WHERE `id` = new.item_id;
+	end if;
+end$$
+
+
+DROP TRIGGER IF EXISTS `item_cessao_BEFORE_UPDATE` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_cessao_BEFORE_UPDATE`
+BEFORE UPDATE ON `saciq`.`item_cessao`
+FOR EACH ROW
+begin
+	set @quantidade = NEW.quantidade;
+    set @oldQuantidade = OLD.quantidade;
+    
+	if (@quantidade <> @oldQuantidade) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` + @oldQuantidade - @quantidade WHERE `id` = new.item_id;
+	end if;
+
+end$$
+
+
+DROP TRIGGER IF EXISTS `item_requisicao_BEFORE_DELETE` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_requisicao_BEFORE_DELETE`
+BEFORE DELETE ON `saciq`.`item_requisicao`
+FOR EACH ROW
+begin
+	set @quantidade = old.quantidade;
+	if (@quantidade <> 0) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` + @quantidade WHERE `id` = old.item_id;
+	end if;
+end$$
+
+
+DROP TRIGGER IF EXISTS `item_requisicao_BEFORE_INSERT` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_requisicao_BEFORE_INSERT`
+BEFORE INSERT ON `saciq`.`item_requisicao`
+FOR EACH ROW
+begin
+	set @quantidade = NEW.quantidade;
+	if (@quantidade <> 0) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` - @quantidade WHERE `id` = new.item_id;
+	end if;
+end$$
+
+
+DROP TRIGGER IF EXISTS `item_requisicao_BEFORE_UPDATE` $$
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `saciq`.`item_requisicao_BEFORE_UPDATE`
+BEFORE UPDATE ON `saciq`.`item_requisicao`
+FOR EACH ROW
+begin
+	set @quantidade = NEW.quantidade;
+    set @oldQuantidade = OLD.quantidade;
+    
+	if (@quantidade <> @oldQuantidade) then
+		UPDATE `item` SET `estoqueDisponivel` = `estoqueDisponivel` + @oldQuantidade - @quantidade WHERE `id` = new.item_id;
+	end if;
+
+end$$
+
+
+DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
