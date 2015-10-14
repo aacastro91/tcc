@@ -47,6 +47,7 @@ class Item extends TRecord
         parent::addAttribute('marca');
         parent::addAttribute('valorUnitario');
         parent::addAttribute('quantidadeDisponivel');
+        parent::addAttribute('estoqueDisponivel');
         parent::addAttribute('fabricante');
         parent::addAttribute('fornecedor_id');
         parent::addAttribute('subelemento_id');

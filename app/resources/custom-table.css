@@ -1,3 +1,7 @@
+.customized-table{
+  background-color: white;
+}
+
 .customized-table .tdatagrid_col, .tdatagrid_action
 {
   background-color: #5C9735 !important;
