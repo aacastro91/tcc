@@ -263,6 +263,7 @@ class ItemSeekCessao extends TWindow {
 
                 if ($item->estoqueDisponivel == 0) {
                     $obj = new stdClass();
+                    $obj->numeroItem = '';
                     $obj->item_id = '';
                     $obj->descricaoSumaria = '';
                     $obj->valorUnitario = '';

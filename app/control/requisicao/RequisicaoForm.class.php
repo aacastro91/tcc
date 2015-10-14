@@ -75,6 +75,7 @@ class RequisicaoForm extends TPage {
         $uasg = new TEntry('uasg');
         $validadeAta = new TEntry('validade');
         $numeroProcesso = new TEntry('numeroProcesso');
+        $emissao = new TDate('emissao');
 
         //campos do itens
         $numeroItem = new TSeekButton('numeroItem');
@@ -93,6 +94,7 @@ class RequisicaoForm extends TPage {
         //ações dos campos
         $numeroSRP->setAction(new TAction(array(new SrpSeekRequisicao(), 'onReload')));
         $numeroProcesso->setExitAction(new TAction(array($this, 'onExitNumeroProcesso')));
+        $emissao->setExitAction(new TAction(array($this, 'onExitEmissao')));
         $numeroItem->setAction(new TAction(array(new ItemSeekRequisicao(), 'onReload')));
 
 
@@ -115,6 +117,7 @@ class RequisicaoForm extends TPage {
 
         //validadores
         $numeroSRP->addValidation('Nº SRP', new TRequiredValidator());
+        $emissao->addValidation('Emissão', new TRequiredValidator());
         $numeroItem->addValidation('Item', new TRequiredValidator());
         $valorUnitario->addValidation('Preço', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
@@ -145,6 +148,9 @@ class RequisicaoForm extends TPage {
         $prazoEntrega->setSize(90);
         $justificativa->setSize(400);
         $justificativa->setMaxLength(100);
+        $emissao->setSize(90);
+        $emissao->setMask('dd/mm/yyyy');
+        $emissao->setValue(date('d/m/Y'));
         $validadeAta->setMask('dd/mm/yyyy');
         $quantidade->class = 'frm_number_only';
         $quantidade->setMaxLength(11);
@@ -164,6 +170,7 @@ class RequisicaoForm extends TPage {
         $row->addCell($nome);
         $table_requisicao->addRowSet(new TLabel('Proc. Orig:'), $numeroProcessoOrigem, new TLabel('UASG:'), $uasg);
         $table_requisicao->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Nº Processo:'), $numeroProcesso);
+        $table_requisicao->addRowSet(new TLabel('Data Emissão:'), $emissao);
 
         $row = $table_itens->addRow();
         $row->class = 'tformtitle'; // CSS class
@@ -228,7 +235,7 @@ class RequisicaoForm extends TPage {
         $this->datagrid->createModel();
 
 
-        $this->form_requisicao->setFields(array($numeroSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroProcesso, $new, $save, $list));
+        $this->form_requisicao->setFields(array($numeroSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroProcesso, $emissao, $new, $save, $list));
 
         $this->form_itens->setFields(array($item_id, $numeroItem, $descricaoSumaria, $valorUnitario, $quantidade, $prazoEntrega, $justificativa, $addItem));
 
@@ -301,6 +308,15 @@ class RequisicaoForm extends TPage {
             $this->form_itens->setData($this->form_itens->getData());
             $this->form_requisicao->setData($requisicao);
             new TMessage('error', $e->getMessage());
+        }
+    }
+    
+    static public function onExitEmissao($param) {
+        $emissao = $param['emissao'];
+        if (TSession::getValue('form_requisicao')!== NULL && $emissao) {
+            $form_requisicao = TSession::getValue('form_requisicao');
+            $form_requisicao->emissao = $emissao;
+            TSession::setValue('form_requisicao', $form_requisicao);
         }
     }
 
@@ -385,6 +401,7 @@ class RequisicaoForm extends TPage {
             $form_requisicao->validade = '';
             $form_requisicao->nome = '';
             $form_requisicao->uasg = '';
+            $form_requisicao->emissao = date('d/m/Y');
             TSession::delValue('requisicao_itens');
             TSession::delValue('requisicao_itens_o');
             TSession::delValue('form_requisicao');
@@ -405,6 +422,7 @@ class RequisicaoForm extends TPage {
             $form_requisicao->validade = TDate::date2br($requisicao->srp->validade);
             $form_requisicao->nome = $requisicao->srp->nome;
             $form_requisicao->uasg = $requisicao->srp->uasg;
+            $form_requisicao->emissao = TDate::date2br($requisicao->emissao);
 
             TSession::delValue('requisicao_itens');
             TSession::delValue('requisicao_itens_o');
@@ -457,6 +475,7 @@ class RequisicaoForm extends TPage {
                 $form_requisicao->validade = '';
                 $form_requisicao->nome = '';
                 $form_requisicao->uasg = '';
+                $form_requisicao->emissao = date('d/m/Y');
             }
             $this->form_requisicao->sendData('form_requisicao', $form_requisicao);
             $this->datagrid->clear(); // clear datagrid
@@ -481,6 +500,8 @@ class RequisicaoForm extends TPage {
 
             $form_requisicao = TSession::getValue('form_requisicao');
             $form_requisicao->numeroProcesso = $form_requisicao_data->numeroProcesso;
+            $form_requisicao->emissao = $form_requisicao_data->emissao;
+            
 
 
             $requisicao_itens = TSession::getValue('requisicao_itens');
@@ -498,10 +519,10 @@ class RequisicaoForm extends TPage {
                 $requisicao->clearParts();
                 
                 $requisicao->numeroProcesso = $form_requisicao->numeroProcesso;
-                if (!$requisicao->emissao){
-                    $requisicao->emissao = date("Y-m-d");
-                }
-                //$requisicao->emissao = //TDate::date2us($form_requisicao->emissao);//date("Y-m-d");
+                $requisicao->emissao = TDate::date2us($form_requisicao->emissao);
+                //if (!$requisicao->emissao){
+                //    $requisicao->emissao = date("Y-m-d");
+                //}
                 $requisicao->aprovado = 0;
                 $requisicao->srp = new Srp(TSession::getValue("SRP_id"));
                 foreach ($requisicao_itens as $item) {
