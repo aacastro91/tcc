@@ -78,7 +78,7 @@ class ItemSeekRequisicao extends TWindow {
         //criar as colunas da datagrid 
         $GnumeroItem = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
         $GdescricaoSumaria = new TDataGridColumn('descricaoSumaria', 'Descrição Sumária', 'left', 500);
-        $Gquantidade = new TDataGridColumn('quantidadeDisponivel', 'Quantidade', 'right', 70);
+        $Gquantidade = new TDataGridColumn('estoqueDisponivel', 'Quantidade', 'right', 70);
         $GunidadeMedida = new TDataGridColumn('unidadeMedida', 'Unidade', 'left', 50);
         $GvalorUnitario = new TDataGridColumn('valorUnitario', 'Valor Unit.', 'right', 70);
 
@@ -159,7 +159,7 @@ class ItemSeekRequisicao extends TWindow {
     function onReload($param = null) {
         if ($this->message === false)
             return;
-        
+
         try {
 
             //inicia uma transacao no banco
@@ -206,6 +206,9 @@ class ItemSeekRequisicao extends TWindow {
 
             if ($itens) {
                 foreach ($itens as $item) {
+                    if ($item->estoqueDisponivel == 0) {
+                        continue;
+                    }
                     $this->datagrid->addItem($item);
                 }
             }
@@ -229,7 +232,7 @@ class ItemSeekRequisicao extends TWindow {
 
     public function onSelect($param) {
         try {
-            
+
             if (!$param['key'])
                 return;
 
@@ -246,23 +249,40 @@ class ItemSeekRequisicao extends TWindow {
 
             $repository = new TRepository('Item');
             $criteria = new TCriteria();
-            
+
             $criteria->add(new TFilter('numeroItem', '=', $key));
             if (TSession::getValue('SRP_id')) {
                 $criteria->add(new TFilter('srp_id', '=', TSession::getValue('SRP_id')));
             }
 
             $itens = $repository->load($criteria);
-            
-            if (count($itens) > 0){
-                
+
+            if (count($itens) > 0) {
+
                 $item = $itens[0];
+
+                if ($item->estoqueDisponivel == 0) {
+                    $obj = new stdClass();
+                    $obj->item_id = '';
+                    $obj->numeroItem = '';
+                    $obj->descricaoSumaria = '';
+                    $obj->valorUnitario = '';
+                    //$obj->quantidade = '';
+                    $obj->prazoEntrega = '60 Dias';
+                    $obj->justificativa = '';
+                    TForm::sendData('form_itens', $obj);
+                    $this->closeWindow();
+                    new TMessage('error', 'Item sem quantidade disponível');
+                    $this->message = false;
+                    return;
+                }
+
                 $obj = new stdClass();
-                                     
+
                 $obj->item_id = $item->id;
 
-                if (strpos($item->descricaoSumaria,'–')){
-                    $item->descricaoSumaria = str_replace('–','-',$item->descricaoSumaria);
+                if (strpos($item->descricaoSumaria, '–')) {
+                    $item->descricaoSumaria = str_replace('–', '-', $item->descricaoSumaria);
                     $item->store();
                 }
                 $obj->numeroItem = $item->numeroItem;
@@ -270,8 +290,7 @@ class ItemSeekRequisicao extends TWindow {
                 $obj->valorUnitario = $item->valorUnitario;
                 TForm::sendData('form_itens', $obj);
                 parent::closeWindow();
-            }
-            else{
+            } else {
                 $obj = new stdClass();
                 $obj->item_id = '';
                 $obj->numeroItem = '';
