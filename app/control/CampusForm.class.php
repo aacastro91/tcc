@@ -90,7 +90,7 @@ class CampusForm extends TStandardForm
 
         $container = new TTable;
         $container->style = 'width: 80%';
-        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml','FuncionalidadeList'));
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml','CampusList'));
         $container->addRow()->addCell($this->form);
         
         

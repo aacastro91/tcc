@@ -363,6 +363,7 @@ class ImportForm extends TPage {
                 $item->marca = $this->importacao->getMarca();
                 $item->valorUnitario = $this->importacao->getValorUnitarioLicitado();
                 $item->quantidadeDisponivel = $this->importacao->getOrgao(CAMPUS);
+                $item->estoqueDisponivel = $item->quantidadeDisponivel;
                 $item->fabricante = $this->importacao->getFabricante();
                 $item->fornecedor = $fornecedor;
                 $item->subelemento = $subelemento;
