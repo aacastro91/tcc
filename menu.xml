@@ -57,6 +57,10 @@
         <icon>fa:history fa-fw white</icon>
         <action>DesaprovarRequisicaoList</action>
       </menuitem>
+      <menuitem label='Gerar Planilha Requisição'>
+        <icon>fa:file-excel-o fa-fw white</icon>
+        <action>PlanilhaRequisicao</action>
+      </menuitem>
     </menu>
   </menuitem>
   <menuitem label='Cessão'>
