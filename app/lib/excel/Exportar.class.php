@@ -200,6 +200,31 @@ class Exportar {
                     'color' => array('argb' => 'FFFF0000'),
                 ),
             ),
+            
+        );
+
+        $style_subtotal = array(
+            'font' => array(
+                'name' => 'Arial',
+                'size' => 12,
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                'wrap' => true,
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array('argb' => 'FF000000'),
+                ),
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'startcolor' => array(
+                    'argb' => 'FFD9D9D9',
+                ),
+            ),
         );
 
         $sheet->getStyle('A1:W1')->applyFromArray($style_titulo);
@@ -266,25 +291,25 @@ class Exportar {
         $fornecedor_startCel = "S{$row}";
         $fornecedor_endCel = "S{$row}";
         foreach ($this->array_obj as $obj) {
-            if ($fornecedor != $obj->fornecedor){
+            if ($fornecedor != $obj->fornecedor) {
                 $sheet->setCellValueByColumnAndRow(18, $row, "=SUBTOTAL(9,{$fornecedor_startCel}:{$fornecedor_endCel})");
                 $sheet->getStyleByColumnAndRow(18, $row)->getNumberFormat()->setFormatCode('_("R$ "* #.##0,00_);_("R$ "* (#.##0,00);_("R$ "* "-"??_);_(@_)');
                 $sheet->setCellValueByColumnAndRow(19, $row, $fornecedor . ' Total');
-                $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_data);
-                $fornecedor = $obj->fornecedor;                
+                $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_subtotal);
+                $fornecedor = $obj->fornecedor;
                 $row++;
                 $fornecedor_startCel = "S{$row}";
             }
-            $sheet->setCellValueByColumnAndRow( 0, $row, $obj->DataRequisicao);
-            $sheet->setCellValueByColumnAndRow( 1, $row, $obj->NroProcAquisicao);
-            $sheet->setCellValueByColumnAndRow( 2, $row, $obj->NroSrp);
-            $sheet->setCellValueByColumnAndRow( 3, $row, $obj->ProcOrig);
-            $sheet->setCellValueByColumnAndRow( 4, $row, $obj->UASG);
-            $sheet->setCellValueByColumnAndRow( 5, $row, $obj->NomeLicitacao);
-            $sheet->setCellValueByColumnAndRow( 6, $row, $obj->SubElemento);
-            $sheet->setCellValueByColumnAndRow( 7, $row, $obj->ValidadeAta);
-            $sheet->setCellValueByColumnAndRow( 8, $row, $obj->PrazoEntrega);
-            $sheet->setCellValueByColumnAndRow( 9, $row, $obj->EstimativoCampus);
+            $sheet->setCellValueByColumnAndRow(0, $row, $obj->DataRequisicao);
+            $sheet->setCellValueByColumnAndRow(1, $row, $obj->NroProcAquisicao);
+            $sheet->setCellValueByColumnAndRow(2, $row, $obj->NroSrp);
+            $sheet->setCellValueByColumnAndRow(3, $row, $obj->ProcOrig);
+            $sheet->setCellValueByColumnAndRow(4, $row, $obj->UASG);
+            $sheet->setCellValueByColumnAndRow(5, $row, $obj->NomeLicitacao);
+            $sheet->setCellValueByColumnAndRow(6, $row, $obj->SubElemento);
+            $sheet->setCellValueByColumnAndRow(7, $row, $obj->ValidadeAta);
+            $sheet->setCellValueByColumnAndRow(8, $row, $obj->PrazoEntrega);
+            $sheet->setCellValueByColumnAndRow(9, $row, $obj->EstimativoCampus);
             $sheet->setCellValueByColumnAndRow(10, $row, $obj->OrcamentoCampus);
             $sheet->setCellValueByColumnAndRow(11, $row, $obj->CampusDestino);
             $sheet->setCellValueByColumnAndRow(12, $row, $obj->LocalEntrega);
@@ -300,24 +325,24 @@ class Exportar {
             $sheet->setCellValueByColumnAndRow(21, $row, '');
             $sheet->setCellValueByColumnAndRow(22, $row, $obj->justificativa);
             $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_data);
-            
+
             $fornecedor_endCel = "S{$row}";
-            
+
             $row++;
         }
         //$sheet->setCellValueByColumnAndRow(18, $row, "=SUBTOTAL(9;{$fornecedor_startCel}:{$fornecedor_endCel})");
         //$sheet->setCellValueExplicitByColumnAndRow(18, $row, '=SUM(S3:S4)');
         $sheet->setCellValueByColumnAndRow(18, $row, "=SUBTOTAL(9,{$fornecedor_startCel}:{$fornecedor_endCel})");
         $sheet->getStyleByColumnAndRow(18, $row)->getNumberFormat()->setFormatCode('_("R$ "* #.##0,00_);_("R$ "* (#.##0,00);_("R$ "* "-"??_);_(@_)');
-        
+
         $sheet->setCellValueByColumnAndRow(19, $row, $fornecedor . ' Total');
-        $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_data);
+        $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_subtotal);
         $row++;
-        
+
         $sheet->setCellValueByColumnAndRow(18, $row, "=SUBTOTAL(9,S3:{$fornecedor_endCel})");
         $sheet->getStyleByColumnAndRow(18, $row)->getNumberFormat()->setFormatCode('_("R$ "* #.##0,00_);_("R$ "* (#.##0,00);_("R$ "* "-"??_);_(@_)');
         $sheet->setCellValueByColumnAndRow(19, $row, 'Total Geral');
-        $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_data);
+        $sheet->getStyle("A{$row}:W{$row}")->applyFromArray($style_subtotal);
         $row++;
 
         $this->objPHPExcel->setActiveSheetIndex(0);
