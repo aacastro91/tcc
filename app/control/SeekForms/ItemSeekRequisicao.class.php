@@ -64,7 +64,7 @@ class ItemSeekRequisicao extends TWindow {
         //}
 
         $this->form->addQuickField('Nº Item:', $numeroItem, 70);
-        $this->form->addQuickField('Descrição Suária:', $descricaoSumaria, 250);
+        $this->form->addQuickField('Descrição Sumária:', $descricaoSumaria, 250);
         $this->form->addQuickField('Fabricante:', $fabricante, 150);
 
         //adiciona a acao ao formulario

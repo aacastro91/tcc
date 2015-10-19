@@ -131,7 +131,7 @@ class Exportar {
         if (isset($campusRep[0])) {
             $campus = $campusRep[0];
         } else {
-            throw new Exception('Erro na seleção do campus');
+            throw new Exception('Erro na seleção do câmpus');
         }
 
         $cabecalho = "REQUISIÇÕES DA ATA DE REGISTO DE PREÇOS SRP " . $this->array_obj[0]->NroSrp . " (" . $this->array_obj[0]->NomeLicitacao . ") - " . $campus->nome;

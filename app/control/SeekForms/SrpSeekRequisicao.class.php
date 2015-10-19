@@ -51,7 +51,7 @@ class SrpSeekRequisicao extends TWindow {
 
         //adiciona os campos no formulario
         $this->form->addQuickField('Nº SRP', $numeroSRP);
-        $this->form->addQuickField('Nº Processo', $numeroProcesso);
+        $this->form->addQuickField('Proc. Orig.', $numeroProcesso);
         $this->form->addQuickField('Nome', $nome);
 
         //adiciona a acao ao formulario
@@ -63,7 +63,7 @@ class SrpSeekRequisicao extends TWindow {
 
         //criar as colunas da datagrid
         $this->datagrid->addQuickColumn('Nº SRP', 'numeroSRP', 'left', 50);
-        $this->datagrid->addQuickColumn('Nº Processo', 'numeroProcesso', 'left', 80);
+        $this->datagrid->addQuickColumn('Proc. Orig.', 'numeroProcesso', 'left', 80);
         $this->datagrid->addQuickColumn('UASG', 'uasg', 'left', 50);
         $this->datagrid->addQuickColumn('Validade', 'validade', 'left', 70);
         $this->datagrid->addQuickColumn('Nome', 'nome', 'left', 280);

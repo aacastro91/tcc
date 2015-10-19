@@ -124,7 +124,7 @@ class CessaoForm extends TPage {
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TMinValueValidator(), array(1));
         $numeroCessao->addValidation('Nº Cessão', new TRequiredValidator());
-        $campusID->addValidation('Campus', new TRequiredValidator());
+        $campusID->addValidation('Câmpus', new TRequiredValidator());
         $emissao->addValidation('Emissão', new TRequiredValidator());
 
         //outras propriedades
@@ -167,7 +167,7 @@ class CessaoForm extends TPage {
         $table_cessao->addRowSet(new TLabel('Proc. Orig:'), $numeroProcessoOrigem, new TLabel('UASG:'), $uasg);
         $table_cessao->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Nº Cessão:'), $numeroCessao);
         $row = $table_cessao->addRow();
-        $row->addCell(new TLabel('Campus:'));
+        $row->addCell(new TLabel('Câmpus:'));
         $box = new THBox();
         $box->add($campusID);
         $box->add($campusNome)->style = 'width: 75%; display : inline-block;';

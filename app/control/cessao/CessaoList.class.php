@@ -121,7 +121,7 @@ class CessaoList extends TPage
         $id             = new TDataGridColumn('id', 'ID', 'right', 30);
         $srp            = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 50);
         $numeroCessao = new TDataGridColumn('numeroCessao','Nº do processo', 'left', 200);
-        $nomeCampus         = new TDataGridColumn('nomeCampus', 'Campus', 'left',250);
+        $nomeCampus         = new TDataGridColumn('nomeCampus', 'Câmpus', 'left',250);
         $data           = new TDataGridColumn('emissao', 'Data', 'left', 50);
 
         $id->setTransformer(array($this, 'rowFormat'));

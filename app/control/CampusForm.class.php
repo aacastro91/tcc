@@ -46,7 +46,7 @@ class CampusForm extends TStandardForm
         
         // creates the form
         $this->form = new TQuickForm('form_Campus');
-        $this->form->setFormTitle('Cadastro de Campus');
+        $this->form->setFormTitle('Cadastro de Câmpus');
         $this->form->class = 'tform'; // CSS class
         
         parent::setDatabase('saciq');
