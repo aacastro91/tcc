@@ -5,6 +5,10 @@
   </menuitem>
   <menuitem label='Cadastros'>
     <menu>
+      <menuitem label='Campus'>
+        <icon>fa:university fa-fw white</icon>
+        <action>CampusList</action>
+      </menuitem>
       <menuitem label='Grupos'>
         <icon>fa:users fa-fw white</icon>
         <action>GrupoList</action>
@@ -12,14 +16,6 @@
       <menuitem label='Usuários'>
         <icon>fa:user fa-fw white</icon>
         <action>UsuarioList</action>
-      </menuitem>
-      <menuitem label='Campus'>
-        <icon>fa:university fa-fw white</icon>
-        <action>CampusList</action>
-      </menuitem>
-      <menuitem label='Referencia da planilha'>
-        <icon>fa:cog fa-fw white</icon>
-        <action>ReferenciaList</action>
       </menuitem>
     </menu>
   </menuitem>
@@ -39,10 +35,18 @@
       </menuitem>
     </menu>
   </menuitem> 
-  <menuitem label='Importar planilha de quantitativos'>
-    <icon>fa:file-excel-o fa-fw white</icon>
-    <action>ImportForm</action>
-  </menuitem>    
+  <menuitem label='Planilha de Quantitativos'>
+    <menu>
+      <menuitem label='Referencia da planilha'>
+        <icon>fa:cog fa-fw white</icon>
+        <action>ReferenciaList</action>
+      </menuitem>
+      <menuitem label='Importar planilha'>
+        <icon>fa:file-excel-o fa-fw white</icon>
+        <action>ImportForm</action>
+      </menuitem>
+    </menu>
+  </menuitem>
   <menuitem label='Requisição'>
     <menu>
       <menuitem label='Requisição de Quantitativos'>

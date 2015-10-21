@@ -119,8 +119,8 @@ class ReferenciaList extends TPage
         
 
         // creates the datagrid columns
-        $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
-        $referencia   = new TDataGridColumn('referencia', 'Referência', 'left', 300);
+        $nome   = new TDataGridColumn('nome', 'Campo', 'left', 300);
+        $referencia   = new TDataGridColumn('referencia', 'Referência na planilha', 'left', 300);
 
 
         // add the columns to the DataGrid
