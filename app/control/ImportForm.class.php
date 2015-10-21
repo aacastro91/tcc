@@ -45,8 +45,8 @@ use Adianti\Widget\Util\TBreadCrumb;
  */
 class ImportForm extends TPage {
 
+    protected $form;
     private $notebook;
-    private $form;
     private $step;
     private $frmSelecao;
     private $frmImportacao;
@@ -155,8 +155,8 @@ class ImportForm extends TPage {
         $target_file = 'uploads/' . $file;
 
         //$finfo = new finfo(FILEINFO_MIME_TYPE);
-    if (file_exists($source_file)){ //AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        if (file_exists($target_file)) {
+        if (file_exists($source_file)) { //AND $finfo->file($source_file) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            if (file_exists($target_file)) {
                 unlink($target_file);
             }
             rename($source_file, $target_file);
@@ -240,11 +240,11 @@ class ImportForm extends TPage {
         }
 
         $file = $this->checkFile($param['file']);
-        
-        if ($file == false){
+
+        if ($file == false) {
             return;
         }
-        
+
         $data->file = $file;
 
         set_time_limit(0);
@@ -252,18 +252,18 @@ class ImportForm extends TPage {
         $this->importacao = new Importar();
         $this->importacao->loadFile($file);
         $mes = $this->importacao->isValidFile();
-        if ($mes){
-            new TMessage('error', '<b>Error</b>: <br> Arquivo fora do padrão<br>'.$mes);
+        if ($mes) {
+            new TMessage('error', '<b>Error</b>: <br> Arquivo fora do padrão<br>' . $mes);
             return;
         }
-        
+
         $hoje = date("Y-m-d");
-        
-        if ($this->importacao->getValidadeAta() < $hoje){
+
+        if ($this->importacao->getValidadeAta() < $hoje) {
             new TMessage('error', 'SRP da planilha Vencida!');
             return;
-        } 
-        
+        }
+
         $this->importacao->setActiveRow(3);
 
         $this->form->setData($data);
@@ -274,7 +274,7 @@ class ImportForm extends TPage {
             $this->step->select('Importação');
         }
     }
-    
+
     private function LoadObjectByField($model, $field, $value) {
         $repository = new TRepository($model);
         $criteria = new TCriteria();
@@ -288,14 +288,14 @@ class ImportForm extends TPage {
     }
 
     function onImportFile() {
-       
+
         $data = $this->form->getData();
         $this->importacao = new Importar();
         $this->importacao->loadFile($data->file);
         $this->importacao->setActiveRow(3);
         try {
             TTransaction::open('saciq');
-            
+
             $criteria = new TCriteria;
             $criteria->add(new TFilter('numeroSRP', '=', $this->importacao->getNroSRP()));
             $criteria->add(new TFilter('numeroIRP', '=', $this->importacao->getNroIRP()));
@@ -303,13 +303,13 @@ class ImportForm extends TPage {
             $criteria->add(new TFilter('uasg', '=', $this->importacao->getUasgGerenciadora()));
             $criteria->add(new TFilter('validade', '=', $this->importacao->getValidadeAta()));
 
-            $repositorySrp = new TRepository('Srp');           
-            
+            $repositorySrp = new TRepository('Srp');
+
             $count = $repositorySrp->count($criteria);
-            if ($count > 0){
+            if ($count > 0) {
                 $RepSRP = $repositorySrp->load($criteria);
                 $RepSRP[0]->delete();
-            }            
+            }
 
             $srp = null;
 
@@ -351,7 +351,7 @@ class ImportForm extends TPage {
                     $srp->uasg = $this->importacao->getUasgGerenciadora();
                     $srp->validade = $this->importacao->getValidadeAta();
                     $srp->nome = $this->importacao->getNomeProcesso();
-                    $srp->natureza = $natureza;                    
+                    $srp->natureza = $natureza;
                 }
 
                 $item = new Item();
@@ -372,7 +372,7 @@ class ImportForm extends TPage {
                 $this->importacao->nextRow();
             }
             $srp->store();
-            
+
             new TMessage('info', 'Planilha importada com sucesso');
 
             TTransaction::close();

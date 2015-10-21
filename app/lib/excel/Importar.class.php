@@ -33,7 +33,6 @@ class Importar {
 
     private $activeSheet = null;
     private $activeRow = 3;
-    //private $objReader = null;
     public $dataFile;
     private $referencia;
 

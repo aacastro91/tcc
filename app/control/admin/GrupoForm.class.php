@@ -323,6 +323,6 @@ class GrupoForm extends TPage {
         parent::show();
     }
 
-}
+}   
 
 ?>
