@@ -33,6 +33,10 @@
         <icon></icon>
         <action>FornecedorList</action>
       </menuitem>
+      <menuitem label='Consulta SRPs'>
+        <icon></icon>
+        <action>SrpList</action>
+      </menuitem>
     </menu>
   </menuitem> 
   <menuitem label='Planilha de Quantitativos'>
