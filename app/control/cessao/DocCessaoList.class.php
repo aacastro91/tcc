@@ -7,7 +7,6 @@ use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
-use Adianti\Widget\Base\TScript;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Container\TVBox;
@@ -42,314 +41,337 @@ use Adianti\Widget\Form\TLabel;
  */
 
 /**
- * Description of PlanilhaRequisicao
+ * Description of DocCessaoList
  *
  * @author Anderson
  */
-class PlanilhaRequisicao extends TPage
-{
+class DocCessaoList extends TPage {
+
     private $form;     // registration form
     private $datagrid; // listing
     private $pageNavigation;
     private $loaded;
-    
+    private $pdf;
+
     /**
      * Class constructor
      * Creates the page, the form and the listing
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
-        
+
         // creates the form
-        $this->form = new TForm('form_Planilha_Requisicao');
+        $this->form = new TForm('doc_cessao_list');
         $this->form->class = 'tform'; // CSS class
-        
         // creates a table
         $table = new TTable;
-        $table-> width = '100%';
+        $table->width = '100%';
         $this->form->add($table);
-        
+
         // add a row for the form title
         $row = $table->addRow();
         $row->class = 'tformtitle'; // CSS class
-        $row->addCell( new TLabel('Gerar Planilha Requisicao') )->colspan = 2;
-        
+        $row->addCell(new TLabel('Gerar Documentos da Cessão'))->colspan = 2;
+
 
         // create the form fields
-        $numeroProcesso                 = new TEntry('numeroProcesso');
+        $numeroCessao = new TEntry('numeroCessao');
 
 
         // define the sizes
-        $numeroProcesso->setSize(200);
+        $numeroCessao->setSize(200);
 
 
         // add one row for each form field
-        $table->addRowSet( new TLabel('Nº do Processo:'), $numeroProcesso );
+        $table->addRowSet(new TLabel('Nº da Cessão:'), $numeroCessao);
 
 
-        $this->form->setFields(array($numeroProcesso));
+        $this->form->setFields(array($numeroCessao));
 
 
         // keep the form filled during navigation with session data
-        $this->form->setData( TSession::getValue('Requisicao_filter_data') );
-        
+        $this->form->setData(TSession::getValue('Cessao_filter_data'));
+
         // create two action buttons to the form
         $find_button = TButton::create('find', array($this, 'onSearch'), 'Buscar', 'ico_find.png');
-        //$new_button  = TButton::create('new',  array('RequisicaoForm', 'onEdit'), 'Novo', 'ico_new.png');
-        
+        //$new_button  = TButton::create('new',  array('CessaoForm', 'onEdit'), 'Novo', 'ico_new.png');
+
         $this->form->addField($find_button);
         //$this->form->addField($new_button);
-        
+
         $buttons_box = new THBox;
         $buttons_box->add($find_button);
         //$buttons_box->add($new_button);
-        
         // add a row for the form action
         $row = $table->addRow();
         $row->class = 'tformaction'; // CSS class
         $row->addCell($buttons_box)->colspan = 2;
-        
+
         // creates a Datagrid
         parent::include_css('app/resources/custom-table.css');
         $this->datagrid = new TDataGrid;
         $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
         $this->datagrid->disableDefaultClick();
-        
+
 
         // creates the datagrid columns
-        $id             = new TDataGridColumn('id', 'ID', 'right', 80);
-        $srp            = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
-        $numeroProcesso = new TDataGridColumn('numeroProcesso','Nº do processo', 'left', 250);
-        $data           = new TDataGridColumn('emissao', 'Data', 'left', 100);
+        $id = new TDataGridColumn('id', 'ID', 'right', 80);
+        $srp = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
+        $numeroCessao = new TDataGridColumn('numeroCessao', 'Nº da Cessão', 'left', 250);
+        $data = new TDataGridColumn('emissao', 'Data', 'left', 100);
 
 
         // add the columns to the DataGrid
         $this->datagrid->addColumn($id);
         $this->datagrid->addColumn($srp);
-        $this->datagrid->addColumn($numeroProcesso);
+        $this->datagrid->addColumn($numeroCessao);
         $this->datagrid->addColumn($data);
 
-        
+
         // creates two datagrid actions
-        $action1 = new TDataGridAction(array($this, 'onQuestionGerarPlanilha'));
-        $action1->setLabel('Gerar Planilha Requisicao');
-        $action1->setImage('fa:download fa-fw');
+        $action1 = new TDataGridAction(array('DocCessaoForm', 'onReload'));
+        $action1->setLabel('Desaprovar Cessao');
+        $action1->setImage('fa:history fa-fw');
         $action1->setField('id');
-       
-        
+
+
         // add the actions to the datagrid
         $this->datagrid->addAction($action1);
-        
+
         // create the datagrid model
         $this->datagrid->createModel();
-        
+
         // creates the page navigation
         $this->pageNavigation = new TPageNavigation;
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
-        
-        //limpar a sessao com detalhes de itens e requisicao
-        TSession::delValue('requisicao_itens');
+
+        //limpar a sessao com detalhes de itens e cessao
+        TSession::delValue('cessao_itens');
         TSession::delValue('SRP_id');
-        TSession::delValue('form_requisicao');
-        
+        TSession::delValue('form_cessao');
+
         // create the page container
-        $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
+        $container = TVBox::pack($this->form, $this->datagrid, $this->pageNavigation);
         parent::add($container);
     }
-    
-    function onGerar($param){
-        if (!isset($param)){
+
+    function onGerar($param) {
+        if (!isset($param)) {
             return;
         }
-        
-        $key = $param['requisicao'];
-        if (!isset($key) || !$key){
+
+        $key = $param['cessao'];
+        if (!isset($key) || !$key) {
             return;
         }
-        
-        try{
+
+        try {
             TTransaction::open('saciq');
-            $gerarArquivo = new Exportar();
-            $gerarArquivo->loadRequisicao($key);
-            $nome = "planilha_requisicao".date("d-m-Y_H-i-s");
-            $gerarArquivo->createfile($nome);
+            $Cessao = new Cessao($key);
+            if (!$Cessao->aprovado) {
+                new TMessage('error', 'Cessão já Desaprovada');
+                $this->onReload();
+                return;
+            }
             
-            //echo ('<a href="'.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'] . '/' . $_SERVER['CONTEXT_PREFIX'] . '/app/output/' . $nome .'.xlsx">DOWNLOAD</a>');            
-            
-            //download nova pagina
-            TScript::create(' window.open("'. $_SERVER['CONTEXT_PREFIX'] .'/app/output/' . $nome .'.xlsx", "_blank"); ');
-            
+
+
+
+            TTransaction::close();
+            new TMessage('info', 'Cessão Desaprovada com sucesso!');
+            $this->onReload();
+        } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
+            TTransaction::rollback();
+            return;
+        }
+    }
+
+    
+
+    function onQuestionGerar($param) {
+
+        if (!isset($param)) {
+            return;
+        }
+
+        $key = $param['key'];
+        if (!isset($key) || !$key) {
+            return;
+        }
+
+        try {
+            TTransaction::open('saciq');
+            $Cessao = new Cessao($key);
+            if ($Cessao->srp->estaVencida()) {
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }
+            $pergunta = 'Voce realmente deseja gerar o documento da seguinte Cessão?<br>' .
+                    'SRP: ' . $Cessao->srp->numeroSRP . '<br>' .
+                    'Nº Cessão: ' . $Cessao->numeroCessao . '<br>' .
+                    'Emissão: ' . TDate::date2br($Cessao->emissao);
             TTransaction::close();
         } catch (Exception $ex) {
             new TMessage('error', $ex->getMessage());
             TTransaction::rollback();
             return;
         }
-    }
-    
-    function onQuestionGerarPlanilha($param){
-        
-        if (!isset($param)){
+
+        if (!isset($pergunta) || !$pergunta) {
             return;
         }
-        
-        $key = $param['key'];
-        if (!isset($key) || !$key){
-            return;
-        }
-        
-        try{
-            TTransaction::open('saciq');
-            $Requisicao = new Requisicao($key);
-            if ($Requisicao->srp->estaVencida()){
-                new TMessage('error', 'SRP já está vencida!');
-                return;
-            }  
-            $pergunta = 'Voce realmente deseja gerar a planilha da seguinte Requisição?<br>'.
-                    'SRP: ' . $Requisicao->srp->numeroSRP .'<br>'.
-                    'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.
-                    'Emissão: ' . TDate::date2br($Requisicao->emissao);
-            TTransaction::close();            
-        } catch (Exception $ex) {
-            new TMessage('error', $ex->getMessage());
-            TTransaction::rollback();
-            return;
-        }
-        
-        if (!isset($pergunta) || !$pergunta){
-            return;
-        }
-        
-        
+
+
         $sim = new TAction(array($this, 'onGerar'));
         //$nao = new TAction(array($this, 'onAction2'));
-
         // define os parâmetros de cada ação
-        $sim->setParameter('requisicao', $key);
-        
+        $sim->setParameter('cessao', $key);
+
         // shows the question dialog
         new TQuestion($pergunta, $sim);
     }
-    
+
     /**
      * method onSearch()
      * Register the filter in the session when the user performs a search
      */
-    function onSearch()
-    {
+    function onSearch() {
         // get the search form data
         $data = $this->form->getData();
-        
-        // clear session filters
-        TSession::setValue('RequisicaoList_filter_numeroProcesso',   NULL);
 
-        if (isset($data->numeroProcesso) AND ($data->numeroProcesso)) {
-            $filter = new TFilter('numeroProcesso', 'like', "%{$data->numeroProcesso}%"); // create the filter
-            TSession::setValue('RequisicaoList_filter_numeroProcesso',   $filter); // stores the filter in the session
+        // clear session filters
+        TSession::setValue('CessaoList_filter_numeroCessao', NULL);
+
+        if (isset($data->numeroCessao) AND ( $data->numeroCessao)) {
+            $filter = new TFilter('numeroCessao', 'like', "%{$data->numeroCessao}%"); // create the filter
+            TSession::setValue('CessaoList_filter_numeroCessao', $filter); // stores the filter in the session
         }
 
-        
+
         // fill the form with data again
         $this->form->setData($data);
-        
+
         // keep the search data in the session
-        TSession::setValue('Requisicao_filter_data', $data);
-        
-        $param=array();
-        $param['offset']    =0;
-        $param['first_page']=1;
+        TSession::setValue('Cessao_filter_data', $data);
+
+        $param = array();
+        $param['offset'] = 0;
+        $param['first_page'] = 1;
         $this->onReload($param);
     }
-    
+
     /**
      * method onReload()
      * Load the datagrid with the database objects
      */
-    function onReload($param = NULL)
-    {
-        try
-        {
+    function onReload($param = NULL) {
+        try {
             // open a transaction with database 'saciq'
             TTransaction::open('saciq');
             //TTransaction::setLogger(new TLoggerTXT('c:\array\file.txt'));
-            
-            // creates a repository for Requisicao
-            $repository = new TRepository('Requisicao');
+            // creates a repository for Cessao
+            $repository = new TRepository('Cessao');
             $limit = 10;
             // creates a criteria
             $criteria = new TCriteria;
-            
+
             // default order
-            if (empty($param['order']))
-            {
+            if (empty($param['order'])) {
                 $param['order'] = 'id';
                 $param['direction'] = 'asc';
             }
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
             $criteria->add(new TFilter('aprovado', '=', '1'));
-            
 
-            if (TSession::getValue('RequisicaoList_filter_numeroProcesso')) {
-                $criteria->add(TSession::getValue('RequisicaoList_filter_numeroProcesso')); // add the session filter
+
+            if (TSession::getValue('CessaoList_filter_numeroCessao')) {
+                $criteria->add(TSession::getValue('CessaoList_filter_numeroCessao')); // add the session filter
             }
 
-            
+
             // load the objects according to criteria
-            $objects = $repository->load($criteria, FALSE);;
+            $objects = $repository->load($criteria, FALSE);
+
             $this->datagrid->clear();
-            if ($objects)
-            {
+            if ($objects) {
                 // iterate the collection of active records
-                foreach ($objects as $object)
-                {
-                    if ($object->srp->estaVencida()){
+                foreach ($objects as $object) {
+                    if ($object->srp->estaVencida()) {
                         continue;
                     }
                     $object->emissao = TDate::date2br($object->emissao);
                     $object->numeroSRP = $object->srp->numeroSRP;
-                    
-                    
+
+
                     $this->datagrid->addItem($object);
                 }
             }
-            
+
             // reset the criteria for record count
             $criteria->resetProperties();
-            $count= $repository->count($criteria);
-            
+            $count = $repository->count($criteria);
+
             $this->pageNavigation->setCount($count); // count of records
             $this->pageNavigation->setProperties($param); // order, page
             $this->pageNavigation->setLimit($limit); // limit
-            
             // close the transaction
             TTransaction::close();
             $this->loaded = true;
-        }
-        catch (Exception $e) // in case of exception
-        {
+        } catch (Exception $e) { // in case of exception
             // shows the exception error message
             new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
+
             // undo all pending operations
             TTransaction::rollback();
         }
     }
-            
+
+    /**
+     * method onDelete()
+     * executed whenever the user clicks at the delete button
+     * Ask if the user really wants to delete the record
+     */
+    function onDelete($param) {
+        // define the delete action
+        $action = new TAction(array($this, 'Delete'));
+        $action->setParameters($param); // pass the key parameter ahead
+        // shows a dialog to the user
+        new TQuestion(TAdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
+    }
+
+    /**
+     * method Delete()
+     * Delete a record
+     */
+    function Delete($param) {
+        try {
+            $key = $param['key']; // get the parameter $key
+            TTransaction::open('saciq'); // open a transaction with database
+            $object = new Cessao($key, FALSE); // instantiates the Active Record
+            $object->delete(); // deletes the object from the database
+            TTransaction::close(); // close the transaction
+            $this->onReload($param); // reload the listing
+            new TMessage('info', TAdiantiCoreTranslator::translate('Record deleted')); // success message
+        } catch (Exception $e) { // in case of exception
+            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
+            TTransaction::rollback(); // undo all pending operations
+        }
+    }
+
     /**
      * method show()
      * Shows the page
      */
-    function show()
-    {
+    function show() {
         // check if the datagrid is already loaded
-        if (!$this->loaded AND (!isset($_GET['method']) OR $_GET['method'] !== 'onReload') )
-        {
-            $this->onReload( func_get_arg(0) );
+        if (!$this->loaded AND ( !isset($_GET['method']) OR $_GET['method'] !== 'onReload')) {
+            $this->onReload(func_get_arg(0));
         }
         parent::show();
     }
+
 }
