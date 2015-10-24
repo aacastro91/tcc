@@ -138,6 +138,7 @@ class Cessao extends TRecord
         // load the related Item objects
         $repository = new TRepository('ItemCessao');
         $criteria = new TCriteria;
+        $criteria->setProperty('order', 'item_id');
         $criteria->add(new TFilter('cessao_id', '=', $id));
         $cessao_items = $repository->load($criteria);
         if ($cessao_items)

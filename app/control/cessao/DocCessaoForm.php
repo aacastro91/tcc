@@ -152,6 +152,7 @@ class DocCessaoForm extends TPage {
         $this->pdf->AliasNbPages();
         try {
             TTransaction::open('saciq');
+
             $cessao = new Cessao($id);
 
             $memorando = utf8_decode($data->memorando);
@@ -212,8 +213,8 @@ class DocCessaoForm extends TPage {
             //preencher a tabela
             foreach ($cessao->getItems() as $item) {
                 $numeroItem = $item->numeroItem;
-                $descricaoSumaria = $item->descricaoSumaria;
-                $descricaoPosLicitacao = substr($item->descricaoPosLicitacao, 0, 100);
+                $descricaoSumaria = substr($item->descricaoSumaria,0 ,80);
+                $descricaoPosLicitacao = substr($item->descricaoPosLicitacao, 0, 80);
                 $quantidade = $item->quantidade;
 
                 $t1 = $this->pdf->GetStringWidth($descricaoSumaria);
@@ -226,10 +227,10 @@ class DocCessaoForm extends TPage {
                 $atualSize = 0;
                 while (true) {
                     $pos = strpos($text, ' ', $offset);
-                    if ($pos === FALSE){
-                        while ($tamanhoTexto > $tamanhoDesc){
+                    if ($pos === FALSE) {
+                        while ($tamanhoTexto > $tamanhoDesc) {
                             $qtdLinha++;
-                            $tamanhoTexto -= $tamanhoDesc;                            
+                            $tamanhoTexto -= $tamanhoDesc;
                         }
                         break;
                     }
@@ -248,17 +249,18 @@ class DocCessaoForm extends TPage {
 
                 $alturaLinha = 5 * $qtdLinha;
 
-                $this->pdf->MultiCell($width[0], $alturaLinha, utf8_decode($numeroItem), 1, 'C');
+                $this->pdf->MultiCell($width[0], $alturaLinha, utf8_decode($numeroItem), 'LRT', 'C');
                 $this->pdf->SetXY($x += $width[0], $y);
-                $this->pdf->MultiCell($width[1], 5, utf8_decode($descricaoSumaria), 1, 'J');
+                $this->pdf->MultiCell($width[1], 5, utf8_decode($descricaoSumaria), 'LRT', 'J');
                 $this->pdf->SetXY($x += $width[1], $y);
-                $this->pdf->MultiCell($width[2], 5, utf8_decode($descricaoPosLicitacao), 1, 'J');
+                $this->pdf->MultiCell($width[2], 5, utf8_decode($descricaoPosLicitacao), 'LRT', 'J');
                 $this->pdf->SetXY($x += $width[2], $y);
-                $this->pdf->MultiCell($width[3], $alturaLinha, utf8_decode($quantidade), 1, 'C');
+                $this->pdf->MultiCell($width[3], $alturaLinha, utf8_decode($quantidade), 'LRT', 'C');
                 $this->pdf->Ln(0);
                 $y = $this->pdf->GetY();
                 $x = $this->pdf->GetX();
             }
+            $this->pdf->Cell(array_sum($width), 0, '', 'T');
 
 
 
@@ -274,9 +276,9 @@ class DocCessaoForm extends TPage {
             TTransaction::close();
         } catch (Exception $e) {
             TTransaction::rollback();
+            new \Adianti\Widget\Dialog\TMessage('error', $e->getMessage());
         }
     }
-   
 
     function Header() {
         $this->pdf->SetFont('Times', 'B', 12);

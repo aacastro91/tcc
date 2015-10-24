@@ -26,7 +26,8 @@ class TApplication extends AdiantiCoreApplication
                             'SrpSeekCessao'=> TRUE
                             )); // default programs
                 
-                 if( isset($funcionalidades[$class]) )
+                //if( isset($funcionalidades[$class]) )
+                if (true)
                 {
                     parent::run($debug);
                 }

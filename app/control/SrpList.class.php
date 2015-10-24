@@ -229,7 +229,7 @@ class SrpList extends TPage{
         {
             // abre uma transação com o banco 'saciq'
             TTransaction::open('saciq');
-            TTransaction::setLogger(new \Adianti\Log\TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
+            //TTransaction::setLogger(new \Adianti\Log\TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
             // cria um repository para Srp
             $repository = new TRepository('Srp');
             $limit = 10;
