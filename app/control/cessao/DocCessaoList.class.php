@@ -131,8 +131,8 @@ class DocCessaoList extends TPage {
 
         // creates two datagrid actions
         $action1 = new TDataGridAction(array('DocCessaoForm', 'onReload'));
-        $action1->setLabel('Desaprovar Cessao');
-        $action1->setImage('fa:history fa-fw');
+        $action1->setLabel('Gerar Documento');
+        $action1->setImage('fa:file-pdf-o fa-fw');
         $action1->setField('id');
 
 
