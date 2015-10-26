@@ -427,6 +427,8 @@ class RequisicaoForm extends TPage {
             TSession::delValue('requisicao_itens');
             TSession::delValue('requisicao_itens_o');
             TSession::setValue('SRP_id', $requisicao->srp->id);
+            
+            TSeekButton::disableField('form_requisicao', 'numeroSRP');
 
             foreach ($requisicao->getItems() as $item_requisicao) {
                 $item = new stdClass();
