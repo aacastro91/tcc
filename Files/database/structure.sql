@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS `campus` (
   `uasg` varchar(10) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `sigla` varchar(3) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sigla_UNIQUE` (`sigla`))
 
 DEFAULT CHARACTER SET = utf8;
 
@@ -127,9 +128,10 @@ DROP TABLE IF EXISTS `grupo` ;
 
 CREATE TABLE IF NOT EXISTS `grupo` (
   `id` INT(11) NOT NULL,
-  `nome` VARCHAR(45) NULL DEFAULT NULL,
-  `sigla` VARCHAR(10) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  `nome` VARCHAR(45) NOT NULL,
+  `sigla` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sigla_UNIQUE` (`sigla`))
 
 DEFAULT CHARACTER SET = utf8;
 
