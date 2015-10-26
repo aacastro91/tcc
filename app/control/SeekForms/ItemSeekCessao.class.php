@@ -27,7 +27,7 @@ class ItemSeekCessao extends TWindow {
 
     private $form; // form de busca
     private $datagrid; //listagem
-    private $navegadorPagina;
+    //private $navegadorPagina;
     private $carregado;
     private $continue;
     private $message;
@@ -72,8 +72,9 @@ class ItemSeekCessao extends TWindow {
 
         //criar a datagrid
         $this->datagrid = new TDataGrid;
+        $this->datagrid->makeScrollable();
         //$this->datagrid->width = '100%';
-        $this->datagrid->setHeight(300);
+        $this->datagrid->setHeight(400);
 
         //criar as colunas da datagrid 
         $GnumeroItem = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
@@ -101,15 +102,16 @@ class ItemSeekCessao extends TWindow {
 
 
         //criar o navegador de pagina
-        $this->navegadorPagina = new TPageNavigation();
-        $this->navegadorPagina->setAction(new TAction(array($this, 'onReload')));
-        $this->navegadorPagina->setWidth($this->datagrid->getWidth());
+        //$this->navegadorPagina = new TPageNavigation();
+        //$this->navegadorPagina->setAction(new TAction(array($this, 'onReload')));
+        //$this->navegadorPagina->setWidth($this->datagrid->getWidth());
 
         // criar a estrutura da pagina usando uma tabela
         $table = new TTable;
+        $table->style = "width = 100%";
         $table->addRow()->addCell($this->form);
         $table->addRow()->addCell($this->datagrid);
-        $table->addRow()->addCell($this->navegadorPagina);
+        //$table->addRow()->addCell($this->navegadorPagina);
         // add the table inside the page
         parent::add($table);
     }
@@ -150,10 +152,7 @@ class ItemSeekCessao extends TWindow {
         // keep the search data in the session
         TSession::setValue('Item_filter_data', $data);
 
-        $param = array();
-        $param['offset'] = 0;
-        $param['first_page'] = 1;
-        $this->onReload($param);
+        $this->onReload(NULL);
     }
 
     function onReload($param = null) {
@@ -167,7 +166,7 @@ class ItemSeekCessao extends TWindow {
             //TTransaction::setLogger(new TLoggerTXT('C:\array\log.txt'));
 
             $repository = new TRepository('Item');
-            $limit = 10;
+            //$limit = 10;
             $criteria = new TCriteria();
 
             if ((!TSession::getValue('SRP_id')) && (!$this->continue)) {
@@ -181,8 +180,11 @@ class ItemSeekCessao extends TWindow {
                 $criteria->add(new TFilter('srp_id', '=', TSession::getValue('SRP_id')));
             }
 
-            $criteria->setProperties($param);
-            $criteria->setProperty('limit', $limit);
+            //$criteria->setProperties($param);
+            //$criteria->setProperty('limit', $limit);
+            $ord['order'] = 'numeroItem';
+            $ord['direction'] = 'asc';
+            $criteria->setProperties($ord); // order, offset
 
             //filtro do numero srp
             if (TSession::getValue('ItemList_filter_numeroItem')) {
@@ -203,9 +205,14 @@ class ItemSeekCessao extends TWindow {
             $itens = $repository->load($criteria);
 
             $this->datagrid->clear();
-
+            $itens_o = TSession::getValue('cessao_itens_o');
             if ($itens) {
                 foreach ($itens as $item) {
+                    
+                    if (isset($itens_o) && isset($itens_o[$item->numeroItem])) {
+                        $item->estoqueDisponivel += $itens_o[$item->numeroItem]->quantidade;
+                    }
+                    
                     if ($item->estoqueDisponivel == 0) {
                         continue;
                     }
@@ -215,11 +222,11 @@ class ItemSeekCessao extends TWindow {
 
             //reseta as propriedadso do objeto criteria para contar os registros
             $criteria->resetProperties();
-            $count = $repository->count($criteria);
+            //$count = $repository->count($criteria);
 
-            $this->navegadorPagina->setCount($count);
-            $this->navegadorPagina->setProperties($param);
-            $this->navegadorPagina->setLimit($limit);
+            //$this->navegadorPagina->setCount($count);
+            //$this->navegadorPagina->setProperties($param);
+            //$this->navegadorPagina->setLimit($limit);
 
             //fecha a transacao
             TTransaction::close();
@@ -258,9 +265,12 @@ class ItemSeekCessao extends TWindow {
             $itens = $repository->load($criteria);
 
             if (count($itens) > 0) {
-
+                
                 $item = $itens[0];
-
+                $itens_o = TSession::getValue('cessao_itens_o');
+                if (isset($itens_o) && isset($itens_o[$item->numeroItem])) {
+                    $item->estoqueDisponivel += $itens_o[$item->numeroItem]->quantidade;
+                }
                 if ($item->estoqueDisponivel == 0) {
                     $obj = new stdClass();
                     $obj->numeroItem = '';
