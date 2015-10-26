@@ -83,8 +83,7 @@ class DocCessaoForm extends TPage {
         $memorando = new TEntry('memorando');
         //$cidade = new TEntry('cidade');
         $emissao = new TEntry('emissao');
-        //$destino = new TEntry('destino');
-        $campusID = new TDBSeekButton('campusID', 'saciq', 'doc_cessao_form', 'Campus', 'nome', 'campusID', 'campusNome');
+        $campusID = new TEntry('campusID');//TDBSeekButton('campusID', 'saciq', 'doc_cessao_form', 'Campus', 'nome', 'campusID', 'campusNome');
         $campusNome = new TEntry('campusNome');
         $gerente = new TEntry('gerente');
         $diretor = new TEntry('diretor');
@@ -95,6 +94,7 @@ class DocCessaoForm extends TPage {
         //$cidade->setSize(200);
         $emissao->setSize(90);
         $campusID->setSize(50);
+        $campusID->setEditable(false);
         $campusNome->setSize(226);
         $campusNome->setEditable(false);
         $gerente->setSize(300);
@@ -162,6 +162,7 @@ class DocCessaoForm extends TPage {
         //if (!isset($param['key'])){
         //    AdiantiCoreApplication::gotoPage('DocCessaoList'); 
         // }
+        $data = new stdClass();
         if (!isset($param['key'])) {
             return;
         }
@@ -169,6 +170,20 @@ class DocCessaoForm extends TPage {
         $value = $param['key'];
         TSession::setValue('doc_cessao_form_cessao_id', $value);
         $this->loaded = true;
+        
+        if (isset($value)){
+            try {
+                TTransaction::open('saciq');
+                
+                $cessao = new Cessao($value);
+                $data->campusID = $cessao->campus_id;
+                $data->campusNome = $cessao->campus->nome;
+                TTransaction::close();
+            } catch (Exception $e) {
+                TTransaction::rollback();
+            }
+        }
+        $this->form->setData($data);
     }
 
     public function onGenerate($param) {
@@ -211,7 +226,7 @@ class DocCessaoForm extends TPage {
             $campus = $campus_list[0];
 
             $this->cidade = $campus->nome;
-            $destino = $data->campusNome;
+            $destino = strtoupper($data->campusNome);
             $this->gerente = $data->gerente;
             $this->diretor = $data->diretor;
 
