@@ -70,6 +70,7 @@ class RequisicaoForm extends TPage {
 
         //campos da requisicao;
         $numeroSRP = new TSeekButton('numeroSRP');
+        $desabilitaSRP = new THidden('desabilitaSRP');
         $nome = new TEntry('nome');
         $numeroProcessoOrigem = new TEntry('numeroProcessoOrigem');
         $uasg = new TEntry('uasg');
@@ -170,7 +171,7 @@ class RequisicaoForm extends TPage {
         $row->addCell($nome);
         $table_requisicao->addRowSet(new TLabel('Proc. Orig:'), $numeroProcessoOrigem, new TLabel('UASG:'), $uasg);
         $table_requisicao->addRowSet(new TLabel('Validade da Ata:'), $validadeAta, new TLabel('Nº Processo:'), $numeroProcesso);
-        $table_requisicao->addRowSet(new TLabel('Data Emissão:'), $emissao);
+        $table_requisicao->addRowSet(new TLabel('Data Emissão:'), $emissao,$desabilitaSRP);
 
         $row = $table_itens->addRow();
         $row->class = 'tformtitle'; // CSS class
@@ -235,7 +236,7 @@ class RequisicaoForm extends TPage {
         $this->datagrid->createModel();
 
 
-        $this->form_requisicao->setFields(array($numeroSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroProcesso, $emissao, $new, $save, $list));
+        $this->form_requisicao->setFields(array($numeroSRP, $desabilitaSRP, $nome, $numeroProcessoOrigem, $uasg, $validadeAta, $numeroProcesso, $emissao, $new, $save, $list));
 
         $this->form_itens->setFields(array($item_id, $numeroItem, $descricaoSumaria, $valorUnitario, $quantidade, $prazoEntrega, $justificativa, $addItem));
 
@@ -406,6 +407,7 @@ class RequisicaoForm extends TPage {
             TSession::delValue('requisicao_itens_o');
             TSession::delValue('form_requisicao');
             TSession::delValue('SRP_id');
+            TSession::delValue('desabilitaSRP');
             TForm::sendData('form_requisicao', $form_requisicao);
             $this->onReload();
             return;
@@ -429,6 +431,7 @@ class RequisicaoForm extends TPage {
             TSession::setValue('SRP_id', $requisicao->srp->id);
             
             TSeekButton::disableField('form_requisicao', 'numeroSRP');
+            TSession::setValue('desabilitaSRP', true);
 
             foreach ($requisicao->getItems() as $item_requisicao) {
                 $item = new stdClass();
@@ -490,6 +493,16 @@ class RequisicaoForm extends TPage {
                 }
             }
             $this->loaded = true;
+            $v = TSession::getValue('desabilitaSRP');
+            if (!isset($v)) {
+                $v = false;
+            }
+            
+            if ($v == false) {
+                TSeekButton::enableField('form_requisicao', 'numeroSRP');
+            } else {
+                TSeekButton::disableField('form_requisicao', 'numeroSRP');
+            }
         } catch (Exception $e) { // in case of exception
             new TMessage('error', '<b>Error</b> ' . $e);
         }
@@ -540,7 +553,8 @@ class RequisicaoForm extends TPage {
                     
                 TSession::delValue('requisicao_itens');
                 TSession::delValue('form_requisicao');
-                TSession::delValue('SRP_id');                
+                TSession::delValue('SRP_id');
+                TSession::delValue('desabilitaSRP');
 
                 new TMessage('info', 'Requisição salva');
             }
