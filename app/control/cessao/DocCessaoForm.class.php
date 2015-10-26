@@ -339,7 +339,7 @@ class DocCessaoForm extends TPage {
             }
             $this->pdf->Cell(array_sum($width), 0, '', 'T');
 
-            if ($this->pdf->GetY() + $alturaLinha > 85) {
+            if ($this->pdf->GetY() + $alturaLinha > 210) {
                 $this->pdf->AddPage();
                 $this->ImprimiNoRodape = false;
             } else {
