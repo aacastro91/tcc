@@ -85,6 +85,10 @@
         <icon>fa:history fa-fw white</icon>
         <action>DesaprovarCessaoList</action>
       </menuitem>
+      <menuitem label='Gerar Documento de Cessão'>
+        <icon>fa:file-pdf-o fa-fw white</icon>
+        <action>DocCessaoList</action>
+      </menuitem>
     </menu>
   </menuitem>
   <menuitem label='Relatórios'>
