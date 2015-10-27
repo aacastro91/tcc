@@ -11,8 +11,9 @@ if (isset($_GET['file']))
     $content_type_list['rtf']  = 'application/rtf';
     $content_type_list['csv']  = 'application/csv';
     $content_type_list['txt']  = 'text/plain';
+    $content_type_list['xlsx']  = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     
-    if (in_array($extension, array('html', 'pdf', 'rtf', 'csv', 'txt')))
+    if (in_array($extension, array('html', 'pdf', 'rtf', 'csv', 'txt', 'xlsx')))
     {
         $basename  = basename($file);
         

@@ -180,7 +180,8 @@ class PlanilhaRequisicao extends TPage
             //echo ('<a href="'.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'] . '/' . $_SERVER['CONTEXT_PREFIX'] . '/app/output/' . $nome .'.xlsx">DOWNLOAD</a>');            
             
             //download nova pagina
-            TScript::create(' window.open("'. $_SERVER['CONTEXT_PREFIX'] .'/app/output/' . $nome .'.xlsx", "_blank"); ');
+            //TScript::create(' window.open("'. $_SERVER['CONTEXT_PREFIX'] .'/app/output/' . $nome .'.xlsx", "_blank"); ');
+            parent::openFile('app/output/'. $nome .'.xlsx');
             
             TTransaction::close();
         } catch (Exception $ex) {

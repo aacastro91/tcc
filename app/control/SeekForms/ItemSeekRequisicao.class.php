@@ -168,6 +168,7 @@ class ItemSeekRequisicao extends TWindow {
             $repository = new TRepository('Item');
             //$limit = 10;
             $criteria = new TCriteria();
+            $criteria->add(new TFilter('estoqueDisponivel', '>', '0'));
 
             if ((!TSession::getValue('SRP_id')) && (!$this->continue)) {
                 $this->closeWindow();
@@ -213,9 +214,6 @@ class ItemSeekRequisicao extends TWindow {
                         $item->estoqueDisponivel += $itens_o[$item->numeroItem]->quantidade;
                     }
                     
-                    if ($item->estoqueDisponivel == 0) {
-                        continue;
-                    }
                     $this->datagrid->addItem($item);
                 }
             }

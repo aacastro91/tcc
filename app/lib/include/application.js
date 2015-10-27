@@ -2,8 +2,10 @@ loading = true;
 
 function showLoading()
 {
-  if (loading)
+  if (loading){
+    console.log('block');
     __adianti_block_ui('Carregando');
+  }
 }
 
 function frm_number_only_exc() {
@@ -13,21 +15,22 @@ function frm_number_only_exc() {
   } else {
     return false;
   }
-}
+};
 
 Adianti.onBeforeLoad = function ()
 {
   loading = true;
 
+  console.log('start');
   setTimeout(function () {
-    showLoading()
+    showLoading();
   }, 400);
 };
 
 Adianti.onAfterLoad = function ()
 {
   loading = false;
-
+  console.log('unblock');
   __adianti_unblock_ui();
 
   $("input.frm_number_only").keydown(function (event) {
@@ -38,5 +41,5 @@ Adianti.onAfterLoad = function ()
         event.preventDefault();
       }
     }
-  })
+  });
 };

@@ -135,8 +135,8 @@ class CessaoList extends TPage
 
         
         // creates two datagrid actions
-        //$action1 = new TDataGridAction(array('CessaoForm', 'onEdit'));
-        $action1 = new TDataGridAction(array($this, 'onCheckValidadeSRP'));
+        $action1 = new TDataGridAction(array('CessaoForm', 'onEdit'));
+        //$action1 = new TDataGridAction(array($this, 'onCheckValidadeSRP'));
         $action1->setLabel(_t('Edit'));
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
@@ -183,6 +183,7 @@ class CessaoList extends TPage
         return true;
     }
     
+    /*
     function onCheckValidadeSRP($param){
         
         if (isset($param) && isset($param['key']))
@@ -206,7 +207,7 @@ class CessaoList extends TPage
             TTransaction::rollback();
             new TMessage('error', 'Erro: ' . $ex->getMessage());
         }
-    }
+    }*/
     
     /**
      * method onSearch()

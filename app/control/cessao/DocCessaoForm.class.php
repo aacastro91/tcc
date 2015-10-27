@@ -169,6 +169,7 @@ class DocCessaoForm extends TPage {
 
         $value = $param['key'];
         TSession::setValue('doc_cessao_form_cessao_id', $value);
+        $data->cessao_id = $value;
         $this->loaded = true;
         
         if (isset($value)){
