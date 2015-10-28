@@ -195,9 +195,7 @@ class DocCessaoForm extends TPage {
         $this->U = 0;
         $this->HREF = '';
 
-        $data = $this->form->getData();
-        
-        
+        $data = $this->form->getData();        
         
         $id = $data->cessao_id;
         $this->pdf = new FPDF();
