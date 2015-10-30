@@ -62,8 +62,8 @@ class SrpSeekCessao extends TWindow {
         $this->datagrid->setHeight(300);
 
         //criar as colunas da datagrid
-        $this->datagrid->addQuickColumn('Nº SRP', 'numeroSRP', 'left', 50);
-        $this->datagrid->addQuickColumn('Proc. Orig.', 'numeroProcesso', 'left', 80);
+        $this->datagrid->addQuickColumn('Nº SRP', 'numeroSRP', 'left', 45);
+        $this->datagrid->addQuickColumn('Proc. Orig.', 'numeroProcesso', 'left', 140);
         $this->datagrid->addQuickColumn('UASG', 'uasg', 'left', 50);
         $this->datagrid->addQuickColumn('Validade', 'validade', 'left', 70);
         $this->datagrid->addQuickColumn('Nome', 'nome', 'left', 280);
@@ -154,14 +154,14 @@ class SrpSeekCessao extends TWindow {
             if (TSession::getValue('srp_nome_filter')) {
                 $criteria->add(TSession::getValue('srp_nome_filter'));
             }
+            
+            $criteria->add(new TFilter('validade', '>=' , date("Y-m-d") ));
             $srps = $repository->load($criteria);
 
             $this->datagrid->clear();
 
             if ($srps) {
                 foreach ($srps as $srp) {
-                    if ($srp->estaVencida())
-                        continue;
                     $srp->validade = TDate::date2br($srp->validade);
                     $this->datagrid->addItem($srp);
                 }

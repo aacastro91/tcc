@@ -154,11 +154,12 @@ class Srp extends TRecord {
      * @return boolean True = srp vencida; False = srp dentro
      *      do prazo de validade
      */
-    public function estaVencida() {
+    public function estaVencida($data = NULL) {
 
-        if (isset($this->validade)) {
+        $validade = ($data === NULL) ? $this->validade : $data;
+        if (isset($validade)) {
             $hoje = date("Y-m-d");
-            if ($this->validade < $hoje) {
+            if ($validade < $hoje) {
                 return true;
             }
             return false;

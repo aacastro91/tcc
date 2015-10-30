@@ -13,7 +13,6 @@ use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridAction;
 use Adianti\Widget\Datagrid\TDataGridColumn;
-use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Dialog\TQuestion;
 use Adianti\Widget\Form\TButton;
@@ -49,7 +48,6 @@ class DocCessaoList extends TPage {
 
     private $form;     // registration form
     private $datagrid; // listing
-    private $pageNavigation;
     private $loaded;
     private $pdf;
 
@@ -112,6 +110,7 @@ class DocCessaoList extends TPage {
         $this->datagrid = new TDataGrid;
         $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
+        $this->datagrid->makeScrollable();
         $this->datagrid->disableDefaultClick();
 
 
@@ -142,10 +141,6 @@ class DocCessaoList extends TPage {
         // create the datagrid model
         $this->datagrid->createModel();
 
-        // creates the page navigation
-        $this->pageNavigation = new TPageNavigation;
-        $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
-        $this->pageNavigation->setWidth($this->datagrid->getWidth());
 
         //limpar a sessao com detalhes de itens e cessao
         TSession::delValue('cessao_itens');
@@ -153,7 +148,7 @@ class DocCessaoList extends TPage {
         TSession::delValue('form_cessao');
 
         // create the page container
-        $container = TVBox::pack($this->form, $this->datagrid, $this->pageNavigation);
+        $container = TVBox::pack($this->form, $this->datagrid);
         parent::add($container);
     }
 
@@ -305,19 +300,10 @@ class DocCessaoList extends TPage {
                     }
                     $object->emissao = TDate::date2br($object->emissao);
                     $object->numeroSRP = $object->srp->numeroSRP;
-
-
                     $this->datagrid->addItem($object);
                 }
             }
 
-            // reset the criteria for record count
-            $criteria->resetProperties();
-            $count = $repository->count($criteria);
-
-            $this->pageNavigation->setCount($count); // count of records
-            $this->pageNavigation->setProperties($param); // order, page
-            $this->pageNavigation->setLimit($limit); // limit
             // close the transaction
             TTransaction::close();
             $this->loaded = true;

@@ -121,7 +121,7 @@ class SrpList extends TPage{
         $validade   = new TDataGridColumn('validade', 'Validade', 'left', 100);
         $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
         
-        $numeroSRP->setTransformer(array($this, 'rowFormat'));
+        $validade->setTransformer(array($this, 'rowFormat'));
 
 
         // adiciona as colunas ao datagrid
@@ -316,12 +316,12 @@ class SrpList extends TPage{
         }
     }
     
-    public function rowFormat($id, $object, $row) {
+    public function rowFormat($date, $object, $row) {
         
-        if ($object->estaVencida()) {
+        if ($object->estaVencida(TDate::date2us($date))) {
             $row->style = "background: #FFDADE";
         }
-        return $id;
+        return $date;
     }
     
     /**

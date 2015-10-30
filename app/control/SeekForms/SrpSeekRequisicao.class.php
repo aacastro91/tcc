@@ -6,6 +6,7 @@ use Adianti\Database\TCriteria;
 use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
+use Adianti\Log\TLoggerTXT;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Base\TScript;
 use Adianti\Widget\Container\TTable;
@@ -135,7 +136,7 @@ class SrpSeekRequisicao extends TWindow {
         try {
             //inicia uma transacao no banco
             TTransaction::open('saciq');
-
+            TTransaction::setLogger(new TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
             $repository = new TRepository('Srp');
             $limit = 10;
             $criteria = new TCriteria();
@@ -154,14 +155,13 @@ class SrpSeekRequisicao extends TWindow {
             if (TSession::getValue('srp_nome_filter')) {
                 $criteria->add(TSession::getValue('srp_nome_filter'));
             }
+            $criteria->add(new TFilter('validade', '>=' , date("Y-m-d") ));
             $srps = $repository->load($criteria);
 
             $this->datagrid->clear();
             
             if ($srps) {
                 foreach ($srps as $srp) {
-                    if ($srp->estaVencida())
-                        continue;
                     $srp->validade = TDate::date2br($srp->validade);
                     $this->datagrid->addItem($srp);
                 }
