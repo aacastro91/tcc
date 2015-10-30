@@ -98,7 +98,7 @@ class LoginForm extends TPage {
    */
   function onLogin() {
     try {
-      TTransaction::open('saciq');
+      TTransaction::open('login');
       $data = $this->form->getData('StdClass');
       $this->form->validate();
       $user = Usuario::autenticar($data->prontuario, $data->senha);
@@ -112,7 +112,7 @@ class LoginForm extends TPage {
         TSession::setValue('prontuario', $user->prontuario);
         TSession::setValue('funcionalidades', $funcionalidades);
 
-        TApplication::gotoPage('EmptyPage'); // reload
+        TApplication::gotoPage('Home'); // reload
       }
       TTransaction::close();
     } catch (Exception $e) {
