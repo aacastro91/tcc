@@ -51,6 +51,7 @@ class SrpList extends TPage{
     
     function __construct() {
         parent::__construct();
+        parent::include_css('app/resources/custom-table.css');
         
         //criar o form
         $this->form = new TForm('form_consulta_srp');
@@ -108,6 +109,7 @@ class SrpList extends TPage{
         
         // cria o datagrid
         $this->datagrid = new TDataGrid;
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->setHeight(320);
         
 

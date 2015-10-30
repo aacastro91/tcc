@@ -49,6 +49,7 @@ class SrpFormView extends TPage {
 
     function __construct() {
         parent::__construct();
+        parent::include_css('app/resources/custom-table.css');
 
         //cria o formulario
         $this->form = new TForm('SrpFormView');
@@ -110,9 +111,10 @@ class SrpFormView extends TPage {
 
         //criar a datagrid
         $this->datagrid = new TDataGrid;
+        $this->datagrid->class = 'tdatagrid_table customized-table';
         $this->datagrid->makeScrollable();
         $this->datagrid->disableDefaultClick();
-        $this->datagrid->setHeight(300);
+        $this->datagrid->setHeight(180);
 
         //criar as colunas da datagrid 
         $GnumeroItem = new TDataGridColumn('numeroItem', 'Nº Item', 'left', 50);
