@@ -1,7 +1,7 @@
 <menu>
   <menuitem label='Home'>
     <icon></icon>
-    <action>CommonPage</action>
+    <action>Home</action>
   </menuitem>
   <menuitem label='Cadastros'>
     <menu>
