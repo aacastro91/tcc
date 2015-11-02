@@ -43,7 +43,7 @@ class Home extends TPage{
     private $loaded;
     
     private $dg_UltImportacao;
-    private $dg_AtasAVencer;
+    private $dg_SRPAVencer;
     private $dg_UltRequisicao;
     private $dg_UltCesssao;
     
@@ -69,16 +69,16 @@ class Home extends TPage{
         $lbUI = new TLabel('<B>Últimas Importações</B>');
         $lbUR = new TLabel('<B>Últimas Requisições</B>');
         $lbUC = new TLabel('<B>Últimas Cessões</B>');
-        $lbAV = new TLabel('<B>Atas a Vencer</B>');
+        $lbSV = new TLabel('<B>SRP a Vencer</B>');
         
         $lbUI->setFontSize(16);
         $lbUR->setFontSize(16);
         $lbUC->setFontSize(16);
-        $lbAV->setFontSize(16);
+        $lbSV->setFontSize(16);
         $lbUI->style = "padding-top : 10px;";
         $lbUR->style = "padding-top : 10px;";
         $lbUC->style = "padding-top : 10px;";
-        $lbAV->style = "padding-top : 10px;";
+        $lbSV->style = "padding-top : 10px;";
         $row->addCell($lbUI);
         $row->addCell(new TLabel('&nbsp;'));
         $row->addCell($lbUR);        
@@ -87,12 +87,12 @@ class Home extends TPage{
         $this->dg_UltImportacao = new TDataGrid;
         $this->dg_UltRequisicao = new TDataGrid;
         $this->dg_UltCesssao    = new TDataGrid;
-        $this->dg_AtasAVencer   = new TDataGrid;
+        $this->dg_SRPAVencer   = new TDataGrid;
         
         $this->dg_UltImportacao->class = 'tdatagrid_table customized-table';
         $this->dg_UltRequisicao->class = 'tdatagrid_table customized-table';
         $this->dg_UltCesssao->class = 'tdatagrid_table customized-table';
-        $this->dg_AtasAVencer->class = 'tdatagrid_table customized-table';
+        $this->dg_SRPAVencer->class = 'tdatagrid_table customized-table';
         
         //$this->dg_UltImportacao->style = 'width : 100%';
         //$this->dg_UltRequisicao->style = 'width : 100%';
@@ -102,17 +102,17 @@ class Home extends TPage{
         $this->dg_UltImportacao->setHeight(320);
         $this->dg_UltRequisicao->setHeight(320);
         $this->dg_UltCesssao->setHeight(320);
-        $this->dg_AtasAVencer->setHeight(320);
+        $this->dg_SRPAVencer->setHeight(320);
         
         $this->dg_UltImportacao->makeScrollable();
         $this->dg_UltRequisicao->makeScrollable();
         $this->dg_UltCesssao->makeScrollable();
-        $this->dg_AtasAVencer->makeScrollable();
+        $this->dg_SRPAVencer->makeScrollable();
         
         $this->dg_UltImportacao->disableDefaultClick();
         $this->dg_UltRequisicao->disableDefaultClick();
         $this->dg_UltCesssao->disableDefaultClick();
-        $this->dg_AtasAVencer->disableDefaultClick();
+        $this->dg_SRPAVencer->disableDefaultClick();
         
         //Ultimas Importações
         $numeroSRP   = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 70);
@@ -147,13 +147,13 @@ class Home extends TPage{
         $uasg   = new TDataGridColumn('uasg', 'UASG', 'left', 50);
         $validade   = new TDataGridColumn('validade', 'Validade', 'left', 100);
         $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
-        $this->dg_AtasAVencer->addColumn($numeroSRP);
-        $this->dg_AtasAVencer->addColumn($numeroIRP);
-        $this->dg_AtasAVencer->addColumn($numeroProcesso);
-        $this->dg_AtasAVencer->addColumn($nome);
-        $this->dg_AtasAVencer->addColumn($uasg);
-        $this->dg_AtasAVencer->addColumn($validade);
-        $this->dg_AtasAVencer->createModel();
+        $this->dg_SRPAVencer->addColumn($numeroSRP);
+        $this->dg_SRPAVencer->addColumn($numeroIRP);
+        $this->dg_SRPAVencer->addColumn($numeroProcesso);
+        $this->dg_SRPAVencer->addColumn($nome);
+        $this->dg_SRPAVencer->addColumn($uasg);
+        $this->dg_SRPAVencer->addColumn($validade);
+        $this->dg_SRPAVencer->createModel();
         
         //Ultimas Cessões
         $srp = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 100);
@@ -172,10 +172,10 @@ class Home extends TPage{
         $row->addCell(new TLabel('&nbsp;'))->colspan = 3;
         
         $row = $table->addRow();
-        $row->addCell($lbAV);
+        $row->addCell($lbSV);
         $row->addCell(new TLabel('&nbsp;'));
         $row->addCell($lbUC);
-        $table->addRowSet($this->dg_AtasAVencer,new TLabel('&nbsp;'),$this->dg_UltCesssao);
+        $table->addRowSet($this->dg_SRPAVencer,new TLabel('&nbsp;'),$this->dg_UltCesssao);
         
         $container = TVBox::pack( $this->form);
         parent::add($container);
@@ -187,7 +187,7 @@ class Home extends TPage{
         $this->dg_UltImportacao->clear();
         $this->dg_UltRequisicao->clear();
         $this->dg_UltCesssao->clear();
-        $this->dg_AtasAVencer->clear();
+        $this->dg_SRPAVencer->clear();
         
         try {
             TTransaction::open('saciq');
@@ -235,7 +235,7 @@ class Home extends TPage{
             foreach ($atasAVencer as $atas)
             {
                 $atas->validade = TDate::date2br($atas->validade);
-                $this->dg_AtasAVencer->addItem($atas);
+                $this->dg_SRPAVencer->addItem($atas);
             }
             
             //ultimas Cessões
