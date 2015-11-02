@@ -29,7 +29,7 @@ class TDateValidator extends TFieldValidator
         
         if (!checkdate((int) $month, (int) $day, (int) $year))
         {
-            throw new Exception("The field $label is not a valid date ($mask)");
+            throw new Exception("O Campo $label não é uma data válida ($mask)");
         }
     }
 }

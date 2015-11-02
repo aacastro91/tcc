@@ -191,7 +191,7 @@ class Home extends TPage{
         
         try {
             TTransaction::open('saciq');
-            TTransaction::setLogger(new TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
+            //TTransaction::setLogger(new TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
             //ultimas importações
             $criteriaUI = new TCriteria();
             $param['order'] = 'id';
@@ -262,24 +262,6 @@ class Home extends TPage{
             TTransaction::rollback();
         }
 
-
-
-
-
-
-/*
-
-
-        $obj = new stdClass();
-        $obj->numeroSRP = '22/1234';
-        $obj->numeroIRP = '123456';
-        $obj->numeroProcesso = '9876543210123';
-        $obj->nome= 'nome teste';
-        $obj->uasg = '150213';
-        $obj->validade = '01/01/2016';
-        
-        $this->dg_ultimasImportações->clear();
-        $this->dg_ultimasImportações->addItem($obj);*/
     }
 
     

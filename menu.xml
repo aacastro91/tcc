@@ -95,7 +95,7 @@
     <menu>
       <menuitem label='Itens requeridos'>
         <icon></icon>
-        <action>CommonPage</action>
+        <action>RequisicaoReport</action>
       </menuitem>
       <menuitem label='Itens cedidos'>
         <icon></icon>

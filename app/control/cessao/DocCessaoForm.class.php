@@ -83,7 +83,7 @@ class DocCessaoForm extends TPage {
         $memorando = new TEntry('memorando');
         //$cidade = new TEntry('cidade');
         $emissao = new TEntry('emissao');
-        $campusID = new TEntry('campusID');//TDBSeekButton('campusID', 'saciq', 'doc_cessao_form', 'Campus', 'nome', 'campusID', 'campusNome');
+        $campusID = new TEntry('campusID'); //TDBSeekButton('campusID', 'saciq', 'doc_cessao_form', 'Campus', 'nome', 'campusID', 'campusNome');
         $campusNome = new TEntry('campusNome');
         $gerente = new TEntry('gerente');
         $diretor = new TEntry('diretor');
@@ -103,14 +103,14 @@ class DocCessaoForm extends TPage {
         //mascara
         $emissao->setMask('dd/mm/yyyy');
         $emissao->setValue(date('d/m/Y'));
-        
+
         //validadores
         $memorando->addValidation('Memorando', new TRequiredValidator());
         $emissao->addValidation('Emissão', new TRequiredValidator());
         $campusID->addValidation('Destino', new TRequiredValidator());
         $gerente->addValidation('Gerente Administrativo(a)', new TRequiredValidator());
         $diretor->addValidation('Diretor(a) Geral', new TRequiredValidator());
-        
+
         $value = TSession::getValue('doc_cessao_form_cessao_id');
         if (isset($value)) {
             $cessao_id->setValue($value);
@@ -171,11 +171,11 @@ class DocCessaoForm extends TPage {
         TSession::setValue('doc_cessao_form_cessao_id', $value);
         $data->cessao_id = $value;
         $this->loaded = true;
-        
-        if (isset($value)){
+
+        if (isset($value)) {
             try {
                 TTransaction::open('saciq');
-                
+
                 $cessao = new Cessao($value);
                 $data->campusID = $cessao->campus_id;
                 $data->campusNome = $cessao->campus->nome;
@@ -195,20 +195,20 @@ class DocCessaoForm extends TPage {
         $this->U = 0;
         $this->HREF = '';
 
-        $data = $this->form->getData();        
-        
+        $data = $this->form->getData();
+
         $id = $data->cessao_id;
         $this->pdf = new FPDF();
         $this->pdf->AliasNbPages();
         setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
         try {
             TTransaction::open('saciq');
-            $this->form->validate(); 
-            
+            $this->form->validate();
+
             $cessao = new Cessao($id);
             $itens_list = $cessao->getItems();
-            
-            if (count($itens_list) == 0){
+
+            if (count($itens_list) == 0) {
                 new TMessage('error', 'Nenhum item encontrado na cessão');
                 $this->form->sendData('doc_cessao_form', $data);
                 return;
@@ -276,7 +276,7 @@ class DocCessaoForm extends TPage {
             $this->pdf->ln(0);
             $y = $this->pdf->GetY();
             $x = $this->pdf->GetX();
-            
+
 
             usort($itens_list, array("DocCessaoForm", "cmp"));
 
@@ -349,10 +349,14 @@ class DocCessaoForm extends TPage {
             $this->Footer();
 
 
-            $this->pdf->Output('app/output/doc.pdf');
+            if (!file_exists("app/output/doc.pdf") OR is_writable("app/output/doc.pdf")) {
+                $this->pdf->Output("app/output/doc.pdf");
+            } else {
+                throw new Exception('Permissão negada' . ': ' . "app/output/doc.pdf");
+            }
+            
             parent::openFile('app/output/doc.pdf');
             $this->form->sendData('doc_cessao_form', $data);
-
 
             TTransaction::close();
         } catch (Exception $e) {
