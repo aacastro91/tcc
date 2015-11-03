@@ -260,8 +260,8 @@ class GrupoForm extends TPage {
             TTransaction::close(); // close the transaction
             new TMessage('info', 'Registro salvo'); // shows the success message
         } catch (Exception $e) { // Em caso de erro
-            if (strpos($e->getMessage(), 'Integrity constraint violation')) {
-                $posi = strpos($e->getMessage(), 'Duplicate entry ') + strlen('Duplicate entry ') + 1;
+            if ($e->getCode() == 23000 ) {
+                /*$posi = strpos($e->getMessage(), 'Duplicate entry ') + strlen('Duplicate entry ') + 1;
                 $posf = strpos($e->getMessage(), '\' for key');
                 $str = substr($e->getMessage(), $posi, 3);
 
@@ -269,12 +269,14 @@ class GrupoForm extends TPage {
                 $grupo = new Grupo($idGrupo);
                 $idFuncionalidade = substr($str, strpos($str, '-') + 1);
                 $funcionalidade = new Funcionalidade($idFuncionalidade);
-
-
                 new TMessage('error', '<b>Registro duplicado</b><br>A funcionalidade "' . $funcionalidade->nome . '" já foi registrada no grupo ' . $grupo->nome);
+                 */
+                
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique se a sigla já não foi registrada em outro grupo');
+                
             } else {
 
-                new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
             }
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();

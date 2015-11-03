@@ -5,7 +5,7 @@
   </menuitem>
   <menuitem label='Cadastros'>
     <menu>
-      <menuitem label='Campus'>
+      <menuitem label='Câmpus'>
         <icon>fa:university fa-fw white</icon>
         <action>CampusList</action>
       </menuitem>
@@ -99,7 +99,7 @@
       </menuitem>
       <menuitem label='Itens cedidos'>
         <icon></icon>
-        <action>CommonPage</action>
+        <action>CessaoReport</action>
       </menuitem>
       <menuitem label='SRPs'>
         <icon></icon>

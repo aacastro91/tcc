@@ -35,11 +35,11 @@ use Adianti\Widget\Form\TRadioGroup;
  */
 
 /**
- * Description of RequisicaoReport
+ * Description of CessaoReport
  *
  * @author Anderson
  */
-class RequisicaoReport extends TPage {
+class CessaoReport extends TPage {
 
     protected $form; // form
     private $pdf;
@@ -53,7 +53,7 @@ class RequisicaoReport extends TPage {
         parent::__construct();
 
         // creates the form
-        $this->form = new TForm('form_Requisicao_report');
+        $this->form = new TForm('form_Cessao_report');
         $this->form->class = 'tform'; // CSS class
         $this->form->style = 'width: 500px';
 
@@ -65,21 +65,21 @@ class RequisicaoReport extends TPage {
         $this->form->add($table);
 
         // define the form title
-        $row = $table->addRow(); //Set( new TLabel('Relatório de Requisição'), '', '','', '' )->class = 'tformtitle';
+        $row = $table->addRow(); //Set( new TLabel('Relatório de Cessão'), '', '','', '' )->class = 'tformtitle';
         $row->class = 'tformtitle';
-        $row->addCell(new TLabel('Relatório de Requisição'))->colspan = 5;
+        $row->addCell(new TLabel('Relatório de Cessão'))->colspan = 5;
 
         // create the form fields
-        $numeroProcessoI = new TEntry('numeroProcessoI');
-        $numeroProcessoF = new TEntry('numeroProcessoF');
+        $numeroCessaoI = new TEntry('numeroCessaoI');
+        $numeroCessaoF = new TEntry('numeroCessaoF');
         $emissaoI = new TEntry('emissaoI');
         $emissaoF = new TEntry('emissaoF');
         $aprovado = new TRadioGroup('aprovado');
 
 
         // define the sizes
-        $numeroProcessoI->setSize(100);
-        $numeroProcessoF->setSize(100);
+        $numeroCessaoI->setSize(100);
+        $numeroCessaoF->setSize(100);
         $emissaoI->setSize(85);
         $emissaoF->setSize(85);
         //$aprovado->setSize(90);
@@ -96,13 +96,13 @@ class RequisicaoReport extends TPage {
 
 
         // add one row for each form field
-        $table->addRowSet(new TLabel('Nº Processo'), new TLabel('De:'), $numeroProcessoI, new TLabel('Até'), $numeroProcessoF);
+        $table->addRowSet(new TLabel('Nº Cessão'), new TLabel('De:'), $numeroCessaoI, new TLabel('Até'), $numeroCessaoF);
         $table->addRowSet(new TLabel('Emissão'), new TLabel('De:'), $emissaoI, new TLabel('Até'), $emissaoF);
         $row = $table->addRow(); //Set( new TLabel('Aprovado:'), $aprovado );
         $row->addCell(new TLabel('Aprovado:'));
         $row->addCell($aprovado)->colspan = 4;
 
-        $this->form->setFields(array($numeroProcessoI, $numeroProcessoF, $emissaoI, $emissaoF, $aprovado));
+        $this->form->setFields(array($numeroCessaoI, $numeroCessaoF, $emissaoI, $emissaoF, $aprovado));
 
 
         $aprovado->addItems(array('1' => 'Sim', '0' => 'Não', '%' => 'Todos'));
@@ -121,7 +121,7 @@ class RequisicaoReport extends TPage {
 
     function header() {
         $this->pdf->SetFont('Times', 'B', 18);
-        $this->pdf->Cell(0, 5, utf8_decode('Relatório de Requisição'), 0, 1, 'L');
+        $this->pdf->Cell(0, 5, utf8_decode('Relatório de Cessão'), 0, 1, 'L');
         $this->pdf->ln(2);
         $this->pdf->Cell(0, 0, '', 'T', 1);
     }
@@ -131,29 +131,48 @@ class RequisicaoReport extends TPage {
         $this->pdf->Cell(0, 5, utf8_decode(date('d/m/Y h:i:s')), 'T');
     }
 
-    function requisicaoHeader() {
+    function cessaoHeader() {
         $this->pdf->Cell(0, 0, '', 'T', 1);
         $this->pdf->SetFont('Times', 'B', 12);
-        $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nº Processo: ')), 5, utf8_decode('Nº Processo:'), 0, 0, 'L');
+        $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nº Cessão: ')), 5, utf8_decode('Nº Cessão:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
-        $this->pdf->Cell(50, 5, utf8_decode($this->data->numeroProcesso), 0, 0, 'L');
+        $this->pdf->Cell(40, 5, utf8_decode($this->data->numeroCessao), 0, 0, 'L');
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Emissão: ')), 5, utf8_decode('Emissão:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
-        $this->pdf->Cell(50, 5, utf8_decode(TDate::date2br($this->data->emissao)), 0, 0, 'L');
+        $this->pdf->Cell(25, 5, utf8_decode(TDate::date2br($this->data->emissao)), 0, 0, 'L');
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Aprovado: ')), 5, utf8_decode('Aprovado:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
-        $this->pdf->Cell(50, 5, utf8_decode(($this->data->aprovado == 1) ? 'Sim' : 'Não'), 0, 1, 'L');
-
+        $this->pdf->Cell(15, 5, utf8_decode(($this->data->aprovado == 1) ? 'Sim' : 'Não'), 0, 0, 'L');
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nº SRP: ')), 5, utf8_decode('Nº SRP:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
-        $this->pdf->Cell(50, 5, utf8_decode($this->data->srp->numeroSRP), 0, 0, 'L');
+        $this->pdf->Cell(25, 5, utf8_decode($this->data->srp->numeroSRP), 0, 1, 'L');
+
+
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nome: ')), 5, utf8_decode('Nome:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
-        $this->pdf->Cell(50, 5, utf8_decode($this->data->srp->nome), 0, 1, 'L');
+
+        $nome = $this->data->srp->nome;
+        while ($this->pdf->GetStringWidth(utf8_decode($nome)) > 90) {
+            $nome = substr($nome, 0, -1);
+        }
+        $this->pdf->Cell(95, 5, utf8_decode($nome), 0, 0, 'L');
+        
+        $this->pdf->SetFont('Times', 'B', 12);
+        $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Câmpus Destino: ')), 5, utf8_decode('Câmpus Destino:'), 0, 0, 'L');
+        $this->pdf->SetFont('Times', '', 12);
+        
+        $campus = $this->data->campus->nome;
+        while ($this->pdf->GetStringWidth(utf8_decode($campus)) > 49) {
+            $campus = substr($campus, 0, -1);
+        }
+        $this->pdf->Cell(0, 5, utf8_decode($campus), 0, 1, 'L');
+        
+        
+        
         $this->pdf->Cell(0, 0, '', 'T', 1);
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell(20, 5, utf8_decode('Nº Item'), 0, 0, 'L');
@@ -164,7 +183,7 @@ class RequisicaoReport extends TPage {
         $this->pdf->Cell(0, 0, '', 'T', 1);
     }
 
-    function requisicaoItens() {
+    function cessaoItens() {
         $itens = $this->data->getItems();
 
         $totalItem = 0;
@@ -196,7 +215,7 @@ class RequisicaoReport extends TPage {
         $this->pdf->Cell(0, 0, '', 'T', 1);
         $this->pdf->Cell(15, 5, '', 0, 0);
         $this->pdf->Cell(50, 5, utf8_decode('Quantidade de Itens: ' . $totalItem), 0, 0);
-        $this->pdf->Cell(0, 5, utf8_decode('Total da Requisição: ' . utf8_decode(number_format($ValorTotal, 2, ',', '.'))), 0, 1, 'R');
+        $this->pdf->Cell(0, 5, utf8_decode('Total da Cessão: ' . utf8_decode(number_format($ValorTotal, 2, ',', '.'))), 0, 1, 'R');
         $this->pdf->Cell(0, 0, '', 'T', 1);
         $this->pdf->ln(15);
     }
@@ -221,16 +240,16 @@ class RequisicaoReport extends TPage {
             } else {
                 $emissaoI = TDate::date2us($emissaoI);
             }
-            
+
 
             $this->form->validate();
 
 
-            $repository = new TRepository('Requisicao');
+            $repository = new TRepository('Cessao');
             $criteria = new TCriteria;
 
-            if ($formdata->numeroProcessoI && $formdata->numeroProcessoF) {
-                $criteria->add(new TFilter('numeroProcesso', 'BETWEEN', "{$formdata->numeroProcessoI}", "{$formdata->numeroProcessoF}"));
+            if ($formdata->numeroCessaoI && $formdata->numeroCessaoF) {
+                $criteria->add(new TFilter('numeroCessao', 'BETWEEN', "{$formdata->numeroCessaoI}", "{$formdata->numeroCessaoF}"));
             }
             if ($formdata->emissaoI && $formdata->emissaoF) {
                 $criteria->add(new TFilter('emissao', 'between', "{$emissaoI}", "{$emissaoF}"));
@@ -240,8 +259,8 @@ class RequisicaoReport extends TPage {
             }
 
 
-            $requisicoes = $repository->load($criteria, true);
-            if ($requisicoes) {
+            $cessoes = $repository->load($criteria, true);
+            if ($cessoes) {
 
                 $this->pdf = new FPDF();
                 $this->pdf->AliasNbPages();
@@ -249,19 +268,19 @@ class RequisicaoReport extends TPage {
                 $this->pdf->setHeaderCallback(array($this, 'header'));
                 $this->pdf->setFooterCallback(array($this, 'footer'));
                 $this->pdf->AddPage();
-                foreach ($requisicoes as $requisicao) {
-                    $this->data = $requisicao;
-                    $this->requisicaoHeader();
-                    $this->requisicaoItens();
+                foreach ($cessoes as $cessao) {
+                    $this->data = $cessao;
+                    $this->cessaoHeader();
+                    $this->cessaoItens();
                 }
 
-                if (!file_exists("app/output/RelatorioRequisicao.pdf") OR is_writable("app/output/RelatorioRequisicao.pdf")) {
-                    $this->pdf->Output("app/output/RelatorioRequisicao.pdf");
+                if (!file_exists("app/output/RelatorioCessao.pdf") OR is_writable("app/output/RelatorioCessao.pdf")) {
+                    $this->pdf->Output("app/output/RelatorioCessao.pdf");
                 } else {
-                    throw new Exception('Permissão negada' . ': ' . "app/output/RelatorioRequisicao.pdf");
+                    throw new Exception('Permissão negada' . ': ' . "app/output/RelatorioCessao.pdf");
                 }
 
-                parent::openFile("app/output/RelatorioRequisicao.pdf");
+                parent::openFile("app/output/RelatorioCessao.pdf");
 
                 //new TMessage('info', 'Relatório gerado. Por favor, habilite o pop-up do seu browser.');
             } else {

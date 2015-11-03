@@ -259,7 +259,7 @@ class DocCessaoForm extends TPage {
             $this->pdf->Ln(15);
             $this->pdf->SetX(21);
             $this->WriteHTML(utf8_decode("1.Conforme solicitação, autorizamos a utilização do quantitativo abaixo referido," .
-                            "referente a estimativa do Campus Capivari para a <B>SRP {$srp} - {$natureza} - {$nomeSrp}</B>"));
+                            "referente a estimativa do Câmpus Capivari para a <B>SRP {$srp} - {$natureza} - {$nomeSrp}</B>"));
             $this->pdf->Ln(10);
 
             //cabecalho da tabela
