@@ -103,7 +103,7 @@
       </menuitem>
       <menuitem label='SRPs'>
         <icon></icon>
-        <action>CommonPage</action>
+        <action>SrpReport</action>
       </menuitem>
     </menu>
   </menuitem>    
