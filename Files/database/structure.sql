@@ -206,9 +206,9 @@ CREATE  TABLE IF NOT EXISTS `funcionalidade` (
 
   `id` INT(11) NOT NULL ,
 
-  `nome` VARCHAR(100) NULL DEFAULT NULL ,
+  `nome` VARCHAR(100) NOT NULL ,
 
-  `classe` VARCHAR(100) NULL DEFAULT NULL ,
+  `classe` VARCHAR(100) NOT NULL ,
 
   PRIMARY KEY (`id`) ,
 
@@ -234,11 +234,13 @@ CREATE  TABLE IF NOT EXISTS `grupo` (
 
   `id` INT(11) NOT NULL ,
 
-  `nome` VARCHAR(45) NULL DEFAULT NULL ,
+  `nome` VARCHAR(45) NOT NULL ,
 
-  `sigla` VARCHAR(10) NULL DEFAULT NULL ,
+  `sigla` VARCHAR(10) NOT NULL ,
 
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+
+  UNIQUE INDEX `sigla_UNIQUE` (`sigla` ASC) )
 
 DEFAULT CHARACTER SET = utf8;
 
@@ -578,13 +580,13 @@ CREATE  TABLE IF NOT EXISTS `usuario` (
 
   `id` INT(11) NOT NULL ,
 
-  `nome` VARCHAR(60) NULL DEFAULT NULL ,
+  `nome` VARCHAR(60) NOT NULL ,
 
-  `prontuario` VARCHAR(10) NULL DEFAULT NULL ,
+  `prontuario` VARCHAR(10) NOT NULL ,
 
-  `senha` VARCHAR(32) NULL DEFAULT NULL ,
+  `senha` VARCHAR(32) NOT NULL ,
 
-  `email` VARCHAR(100) NULL DEFAULT NULL ,
+  `email` VARCHAR(100) NOT NULL ,
 
   PRIMARY KEY (`id`) ,
 
