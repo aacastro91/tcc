@@ -42,6 +42,8 @@ class TSeekButton extends TEntry implements AdiantiWidgetInterface
         parent::__construct($name);
         $this->useOutEvent = TRUE;
         $this->setProperty('class', 'tfield tseekentry', TRUE);   // classe CSS
+        //retira o espaco a direta de um edit, para o botao de busca ficar colado
+        $this->setProperty('style', 'margin-right: 0px;',false);
         $image = new TImage('lib/adianti/images/ico_find.png');
         
         $this->button = new TElement('button');
