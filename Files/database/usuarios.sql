@@ -1,3 +1,4 @@
+GRANT USAGE ON *.* TO 'login'@'%' IDENTIFIED BY 'xxx';
 DROP USER 'login';
 
 CREATE USER 'login'@'%' IDENTIFIED BY 'ifspifsp';
