@@ -136,7 +136,7 @@ class SrpSeekRequisicao extends TWindow {
         try {
             //inicia uma transacao no banco
             TTransaction::open('saciq');
-            TTransaction::setLogger(new TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
+            //TTransaction::setLogger(new TLoggerTXT("c:\\array\\LOG".date("Ymd-His").".txt"));
             $repository = new TRepository('Srp');
             $limit = 10;
             $criteria = new TCriteria();
