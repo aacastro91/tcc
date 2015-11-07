@@ -84,6 +84,8 @@ class PlanilhaRequisicao extends TPage
 
         // add one row for each form field
         $table->addRowSet( new TLabel('Nº do Processo:'), $numeroProcesso );
+        
+        $numeroProcesso->setTip('Número do processo gerado no SIGA');
 
 
         $this->form->setFields(array($numeroProcesso));

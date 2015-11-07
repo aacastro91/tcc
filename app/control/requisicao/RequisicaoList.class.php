@@ -82,6 +82,8 @@ class RequisicaoList extends TPage {
         $numeroProcesso->setSize(200);
 
         $numeroProcesso->setMaxLength(30);
+        
+        $numeroProcesso->setTip('Número do processo gerado no SIGA');
 
 
         // add one row for each form field

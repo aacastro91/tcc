@@ -82,6 +82,8 @@ class DocCessaoList extends TPage {
 
         // add one row for each form field
         $table->addRowSet(new TLabel('Nº da Cessão:'), $numeroCessao);
+        
+        $numeroCessao->setTip('Número do processo gerado no SIGA');
 
 
         $this->form->setFields(array($numeroCessao));

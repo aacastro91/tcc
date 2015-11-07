@@ -75,6 +75,8 @@ class DesaprovarRequisicaoList extends TPage
 
         // create the form fields
         $numeroProcesso                 = new TEntry('numeroProcesso');
+        
+        $numeroProcesso->setTip('Número do processo gerado no SIGA');
 
 
         // define the sizes

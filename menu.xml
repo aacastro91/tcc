@@ -1,114 +1,114 @@
 <menu>
-  <menuitem label='Home'>
-    <icon></icon>
-    <action>Home</action>
-  </menuitem>
-  <menuitem label='Cadastros'>
-    <menu>
-      <menuitem label='Câmpus'>
-        <icon>fa:university fa-fw white</icon>
-        <action>CampusList</action>
-      </menuitem>
-      <menuitem label='Grupos'>
-        <icon>fa:users fa-fw white</icon>
-        <action>GrupoList</action>
-      </menuitem>
-      <menuitem label='Usuários'>
-        <icon>fa:user fa-fw white</icon>
-        <action>UsuarioList</action>
-      </menuitem>
-    </menu>
-  </menuitem>
-  <menuitem label='Consulta'>
-    <menu>
-      <menuitem label='Natureza'>
+    <menuitem label='Home'>
         <icon></icon>
-        <action>NaturezaList</action>
-      </menuitem>
-      <menuitem label='SubElemento'>
-        <icon></icon>
-        <action>SubelementoList</action>
-      </menuitem>
-      <menuitem label='Fornecedor'>
-        <icon></icon>
-        <action>FornecedorList</action>
-      </menuitem>
-      <menuitem label='Consulta SRPs'>
-        <icon></icon>
-        <action>SrpList</action>
-      </menuitem>
-    </menu>
-  </menuitem> 
-  <menuitem label='Planilha de Quantitativos'>
-    <menu>
-      <menuitem label='Referencia da planilha'>
-        <icon>fa:cog fa-fw white</icon>
-        <action>ReferenciaList</action>
-      </menuitem>
-      <menuitem label='Importar planilha'>
-        <icon>fa:file-excel-o fa-fw white</icon>
-        <action>ImportForm</action>
-      </menuitem>
-    </menu>
-  </menuitem>
-  <menuitem label='Requisição'>
-    <menu>
-      <menuitem label='Requisição de Quantitativos'>
-        <icon>fa:pencil fa-fw white</icon>
-        <action>RequisicaoList</action>
-      </menuitem>
-      <menuitem label='Aprovar Requisição'>
-        <icon>fa:check fa-fw white</icon>
-        <action>AprovarRequisicaoList</action>
-      </menuitem>
-      <menuitem label='Desaprovar Requisição'>
-        <icon>fa:history fa-fw white</icon>
-        <action>DesaprovarRequisicaoList</action>
-      </menuitem>
-      <menuitem label='Gerar Planilha Requisição'>
-        <icon>fa:file-excel-o fa-fw white</icon>
-        <action>PlanilhaRequisicao</action>
-      </menuitem>
-    </menu>
-  </menuitem>
-  <menuitem label='Cessão'>
-    <menu>
-      <menuitem label='Cessão de Quantitativos'>
-        <icon>fa:pencil fa-fw white</icon>
-        <action>CessaoList</action>
-      </menuitem>
-      <menuitem label='Aprovar Cessão'>
-        <icon>fa:check fa-fw white</icon>
-        <action>AprovarCessaoList</action>
-      </menuitem>
-      <menuitem label='Desaprovar Cessão'>
-        <icon>fa:history fa-fw white</icon>
-        <action>DesaprovarCessaoList</action>
-      </menuitem>
-      <menuitem label='Gerar Documento de Cessão'>
-        <icon>fa:file-pdf-o fa-fw white</icon>
-        <action>DocCessaoList</action>
-      </menuitem>
-    </menu>
-  </menuitem>
-  <menuitem label='Relatórios'>
-    <menu>
-      <menuitem label='Itens requeridos'>
-        <icon></icon>
-        <action>RequisicaoReport</action>
-      </menuitem>
-      <menuitem label='Itens cedidos'>
-        <icon></icon>
-        <action>CessaoReport</action>
-      </menuitem>
-      <menuitem label='SRPs'>
-        <icon></icon>
-        <action>SrpReport</action>
-      </menuitem>
-    </menu>
-  </menuitem>    
-  <menuitem label='Logout'>
-    <icon>fa:power-off fa-fw white</icon>
-    <action>LoginForm#method=onLogout#static=1</action>
-  </menuitem>
+        <action>Home</action>
+    </menuitem>
+    <menuitem label='Cadastros'>
+        <menu>
+            <menuitem label='Câmpus'>
+                <icon>fa:university fa-fw white</icon>
+                <action>CampusList</action>
+            </menuitem>
+            <menuitem label='Grupos'>
+                <icon>fa:users fa-fw white</icon>
+                <action>GrupoList</action>
+            </menuitem>
+            <menuitem label='Usuários'>
+                <icon>fa:user fa-fw white</icon>
+                <action>UsuarioList</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label='Consulta'>
+        <menu>
+            <menuitem label='Fornecedor'>
+                <icon></icon>
+                <action>FornecedorList</action>
+            </menuitem>
+            <menuitem label='Natureza'>
+                <icon></icon>
+                <action>NaturezaList</action>
+            </menuitem>
+            <menuitem label='SRPs'>
+                <icon></icon>
+                <action>SrpList</action>
+            </menuitem>
+            <menuitem label='Subelemento'>
+                <icon></icon>
+                <action>SubelementoList</action>
+            </menuitem>
+        </menu>
+    </menuitem> 
+    <menuitem label='Planilha de quantitativos'>
+        <menu>
+            <menuitem label='Importar planilha'>
+                <icon>fa:file-excel-o fa-fw white</icon>
+                <action>ImportForm</action>
+            </menuitem>
+            <menuitem label='Parametrizar campos'>
+                <icon>fa:cog fa-fw white</icon>
+                <action>ReferenciaList</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label='Requisição'>
+        <menu>
+            <menuitem label='Requisição de quantitativos'>
+                <icon>fa:pencil fa-fw white</icon>
+                <action>RequisicaoList</action>
+            </menuitem>
+            <menuitem label='Aprovar requisição'>
+                <icon>fa:check fa-fw white</icon>
+                <action>AprovarRequisicaoList</action>
+            </menuitem>
+            <menuitem label='Desaprovar requisição'>
+                <icon>fa:history fa-fw white</icon>
+                <action>DesaprovarRequisicaoList</action>
+            </menuitem>
+            <menuitem label='Gerar planilha de requisição'>
+                <icon>fa:file-excel-o fa-fw white</icon>
+                <action>PlanilhaRequisicao</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label='Cessão'>
+        <menu>
+            <menuitem label='Cessão de quantitativos'>
+                <icon>fa:pencil fa-fw white</icon>
+                <action>CessaoList</action>
+            </menuitem>
+            <menuitem label='Aprovar cessão'>
+                <icon>fa:check fa-fw white</icon>
+                <action>AprovarCessaoList</action>
+            </menuitem>
+            <menuitem label='Desaprovar cessão'>
+                <icon>fa:history fa-fw white</icon>
+                <action>DesaprovarCessaoList</action>
+            </menuitem>
+            <menuitem label='Gerar documento de cessão'>
+                <icon>fa:file-pdf-o fa-fw white</icon>
+                <action>DocCessaoList</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label='Relatórios'>
+        <menu>
+            <menuitem label='Itens cedidos'>
+                <icon></icon>
+                <action>CessaoReport</action>
+            </menuitem>
+            <menuitem label='Itens requeridos'>
+                <icon></icon>
+                <action>RequisicaoReport</action>
+            </menuitem>
+            <menuitem label='SRPs'>
+                <icon></icon>
+                <action>SrpReport</action>
+            </menuitem>
+        </menu>
+    </menuitem>    
+    <menuitem label='Logout'>
+        <icon>fa:power-off fa-fw white</icon>
+        <action>LoginForm#method=onLogout#static=1</action>
+    </menuitem>
 </menu>

@@ -66,10 +66,10 @@ class Home extends TPage{
         
         
         $row = $table->addRow();
-        $lbUI = new TLabel('<B>Últimas Importações</B>');
-        $lbUR = new TLabel('<B>Últimas Requisições</B>');
-        $lbUC = new TLabel('<B>Últimas Cessões</B>');
-        $lbSV = new TLabel('<B>SRP a Vencer</B>');
+        $lbUI = new TLabel('<B>Últimas importações</B>');
+        $lbUR = new TLabel('<B>Últimas requisições</B>');
+        $lbUC = new TLabel('<B>Últimas cessões</B>');
+        $lbSV = new TLabel('<B>SRP à vencer</B>');
         
         $lbUI->setFontSize(16);
         $lbUR->setFontSize(16);

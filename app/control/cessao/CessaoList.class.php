@@ -78,6 +78,8 @@ class CessaoList extends TPage
 
         // create the form fields
         $numeroCessao                 = new TEntry('numeroCessao');
+        
+        $numeroCessao->setTip('Número do processo gerado no SIGA');
 
 
         // define the sizes

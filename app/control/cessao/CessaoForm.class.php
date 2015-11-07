@@ -144,6 +144,7 @@ class CessaoForm extends TPage {
         $descricaoSumaria->setSize('100%');
         $descricaoSumaria->setProperty('style', 'margin-right: 10px', false);
         $numeroCessao->setSize(230);
+        $numeroCessao->setTip('Número do processo gerado no SIGA');
         $campusID->setSize(50);
         $campusNome->setSize('100%');
         $campusNome->setEditable(false);

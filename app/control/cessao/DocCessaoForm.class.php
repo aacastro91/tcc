@@ -110,7 +110,11 @@ class DocCessaoForm extends TPage {
         $campusID->addValidation('Destino', new TRequiredValidator());
         $gerente->addValidation('Gerente Administrativo(a)', new TRequiredValidator());
         $diretor->addValidation('Diretor(a) Geral', new TRequiredValidator());
-
+        
+        $memorando->setTip('Descrição do Memorando que aparecerá no início do documento.');
+        $gerente->setTip('Nome do gerente em exercício');
+        $diretor->setTip('Nome do diretor geral em exercício');
+        
         $value = TSession::getValue('doc_cessao_form_cessao_id');
         if (isset($value)) {
             $cessao_id->setValue($value);

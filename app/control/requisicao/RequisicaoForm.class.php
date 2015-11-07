@@ -141,6 +141,7 @@ class RequisicaoForm extends TPage {
         $uasg->setSize(70);
         $validadeAta->setSize(85);
         $numeroProcesso->setMaxLength(30);
+        $numeroProcesso->setTip('Número do processo gerado no SIGA');
         $numeroItem->setSize(60);
         $numeroItem->setMaxLength(11);
         $descricaoSumaria->setSize(490);
