@@ -3,8 +3,10 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TTransaction;
-use Adianti\Log\TLoggerTXT;
+use Adianti\Registry\TSession;
 use Adianti\Validator\TEmailValidator;
+use Adianti\Validator\TMaxLengthValidator;
+use Adianti\Validator\TMinLengthValidator;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\TFrame;
 use Adianti\Widget\Container\THBox;
@@ -78,10 +80,11 @@ class UsuarioForm extends TPage
 
         // define the sizes
         $id->setSize(100);
-        $nome->setSize(200);
+        $nome->setSize(350);
         $prontuario->setSize(150);
         $password->setSize(150);
-        $email->setSize(200);
+        $repassword->setSize(150);
+        $email->setSize(250);
         $multifield_funcionalidades->setHeight(140);
         
         // outros
@@ -91,8 +94,13 @@ class UsuarioForm extends TPage
         
         // validations
         $nome->addValidation('Nome', new TRequiredValidator);
-        $prontuario->addValidation('Login', new TRequiredValidator);
+        $prontuario->addValidation('Prontuário', new TRequiredValidator);
         $email->addValidation('Email', new TEmailValidator);
+        $nome->addValidation('Nome', new TMaxLengthValidator, array(60));
+        $prontuario->addValidation('Prontuário', new TMaxLengthValidator, array(60));
+        $email->addValidation('Email', new TMaxLengthValidator, array(60));
+        $password->addValidation('Senha', new TMinLengthValidator, array(4));
+        
         $funcionalidade_id->setSize(50);
         $funcionalidade_nome->setSize(200);
         
@@ -105,7 +113,7 @@ class UsuarioForm extends TPage
         // add a row for the field id
         $table->addRowSet(new TLabel('ID:'),           $id,         new TLabel('Nome: '), $nome);
         $table->addRowSet(new TLabel('Prontuário: ' ), $prontuario, new TLabel('Email: '), $email);
-        $table->addRowSet(new TLabel('Senha: '),       $password,   new TLabel('Confirmação da senha: '), $repassword);
+        $table->addRowSet(new TLabel('Senha: '),       $password,   new TLabel('Confirmação <br>da senha: '), $repassword);
         
         $row=$table->addRow();
         $cell = $row->addCell($frame_grupos);
@@ -142,7 +150,7 @@ class UsuarioForm extends TPage
         $cell->colspan = 4;
 
         $container = new TTable;
-        $container->style = 'width: 80%';
+        //$container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'UsuarioList'));
         $container->addRow()->addCell($this->form);
 

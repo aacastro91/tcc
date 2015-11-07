@@ -5,6 +5,7 @@ use Adianti\Control\TPage;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
+use Adianti\Validator\TMaxLengthValidator;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\TFrame;
 use Adianti\Widget\Container\THBox;
@@ -104,7 +105,12 @@ class GrupoForm extends TPage {
         $sigla->setSize(150);
 
         // validations
-        $nome->addValidation('nome', new TRequiredValidator);
+        $nome->addValidation('Nome', new TRequiredValidator);
+        $sigla->addValidation('Sigla', new TRequiredValidator());
+        
+        $nome->addValidation('Nome', new TMaxLengthValidator, array(45));
+        $sigla->addValidation('Sigla', new TMaxLengthValidator, array(10));
+        
 
         // outras propriedades
         $id->setEditable(false);
@@ -158,7 +164,7 @@ class GrupoForm extends TPage {
         $buttons->add($list_button);
 
         $container = new TTable;
-        $container->width = '80%';
+        //$container->width = '80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', 'GrupoList'));
         $container->addRow()->addCell($this->form);
 
@@ -274,8 +280,12 @@ class GrupoForm extends TPage {
                 
                 new TMessage('error', '<b>Registro duplicado</b><br>Verifique se a sigla já não foi registrada em outro grupo');
                 
-            } else {
-
+            } 
+            else
+            if ($e->getCode() == 0){
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            }            
+            else {
                 new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
             }
             // desfazer todas as operacoes pendentes

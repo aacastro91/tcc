@@ -161,7 +161,7 @@ class GrupoList extends TPage
         
         // cria a estrutura da tela usando tabelas
         $container = new TTable;
-        $container->style = 'width: 80%';
+        //$container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($this->datagrid);

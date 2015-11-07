@@ -1,4 +1,25 @@
 <?php
+
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Container\THBox;
+use Adianti\Widget\Container\TTable;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TButton;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TForm;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 /**
  * UsuarioList Listing
  * @author  Anderson
@@ -32,14 +53,16 @@ class UsuarioList extends TPage
         $this->form->add($table);
         
         // cria os campos de pesquisa do form
-        $id = new TEntry('id');
-        $id->setValue(TSession::getValue('Usuario_id'));
+        //$id = new TEntry('id');
+        //$id->setValue(TSession::getValue('Usuario_id'));
         
         $nome = new TEntry('nome');
         $nome->setValue(TSession::getValue('Usuario_nome'));
         
+        $nome->setSize(300);
+        
         // add a row for the filter field
-        $table->addRowSet(new TLabel('ID:'), $id);
+        //$table->addRowSet(new TLabel('ID:'), $id);
         $table->addRowSet(new TLabel('Nome: '), $nome);
         
         // cria dois botoes de acao para o form
@@ -63,7 +86,7 @@ class UsuarioList extends TPage
         $cell->colspan = 2;
         
         // define wich are the form fields
-        $this->form->setFields(array($id, $nome, $find_button, $new_button));
+        $this->form->setFields(array(/*$id, */$nome, $find_button, $new_button));
         
         // creates a DataGrid
         $this->datagrid = new TDataGrid;
@@ -128,7 +151,7 @@ class UsuarioList extends TPage
         
         // creates the page structure using a table
         $table = new TTable;
-        $table->style = 'width: 80%';
+        //$table->style = 'width: 80%';
         $table->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $table->addRow()->addCell($this->form);
         $table->addRow()->addCell($this->datagrid);
@@ -193,22 +216,13 @@ class UsuarioList extends TPage
         // pegar os dados do form de busca
         $data = $this->form->getData();
         
-        TSession::setValue('Usuario_id_filter',   NULL);
+        //TSession::setValue('Usuario_id_filter',   NULL);
         TSession::setValue('Usuario_nome_filter',   NULL);
         
-        TSession::setValue('Usuario_id', '');
+        //TSession::setValue('Usuario_id', '');
         TSession::setValue('Usuario_nome', '');
         
         // check if the user has filled the form
-        if ( $data->id )
-        {
-            // creates a filter using what the user has typed
-            $filter = new TFilter('id', '=', "{$data->id}");
-            
-            // stores the filter in the session
-            TSession::setValue('Usuario_id_filter',   $filter);
-            TSession::setValue('Usuario_id', $data->id);
-        }
         if ( $data->nome )
         {
             // creates a filter using what the user has typed
