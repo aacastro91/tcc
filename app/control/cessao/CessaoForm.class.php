@@ -123,7 +123,9 @@ class CessaoForm extends TPage {
         $valorUnitario->addValidation('Preço', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TMinValueValidator(), array(1));
+        $quantidade->addValidation('Quantidade', new TMaxLengthValidator(), array(11));
         $numeroCessao->addValidation('Nº Cessão', new TRequiredValidator());
+        $numeroCessao->addValidation('Nº Cessão', new TMaxLengthValidator(), array(30));
         $campusID->addValidation('Câmpus', new TRequiredValidator());
         $emissao->addValidation('Emissão', new TRequiredValidator());
 
@@ -150,6 +152,7 @@ class CessaoForm extends TPage {
         $campusNome->setEditable(false);
         $validadeAta->setMask('dd/mm/yyyy');
         $emissao->setSize(90);
+        $emissao->setProperty('style', 'margin-right: 0px;',false);
         $emissao->setMask('dd/mm/yyyy');
         $emissao->setValue(date('d/m/Y'));
         $quantidade->class = 'frm_number_only';

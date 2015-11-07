@@ -139,19 +139,26 @@ class CessaoList extends TPage
         // creates two datagrid actions
         $action1 = new TDataGridAction(array('CessaoForm', 'onEdit'));
         //$action1 = new TDataGridAction(array($this, 'onCheckValidadeSRP'));
-        $action1->setLabel(_t('Edit'));
+        $action1->setLabel('Editar');
         $action1->setImage('ico_edit.png');
         $action1->setField('id');
         $action1->setDisplayCondition(array($this, 'onDisplayConditionEdit'));
         
         $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
+        $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
+        
+        $actAprovar = new TDataGridAction(array($this, 'onQuestionAprovarCessao'));
+        $actAprovar->setLabel('Aprovar Cessao');
+        $actAprovar->setImage('fa:check fa-fw');
+        $actAprovar->setField('id');
+        $actAprovar->setDisplayCondition(array($this, 'onDisplayConditionEdit'));
         
         // add the actions to the datagrid
         $this->datagrid->addAction($action1);
         $this->datagrid->addAction($action2);
+        $this->datagrid->addAction($actAprovar);
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -185,31 +192,80 @@ class CessaoList extends TPage
         return true;
     }
     
-    /*
-    function onCheckValidadeSRP($param){
+    function onQuestionAprovarCessao($param){
         
-        if (isset($param) && isset($param['key']))
-            $key = $param['key'];
-
-        if (!isset($key)) {            
+        if (!isset($param)){
             return;
         }
         
-        try {
-            TTransaction::open('saciq');
-
-            $cessao = new Cessao($key);
-            if ($cessao->srp->estaVencida()){
-                new TMessage('error', 'SRP Vencida!');
-                return;
-            } 
-            AdiantiCoreApplication::loadPage('CessaoForm','onEdit',array('key' => $key));
-            
-        } catch (Exception $ex) {
-            TTransaction::rollback();
-            new TMessage('error', 'Erro: ' . $ex->getMessage());
+        $key = $param['key'];
+        if (!isset($key) || !$key){
+            return;
         }
-    }*/
+        
+        try{
+            TTransaction::open('saciq');
+            $Cessao = new Cessao($key);
+            if ($Cessao->srp->estaVencida()){
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }
+            
+            $pergunta = 'Voce realmente quer aprovar a seguinte Cessão?<br>'.
+                    'SRP: ' . $Cessao->srp->numeroSRP .'<br>'.
+                    'Nº Cessão: '. $Cessao->numeroCessao .'<br>'.
+                    'Emissão: ' . TDate::date2br($Cessao->emissao);
+            TTransaction::close();            
+        } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
+            TTransaction::rollback();
+            return;
+        }
+        
+        if (!isset($pergunta) || !$pergunta){
+            return;
+        }
+        
+        
+        $sim = new TAction(array($this, 'onAprovar'));
+        //$nao = new TAction(array($this, 'onAction2'));
+
+        // define os parâmetros de cada ação
+        $sim->setParameter('cessao', $key);
+        
+        // shows the question dialog
+        new TQuestion($pergunta, $sim);
+    }
+    
+    function onAprovar($param){
+        if (!isset($param)){
+            return;
+        }
+        
+        $key = $param['cessao'];
+        if (!isset($key) || !$key){
+            return;
+        }
+        
+        try{
+            TTransaction::open('saciq');
+            $Cessao = new Cessao($key);
+            if ($Cessao->aprovado){
+                new TMessage('error', 'Cessão já aprovada');
+                $this->onReload();
+                return;
+            }
+            $Cessao->aprovado = TRUE;
+            $Cessao->store();            
+            TTransaction::close();
+            new TMessage('info', 'Cessão Aprovada com sucesso!');
+            $this->onReload();
+        } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
+            TTransaction::rollback();
+            return;
+        }
+    }
     
     /**
      * method onSearch()

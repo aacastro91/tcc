@@ -4,6 +4,7 @@ use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
+use Adianti\Validator\TMaxLengthValidator;
 use Adianti\Validator\TMinValueValidator;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\THBox;
@@ -122,9 +123,13 @@ class RequisicaoForm extends TPage {
         $valorUnitario->addValidation('Preço', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TRequiredValidator());
         $quantidade->addValidation('Quantidade', new TMinValueValidator(), array(1));
+        $quantidade->addValidation('Quantidade', new TMaxLengthValidator(), array(11));
         $justificativa->addValidation('Justificativa', new TRequiredValidator());
+        $justificativa->addValidation('Justificativa', new TMaxLengthValidator(), array(100));
         $prazoEntrega->addValidation('Prazo de entrega', new TRequiredValidator());
+        $prazoEntrega->addValidation('Prazo de entrega', new TMaxLengthValidator(), array(20));
         $numeroProcesso->addValidation('Nº Processo', new TRequiredValidator());
+        $numeroProcesso->addValidation('Nº Processo', new TMaxLengthValidator(), array(30));
 
         //outras propriedades
         $descricaoSumaria->setEditable(false);
@@ -135,6 +140,7 @@ class RequisicaoForm extends TPage {
         $valorUnitario->setEditable(false);
         $numeroSRP->setSize(80);
         $numeroSRP->setMaxLength(10);
+        $emissao->setProperty('style', 'margin-right: 0px;',false);
         $nome->setSize(300);
         $nome->setProperty('style', 'margin-right: 10px', false);
         $numeroProcessoOrigem->setSize(160);

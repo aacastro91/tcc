@@ -147,10 +147,17 @@ class RequisicaoList extends TPage {
         $action2->setLabel('Excluir');
         $action2->setImage('ico_delete.png');
         $action2->setField('id');
+        
+        $actAprovar = new TDataGridAction(array($this, 'onQuestionAprovarRequisicao'));
+        $actAprovar->setLabel('Aprovar Requisição');
+        $actAprovar->setImage('fa:check fa-fw');
+        $actAprovar->setField('id');
+        $actAprovar->setDisplayCondition(array($this, 'onDisplayConditionEdit'));
 
         // add the actions to the datagrid
         $this->datagrid->addAction($action1);
         $this->datagrid->addAction($action2);
+        $this->datagrid->addAction($actAprovar);
 
         // create the datagrid model
         $this->datagrid->createModel();
@@ -183,30 +190,82 @@ class RequisicaoList extends TPage {
         }
         return true;
     }
-/*
-    function onCheckValidadeSRP($param) {
-
-        if (isset($param) && isset($param['key']))
-            $key = $param['key'];
-
-        if (!isset($key)) {
+    
+    
+    function onAprovar($param){
+        if (!isset($param)){
             return;
         }
-
-        try {
+        
+        $key = $param['requisicao'];
+        if (!isset($key) || !$key){
+            return;
+        }
+        
+        try{
             TTransaction::open('saciq');
-
-            $requisicao = new Requisicao($key);
-            if ($requisicao->srp->estaVencida()) {
-                new TMessage('error', 'SRP Vencida!');
+            $Requisicao = new Requisicao($key);
+            if ($Requisicao->aprovado){
+                new TMessage('error', 'Requisição já aprovada');
+                $this->onReload();
                 return;
             }
-            AdiantiCoreApplication::loadPage('RequisicaoForm', 'onEdit', array('key' => $key));
+            $Requisicao->aprovado = TRUE;
+            $Requisicao->store();            
+            TTransaction::close();
+            new TMessage('info', 'Requisição Aprovada com sucesso!');
+            $this->onReload();
         } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
             TTransaction::rollback();
-            new TMessage('error', 'Erro: ' . $ex->getMessage());
+            return;
         }
-    }*/
+    }
+    
+    function onQuestionAprovarRequisicao($param){
+        
+        if (!isset($param)){
+            return;
+        }
+        
+        $key = $param['key'];
+        if (!isset($key) || !$key){
+            return;
+        }
+        
+        try{
+            TTransaction::open('saciq');
+            $Requisicao = new Requisicao($key);
+            if ($Requisicao->srp->estaVencida()){
+                new TMessage('error', 'SRP já está vencida!');
+                return;
+            }            
+            
+            $pergunta = 'Voce realmente quer aprovar a seguinte Requisição?<br>'.
+                    'SRP: ' . $Requisicao->srp->numeroSRP .'<br>'.
+                    'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.
+                    'Emissão: ' . TDate::date2br($Requisicao->emissao);
+            TTransaction::close();            
+        } catch (Exception $ex) {
+            new TMessage('error', $ex->getMessage());
+            TTransaction::rollback();
+            return;
+        }
+        
+        if (!isset($pergunta) || !$pergunta){
+            return;
+        }
+        
+        
+        $sim = new TAction(array($this, 'onAprovar'));
+        //$nao = new TAction(array($this, 'onAction2'));
+
+        // define os parâmetros de cada ação
+        $sim->setParameter('requisicao', $key);
+        
+        // shows the question dialog
+        new TQuestion($pergunta, $sim);
+    }
 
     /**
      * method onSearch()

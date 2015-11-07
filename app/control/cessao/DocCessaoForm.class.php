@@ -6,6 +6,7 @@ use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
+use Adianti\Validator\TMaxLengthValidator;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
@@ -16,7 +17,6 @@ use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\THidden;
 use Adianti\Widget\Form\TLabel;
-use Adianti\Widget\Wrapper\TDBSeekButton;
 
 /*
  * Copyright (C) 2015 Anderson
@@ -82,7 +82,7 @@ class DocCessaoForm extends TPage {
         // cria os campos do formulário
         $memorando = new TEntry('memorando');
         //$cidade = new TEntry('cidade');
-        $emissao = new TEntry('emissao');
+        $emissao = new TDate('emissao');
         $campusID = new TEntry('campusID'); //TDBSeekButton('campusID', 'saciq', 'doc_cessao_form', 'Campus', 'nome', 'campusID', 'campusNome');
         $campusNome = new TEntry('campusNome');
         $gerente = new TEntry('gerente');
@@ -93,6 +93,7 @@ class DocCessaoForm extends TPage {
         $memorando->setSize(300);
         //$cidade->setSize(200);
         $emissao->setSize(90);
+        $emissao->setProperty('style', 'margin-right : 0px');
         $campusID->setSize(50);
         $campusID->setEditable(false);
         $campusNome->setSize(226);
@@ -106,10 +107,13 @@ class DocCessaoForm extends TPage {
 
         //validadores
         $memorando->addValidation('Memorando', new TRequiredValidator());
+        $memorando->addValidation('Memorando', new TMaxLengthValidator, array(70));
         $emissao->addValidation('Emissão', new TRequiredValidator());
         $campusID->addValidation('Destino', new TRequiredValidator());
         $gerente->addValidation('Gerente Administrativo(a)', new TRequiredValidator());
+        $gerente->addValidation('Gerente Administrativo(a)', new TMaxLengthValidator, array(70));
         $diretor->addValidation('Diretor(a) Geral', new TRequiredValidator());
+        $diretor->addValidation('Diretor(a) Geral', new TMaxLengthValidator, array(70));
         
         $memorando->setTip('Descrição do Memorando que aparecerá no início do documento.');
         $gerente->setTip('Nome do gerente em exercício');
