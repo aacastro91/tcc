@@ -57,10 +57,6 @@
                 <icon>fa:pencil fa-fw white</icon>
                 <action>RequisicaoList</action>
             </menuitem>
-            <menuitem label='Aprovar requisição'>
-                <icon>fa:check fa-fw white</icon>
-                <action>AprovarRequisicaoList</action>
-            </menuitem>
             <menuitem label='Desaprovar requisição'>
                 <icon>fa:history fa-fw white</icon>
                 <action>DesaprovarRequisicaoList</action>
@@ -76,10 +72,6 @@
             <menuitem label='Cessão de quantitativos'>
                 <icon>fa:pencil fa-fw white</icon>
                 <action>CessaoList</action>
-            </menuitem>
-            <menuitem label='Aprovar cessão'>
-                <icon>fa:check fa-fw white</icon>
-                <action>AprovarCessaoList</action>
             </menuitem>
             <menuitem label='Desaprovar cessão'>
                 <icon>fa:history fa-fw white</icon>

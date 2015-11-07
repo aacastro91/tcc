@@ -45,7 +45,7 @@ $content  = str_replace('{HEAD}', $css.$js, $content);
 
 if (isset($_REQUEST['class']) AND TSession::getValue('logged'))
 {
-    $url = http_build_query($_REQUEST);
+    $url = "class=Home";//http_build_query($_REQUEST);
     $content = str_replace('//#javascript_placeholder#', "__adianti_load_page('engine.php?{$url}');", $content);
 }
 echo $content;
