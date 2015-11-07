@@ -64,7 +64,7 @@ class SrpReport extends TPage {
         // define the form title
         $row = $table->addRow(); //Set( new TLabel('Relatório de Srp'), '', '','', '' )->class = 'tformtitle';
         $row->class = 'tformtitle';
-        $row->addCell(new TLabel('Relatório de Srp'))->colspan = 5;
+        $row->addCell(new TLabel('Relatório de Srp'))->colspan = 2;
 
         // create the form fields
         $numeroSRPI                      = new TEntry('numeroSRPI');
@@ -87,7 +87,9 @@ class SrpReport extends TPage {
         $numeroProcessoI->setSize(150);
         $numeroProcessoF->setSize(150);
         $validadeI->setSize(85);
+        $validadeI->setProperty('style', 'margin-right : 0px');
         $validadeF->setSize(85);
+        $validadeF->setProperty('style', 'margin-right : 0px');
         //$aprovado->setSize(90);
         //mask
         $validadeI->setMask('dd/mm/yyyy');
@@ -102,14 +104,11 @@ class SrpReport extends TPage {
 
 
         // add one row for each form field
-        $table->addRowSet(new TLabel('Nº SRP'), new TLabel('De:'), $numeroSRPI, new TLabel('Até'), $numeroSRPF);
-        $table->addRowSet(new TLabel('Nº IRP'), new TLabel('De:'), $numeroIRPI, new TLabel('Até'), $numeroIRPF);
+        $table->addRowSet(new TLabel('Nº SRP'), array( $numeroSRPI, new TLabel('Até'), $numeroSRPF));
+        $table->addRowSet(new TLabel('Nº IRP'), array( $numeroIRPI, new TLabel('Até'), $numeroIRPF));
         
-        $table->addRowSet(new TLabel('Nº Processo'), new TLabel('De:'), $numeroProcessoI, new TLabel('Até'), $numeroProcessoF);
-        $table->addRowSet(new TLabel('Emissão'), new TLabel('De:'), $validadeI, new TLabel('Até'), $validadeF);
-        //$row = $table->addRow(); //Set( new TLabel('Aprovado:'), $aprovado );
-        //$row->addCell(new TLabel('Aprovado:'));
-        //$row->addCell($aprovado)->colspan = 4;
+        $table->addRowSet(new TLabel('Nº Processo'), array( $numeroProcessoI, new TLabel('Até'), $numeroProcessoF));
+        $table->addRowSet(new TLabel('Emissão'), array( $validadeI, new TLabel('Até'), $validadeF));
 
         $this->form->setFields(array($numeroProcessoI, $numeroProcessoF, $numeroIRPI, $numeroIRPF, $nomeI, $nomeF, $validadeI, $validadeF, $numeroSRPI, $numeroSRPF));
 
@@ -122,7 +121,7 @@ class SrpReport extends TPage {
         $this->form->addField($generate_button);
 
         // add a row for the form action
-        $table->addRowSet($generate_button, '', '', '', '')->class = 'tformaction';
+        $table->addRowSet($generate_button, '')->class = 'tformaction';
 
         parent::add($this->form);
     }
@@ -241,16 +240,16 @@ class SrpReport extends TPage {
             $repository = new TRepository('Srp');
             $criteria = new TCriteria;
 
-            if ($formdata->numeroProcessoI && $formdata->numeroProcessoF) {
+            if ($formdata->numeroProcessoI != '' && $formdata->numeroProcessoF != '') {
                 $criteria->add(new TFilter('numeroProcesso', 'BETWEEN', "{$formdata->numeroProcessoI}", "{$formdata->numeroProcessoF}"));
             }
-            if ($formdata->validadeI && $formdata->validadeF) {
+            if ($formdata->validadeI != '' && $formdata->validadeF != '') {
                 $criteria->add(new TFilter('validade', 'between', "{$validadeI}", "{$validadeF}"));
             }
-            if ($formdata->numeroSRPI && $formdata->numeroSRPF) {
+            if ($formdata->numeroSRPI != '' && $formdata->numeroSRPF != '') {
                 $criteria->add(new TFilter('numeroSRP', 'between', "{$formdata->numeroSRPI}", "{$formdata->numeroSRPF}"));
             }
-            if ($formdata->numeroIRPI && $formdata->numeroIRPF) {
+            if ($formdata->numeroIRPI != '' && $formdata->numeroIRPF != '') {
                 $criteria->add(new TFilter('numeroIRP', 'between', "{$formdata->numeroIRPI}", "{$formdata->numeroIRPF}"));
             }
 

@@ -67,13 +67,13 @@ class RequisicaoReport extends TPage {
         // define the form title
         $row = $table->addRow(); //Set( new TLabel('Relatório de Requisição'), '', '','', '' )->class = 'tformtitle';
         $row->class = 'tformtitle';
-        $row->addCell(new TLabel('Relatório de Requisição'))->colspan = 5;
+        $row->addCell(new TLabel('Relatório de Requisição'))->colspan = 2;
 
         // create the form fields
         $numeroProcessoI = new TEntry('numeroProcessoI');
         $numeroProcessoF = new TEntry('numeroProcessoF');
-        $emissaoI = new TEntry('emissaoI');
-        $emissaoF = new TEntry('emissaoF');
+        $emissaoI = new TDate('emissaoI');
+        $emissaoF = new TDate('emissaoF');
         $aprovado = new TRadioGroup('aprovado');
 
 
@@ -81,7 +81,9 @@ class RequisicaoReport extends TPage {
         $numeroProcessoI->setSize(100);
         $numeroProcessoF->setSize(100);
         $emissaoI->setSize(85);
+        $emissaoI->setProperty('style', 'margin-right : 0px');
         $emissaoF->setSize(85);
+        $emissaoF->setProperty('style', 'margin-right : 0px');
         //$aprovado->setSize(90);
         //mask
         $emissaoI->setMask('dd/mm/yyyy');
@@ -96,17 +98,16 @@ class RequisicaoReport extends TPage {
 
 
         // add one row for each form field
-        $table->addRowSet(new TLabel('Nº Processo'), new TLabel('De:'), $numeroProcessoI, new TLabel('Até'), $numeroProcessoF);
-        $table->addRowSet(new TLabel('Emissão'), new TLabel('De:'), $emissaoI, new TLabel('Até'), $emissaoF);
+        $table->addRowSet(new TLabel('Nº Processo'), array($numeroProcessoI, new TLabel('Até'), $numeroProcessoF));
+        $table->addRowSet(new TLabel('Emissão'), array($emissaoI, new TLabel('Até'), $emissaoF));
         $row = $table->addRow(); //Set( new TLabel('Aprovado:'), $aprovado );
         $row->addCell(new TLabel('Aprovado:'));
-        $row->addCell($aprovado)->colspan = 4;
+        $row->addCell($aprovado);
 
         $this->form->setFields(array($numeroProcessoI, $numeroProcessoF, $emissaoI, $emissaoF, $aprovado));
 
 
         $aprovado->addItems(array('1' => 'Sim', '0' => 'Não', '%' => 'Todos'));
-        ;
         $aprovado->setValue('%');
         $aprovado->setLayout('horizontal');
 
@@ -114,7 +115,7 @@ class RequisicaoReport extends TPage {
         $this->form->addField($generate_button);
 
         // add a row for the form action
-        $table->addRowSet($generate_button, '', '', '', '')->class = 'tformaction';
+        $table->addRowSet($generate_button, '')->class = 'tformaction';
 
         parent::add($this->form);
     }
@@ -229,10 +230,10 @@ class RequisicaoReport extends TPage {
             $repository = new TRepository('Requisicao');
             $criteria = new TCriteria;
 
-            if ($formdata->numeroProcessoI && $formdata->numeroProcessoF) {
+            if ($formdata->numeroProcessoI != '' && $formdata->numeroProcessoF != '') {
                 $criteria->add(new TFilter('numeroProcesso', 'BETWEEN', "{$formdata->numeroProcessoI}", "{$formdata->numeroProcessoF}"));
             }
-            if ($formdata->emissaoI && $formdata->emissaoF) {
+            if ($formdata->emissaoI != '' && $formdata->emissaoF != '') {
                 $criteria->add(new TFilter('emissao', 'between', "{$emissaoI}", "{$emissaoF}"));
             }
             if (isset($formdata->aprovado)) {

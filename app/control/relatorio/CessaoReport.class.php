@@ -67,13 +67,13 @@ class CessaoReport extends TPage {
         // define the form title
         $row = $table->addRow(); //Set( new TLabel('Relatório de Cessão'), '', '','', '' )->class = 'tformtitle';
         $row->class = 'tformtitle';
-        $row->addCell(new TLabel('Relatório de Cessão'))->colspan = 5;
+        $row->addCell(new TLabel('Relatório de Cessão'))->colspan = 2;
 
         // create the form fields
         $numeroCessaoI = new TEntry('numeroCessaoI');
         $numeroCessaoF = new TEntry('numeroCessaoF');
-        $emissaoI = new TEntry('emissaoI');
-        $emissaoF = new TEntry('emissaoF');
+        $emissaoI = new TDate('emissaoI');
+        $emissaoF = new TDate('emissaoF');
         $aprovado = new TRadioGroup('aprovado');
 
 
@@ -81,7 +81,9 @@ class CessaoReport extends TPage {
         $numeroCessaoI->setSize(100);
         $numeroCessaoF->setSize(100);
         $emissaoI->setSize(85);
+        $emissaoI->setProperty('style', 'margin-right : 0px');
         $emissaoF->setSize(85);
+        $emissaoF->setProperty('style', 'margin-right : 0px');
         //$aprovado->setSize(90);
         //mask
         $emissaoI->setMask('dd/mm/yyyy');
@@ -96,17 +98,16 @@ class CessaoReport extends TPage {
 
 
         // add one row for each form field
-        $table->addRowSet(new TLabel('Nº Cessão'), new TLabel('De:'), $numeroCessaoI, new TLabel('Até'), $numeroCessaoF);
-        $table->addRowSet(new TLabel('Emissão'), new TLabel('De:'), $emissaoI, new TLabel('Até'), $emissaoF);
+        $table->addRowSet(new TLabel('Nº Cessão'), array($numeroCessaoI, new TLabel('Até'), $numeroCessaoF));
+        $table->addRowSet(new TLabel('Emissão'),array($emissaoI, new TLabel('Até'), $emissaoF));
         $row = $table->addRow(); //Set( new TLabel('Aprovado:'), $aprovado );
         $row->addCell(new TLabel('Aprovado:'));
-        $row->addCell($aprovado)->colspan = 4;
+        $row->addCell($aprovado);
 
         $this->form->setFields(array($numeroCessaoI, $numeroCessaoF, $emissaoI, $emissaoF, $aprovado));
 
 
         $aprovado->addItems(array('1' => 'Sim', '0' => 'Não', '%' => 'Todos'));
-        ;
         $aprovado->setValue('%');
         $aprovado->setLayout('horizontal');
 
@@ -114,7 +115,7 @@ class CessaoReport extends TPage {
         $this->form->addField($generate_button);
 
         // add a row for the form action
-        $table->addRowSet($generate_button, '', '', '', '')->class = 'tformaction';
+        $table->addRowSet($generate_button, '')->class = 'tformaction';
 
         parent::add($this->form);
     }
@@ -248,10 +249,10 @@ class CessaoReport extends TPage {
             $repository = new TRepository('Cessao');
             $criteria = new TCriteria;
 
-            if ($formdata->numeroCessaoI && $formdata->numeroCessaoF) {
+            if ($formdata->numeroCessaoI != '' && $formdata->numeroCessaoF != '') {
                 $criteria->add(new TFilter('numeroCessao', 'BETWEEN', "{$formdata->numeroCessaoI}", "{$formdata->numeroCessaoF}"));
             }
-            if ($formdata->emissaoI && $formdata->emissaoF) {
+            if ($formdata->emissaoI != '' && $formdata->emissaoF != '') {
                 $criteria->add(new TFilter('emissao', 'between', "{$emissaoI}", "{$emissaoF}"));
             }
             if (isset($formdata->aprovado)) {
