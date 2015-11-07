@@ -157,7 +157,7 @@ class CampusList extends TPage
         $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
         $nome_edit->setField('id');
         $nome->setEditAction($nome_edit);
-
+/*
         $uasg_edit = new TDataGridAction(array($this, 'onInlineEdit'));
         $uasg_edit->setField('id');
         $uasg->setEditAction($uasg_edit);
@@ -165,7 +165,7 @@ class CampusList extends TPage
         $sigla_edit = new TDataGridAction(array($this, 'onInlineEdit'));
         $sigla_edit->setField('id');
         $sigla->setEditAction($sigla_edit);
-
+*/
         // creates two datagrid actions
         $action1 = new TDataGridAction(array('CampusForm', 'onEdit'));
         $action1->setLabel(_t('Edit'));
@@ -190,7 +190,7 @@ class CampusList extends TPage
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
         $container = new TTable;
-        $container->style = 'width: 80%';
+        //$container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($this->datagrid);

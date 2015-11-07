@@ -68,7 +68,11 @@ class NaturezaList extends TPage
         $table-> width = '100%';
         
         // add a row for the form title
-        $table->addRowSet( new TLabel('Consulta Natureza') ,'')->class = 'tformtitle'; // CSS class   
+        $row = $table->addRow();
+        $row->class = 'tformtitle';
+        $row->addCell(new TLabel('Consulta Natureza'))->colspan = 2;
+        
+        //$table->addRowSet( new TLabel('Consulta Natureza') ,'')->class = 'tformtitle'; // CSS class   
         
         $this->form->add($table);
         
@@ -128,13 +132,6 @@ class NaturezaList extends TPage
         $order_descricao= new TAction(array($this, 'onReload'));
         $order_descricao->setParameter('order', 'descricao');
         $descricao->setAction($order_descricao);
-
-
-
-        // inline editing
-        /*$descricao_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $descricao_edit->setField('id');
-        $descricao->setEditAction($descricao_edit);*/
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -146,7 +143,6 @@ class NaturezaList extends TPage
         
         // create the page container
         $container = new TTable;
-        $container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($this->datagrid);

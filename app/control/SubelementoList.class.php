@@ -9,17 +9,15 @@ use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\THBox;
 use Adianti\Widget\Container\TTable;
-use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Datagrid\TDataGrid;
-use Adianti\Widget\Datagrid\TDataGridAction;
 use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
-use Adianti\Widget\Dialog\TQuestion;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 
 /*
  * Copyright (C) 2015 Anderson
@@ -70,7 +68,10 @@ class SubelementoList extends TPage
         $this->form->add($table);
         
         // add a row for the form title
-        $table->addRowSet( new TLabel('Consulta SubElemento') ,'')->class = 'tformtitle'; // CSS class  
+        $row = $table->addRow();
+        $row->class = 'tformtitle';
+        $row->addCell(new TLabel('Consulta SubElemento'))->colspan = 2;
+        //$table->addRowSet( new TLabel('Consulta SubElemento') ,'')->class = 'tformtitle'; // CSS class  
         
 
         // create the form fields
@@ -129,12 +130,6 @@ class SubelementoList extends TPage
         $order_descricao= new TAction(array($this, 'onReload'));
         $order_descricao->setParameter('order', 'descricao');
         $descricao->setAction($order_descricao);
-
-        /*
-        // inline editing
-        $descricao_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $descricao_edit->setField('id');
-        $descricao->setEditAction($descricao_edit);*/
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -146,7 +141,7 @@ class SubelementoList extends TPage
         
         // create the page container
         $container = new TTable;
-        $container->style = 'width: 80%';
+        //$container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($this->datagrid);

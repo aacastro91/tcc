@@ -115,33 +115,6 @@ class FornecedorList extends TPage
         $order_cnpj= new TAction(array($this, 'onReload'));
         $order_cnpj->setParameter('order', 'cnpj');
         $cnpj->setAction($order_cnpj);
-
-        /*
-        // inline editing
-        $nome_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $nome_edit->setField('id');
-        $nome->setEditAction($nome_edit);
-
-        $cnpj_edit = new TDataGridAction(array($this, 'onInlineEdit'));
-        $cnpj_edit->setField('id');
-        $cnpj->setEditAction($cnpj_edit);*/
-
-
-        /*
-        // creates two datagrid actions
-        $action1 = new TDataGridAction(array('FornecedorForm', 'onEdit'));
-        $action1->setLabel(_t('Edit'));
-        $action1->setImage('ico_edit.png');
-        $action1->setField('id');
-        
-        $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
-        $action2->setImage('ico_delete.png');
-        $action2->setField('id');
-        
-        // add the actions to the datagrid
-        $this->datagrid->addAction($action1);
-        $this->datagrid->addAction($action2);*/
         
         // create the datagrid model
         $this->datagrid->createModel();
@@ -153,7 +126,7 @@ class FornecedorList extends TPage
         
         // create the page container
         $container = new TTable;
-        $container->style = 'width: 80%';
+        //$container->style = 'width: 80%';
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($this->datagrid);

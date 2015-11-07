@@ -72,7 +72,7 @@ class SrpList extends TPage{
         $numeroIRP        = new TEntry('numeroIRP');
         $numeroProcesso   = new TEntry('numeroProcesso');
         $uasg             = new TEntry('uasg');
-        $validade         = new TEntry('validade');
+        $validade         = new TDate('validade');
         $nome             = new TEntry('nome');
         
         // define os tamanhos
@@ -81,6 +81,7 @@ class SrpList extends TPage{
         $numeroProcesso->setSize(150);
         $uasg->setSize(70);
         $validade->setSize(100);
+        $validade->setProperty('style', 'margin-right : 0px');
         $nome->setSize(400);        
         $validade->setMask('dd/mm/yyyy');
         
@@ -131,20 +132,6 @@ class SrpList extends TPage{
         $this->datagrid->addColumn($nome);
         $this->datagrid->addColumn($uasg);
         $this->datagrid->addColumn($validade);
-        
-
-        
-        // cria as ações do datagrid
-
-        /*
-        $action2 = new TDataGridAction(array($this, 'onDelete'));
-        $action2->setLabel(_t('Delete'));
-        $action2->setImage('ico_delete.png');
-        $action2->setField('id');*/
-        
-        // add the actions to the datagrid
-        //$this->datagrid->addAction($action1);
-        //$this->datagrid->addAction($action2);
         
         $srpViewAction = new TDataGridAction(array('SrpFormView','onViewSrp'));
         $srpViewAction->setLabel('Itens');

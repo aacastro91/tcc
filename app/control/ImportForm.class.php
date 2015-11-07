@@ -136,7 +136,15 @@ class ImportForm extends TPage {
         $btnImportFile->setImage('ico_next.png');
 
         $this->frmSelecao->addRowSet($btnLoadFile);
-        $this->frmImportacao->addRowSet($btnImportFile);
+        $this->frmSelecao->addRowSet('&nbsp');
+        $this->frmSelecao->addRowSet('&nbsp');
+        $link = new TElement('a');
+        $link->href = 'Files/template.xls';
+        $link->add('Link para o layout');
+        $this->frmSelecao->addRowSet($link);
+        
+        
+        $this->frmImportacao->addRowSet($btnImportFile);        
 
         // define wich are the form fields
         $this->form->setFields(array($file, $btnLoadFile, $btnImportFile));
