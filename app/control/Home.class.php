@@ -2,12 +2,13 @@
 
 use Adianti\Control\TPage;
 use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
-use Adianti\Log\TLoggerTXT;
 use Adianti\Widget\Container\TTable;
 use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
 use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TDate;
@@ -109,10 +110,10 @@ class Home extends TPage{
         $this->dg_UltCesssao->makeScrollable();
         $this->dg_SRPAVencer->makeScrollable();
         
-        $this->dg_UltImportacao->disableDefaultClick();
-        $this->dg_UltRequisicao->disableDefaultClick();
-        $this->dg_UltCesssao->disableDefaultClick();
-        $this->dg_SRPAVencer->disableDefaultClick();
+        //$this->dg_UltImportacao->disableDefaultClick();
+        //$this->dg_UltRequisicao->disableDefaultClick();
+        //$this->dg_UltCesssao->disableDefaultClick();
+        //$this->dg_SRPAVencer->disableDefaultClick();
         
         //Ultimas Importações
         $numeroSRP   = new TDataGridColumn('numeroSRP', 'Nº SRP', 'left', 70);
@@ -120,7 +121,13 @@ class Home extends TPage{
         $numeroProcesso   = new TDataGridColumn('numeroProcesso', 'Proc. Orig.', 'left', 150);
         $uasg   = new TDataGridColumn('uasg', 'UASG', 'left', 50);
         $validade   = new TDataGridColumn('validade', 'Validade', 'left', 100);
-        $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
+        $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);        
+        $actUltImp = new TDataGridAction(array('SrpFormView', 'onViewSrp'));
+        $actUltImp->setLabel('Visualizar');
+        $actUltImp->setImage('fa:search fa-fw');
+        $actUltImp->setField('id');
+        $this->dg_UltImportacao->addAction($actUltImp);
+        
         $this->dg_UltImportacao->addColumn($numeroSRP);
         $this->dg_UltImportacao->addColumn($numeroIRP);
         $this->dg_UltImportacao->addColumn($numeroProcesso);
@@ -134,6 +141,12 @@ class Home extends TPage{
         $numeroProcesso = new TDataGridColumn('numeroProcesso', 'Nº do processo', 'left', 250);
         $data = new TDataGridColumn('emissao', 'Data', 'left', 100);
         $aprovado = new TDataGridColumn('aprovado', 'Aprovado', 'left',100);
+        $actUltReq = new TDataGridAction(array('RequisicaoList', 'onReload'));
+        $actUltReq->setLabel('Visualizar');
+        $actUltReq->setImage('fa:search fa-fw');
+        $actUltReq->setField('id');
+        $this->dg_UltRequisicao->addAction($actUltReq);
+        
         $this->dg_UltRequisicao->addColumn($srp);
         $this->dg_UltRequisicao->addColumn($numeroProcesso);
         $this->dg_UltRequisicao->addColumn($data);
@@ -147,6 +160,11 @@ class Home extends TPage{
         $uasg   = new TDataGridColumn('uasg', 'UASG', 'left', 50);
         $validade   = new TDataGridColumn('validade', 'Validade', 'left', 100);
         $nome   = new TDataGridColumn('nome', 'Nome', 'left', 300);
+        $actSrpVen = new TDataGridAction(array('SrpFormView', 'onViewSrp'));
+        $actSrpVen->setLabel('Visualizar');
+        $actSrpVen->setImage('fa:search fa-fw');
+        $actSrpVen->setField('id');
+        $this->dg_SRPAVencer->addAction($actSrpVen);
         $this->dg_SRPAVencer->addColumn($numeroSRP);
         $this->dg_SRPAVencer->addColumn($numeroIRP);
         $this->dg_SRPAVencer->addColumn($numeroProcesso);
@@ -160,6 +178,12 @@ class Home extends TPage{
         $numeroCessao = new TDataGridColumn('numeroCessao', 'Nº da Cessão', 'left', 250);
         $data = new TDataGridColumn('emissao', 'Data', 'left', 100);
         $aprovado = new TDataGridColumn('aprovado', 'Aprovado', 'left',100);
+        $actUltCes = new TDataGridAction(array('CessaoList', 'onReload'));
+        $actUltCes->setLabel('Visualizar');
+        $actUltCes->setImage('fa:search fa-fw');
+        $actUltCes->setField('id');
+        $this->dg_UltCesssao->addAction($actUltCes);
+        
         $this->dg_UltCesssao->addColumn($srp);
         $this->dg_UltCesssao->addColumn($numeroCessao);
         $this->dg_UltCesssao->addColumn($data);

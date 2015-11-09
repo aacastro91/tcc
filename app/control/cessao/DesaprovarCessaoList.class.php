@@ -151,7 +151,12 @@ class DesaprovarCessaoList extends TPage
         TSession::delValue('form_cessao');
         
         // create the page container
-        $container = TVBox::pack( $this->form, $this->datagrid);
+        //$container = TVBox::pack( $this->form, $this->datagrid);
+        $container = new TTable;       
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->addRow()->addCell($this->form);
+        $container->addRow()->addCell($this->datagrid);
+        //$container->addRow()->addCell($this->pageNavigation);
         parent::add($container);
     }
     

@@ -117,7 +117,13 @@ class RequisicaoReport extends TPage {
         // add a row for the form action
         $table->addRowSet($generate_button, '')->class = 'tformaction';
 
-        parent::add($this->form);
+        $container = new TTable;       
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->addRow()->addCell($this->form);
+        //$container->addRow()->addCell($this->datagrid);
+        //$container->addRow()->addCell($this->pageNavigation);
+        
+        parent::add($container);
     }
 
     function header() {

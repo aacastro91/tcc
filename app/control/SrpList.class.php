@@ -148,8 +148,12 @@ class SrpList extends TPage{
         $this->pageNavigation->setAction(new TAction(array($this, 'onReload')));
         $this->pageNavigation->setWidth($this->datagrid->getWidth());
         
-        // cria o container da pagina
-        $container = TVBox::pack( $this->form, $this->datagrid, $this->pageNavigation);
+        $container = new TTable;       
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->addRow()->addCell($this->form);
+        $container->addRow()->addCell($this->datagrid);
+        $container->addRow()->addCell($this->pageNavigation);
+
         parent::add($container);
     }
     

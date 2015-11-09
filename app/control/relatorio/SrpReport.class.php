@@ -123,7 +123,10 @@ class SrpReport extends TPage {
         // add a row for the form action
         $table->addRowSet($generate_button, '')->class = 'tformaction';
 
-        parent::add($this->form);
+        $container = new TTable;       
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->addRow()->addCell($this->form);
+        parent::add($container);
     }
 
     function header() {
