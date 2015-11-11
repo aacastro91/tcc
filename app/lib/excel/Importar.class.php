@@ -103,7 +103,7 @@ class Importar {
     public function isValidRow() {
         if (strtoupper($this->getFornecedor()) == 'CANCELADO')
             return false;
-        if ($this->getOrgao(CAMPUS)== '')
+        if ($this->getOrgao(CAMPUS)=== '')
             return false;
         if (!$this->getCNPJ())
             return false;
