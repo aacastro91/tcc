@@ -101,9 +101,11 @@ class Importar {
     }
 
     public function isValidRow() {
-        if ($this->getFornecedor() == 'CANCELADO')
+        if (strtoupper($this->getFornecedor()) == 'CANCELADO')
             return false;
         if ($this->getOrgao(CAMPUS)== '')
+            return false;
+        if (!$this->getCNPJ())
             return false;
         
         return true;
@@ -186,7 +188,7 @@ class Importar {
             $nomeArquivo = $name;
         
         $row = $this->getRowArray(2);
-        for ($i = 0; $i < count($row) - 1; $i++) {
+        for ($i = 0; $i < count($row); $i++) {
             if ($row[$i] == $nomeArquivo) {
                 return $this->dataFile[$i][$this->activeRow-1];
             }
