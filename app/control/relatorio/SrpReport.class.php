@@ -12,6 +12,8 @@ use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Form\TRadioGroup;
+use Adianti\Widget\Util\TXMLBreadCrumb;
 
 /*
  * Copyright (C) 2015 Anderson
@@ -67,16 +69,17 @@ class SrpReport extends TPage {
         $row->addCell(new TLabel('Relatório de Srp'))->colspan = 2;
 
         // create the form fields
-        $numeroSRPI                      = new TEntry('numeroSRPI');
-        $numeroSRPF                      = new TEntry('numeroSRPF');
-        $numeroIRPI                      = new TEntry('numeroIRPI');
-        $numeroIRPF                      = new TEntry('numeroIRPF');
-        $numeroProcessoI                 = new TEntry('numeroProcessoI');
-        $numeroProcessoF                 = new TEntry('numeroProcessoF');
-        $validadeI                       = new TDate('validadeI');
-        $validadeF                       = new TDate('validadeF');
-        $nomeI                           = new TEntry('nomeI');
-        $nomeF                           = new TEntry('nomeF');
+        $numeroSRPI = new TEntry('numeroSRPI');
+        $numeroSRPF = new TEntry('numeroSRPF');
+        $numeroIRPI = new TEntry('numeroIRPI');
+        $numeroIRPF = new TEntry('numeroIRPF');
+        $numeroProcessoI = new TEntry('numeroProcessoI');
+        $numeroProcessoF = new TEntry('numeroProcessoF');
+        $validadeI = new TDate('validadeI');
+        $validadeF = new TDate('validadeF');
+        $nomeI = new TEntry('nomeI');
+        $nomeF = new TEntry('nomeF');
+        $itensZero = new TRadioGroup('itensZero');
 
 
         // define the sizes
@@ -102,15 +105,20 @@ class SrpReport extends TPage {
         //$aprovado->addValidation('Aprovado', new TRequiredValidator);
         $validadeF->addValidation('Validade - Até', new TDateValidator, array('dd/mm/yyyy'));
 
+        $itensZero->addItems(array('1' => 'Sim', '0' => 'Não'));
+        $itensZero->setValue('0');
+        $itensZero->setLayout('horizontal');
+
 
         // add one row for each form field
-        $table->addRowSet(new TLabel('Nº SRP'), array( $numeroSRPI, new TLabel('Até'), $numeroSRPF));
-        $table->addRowSet(new TLabel('Nº IRP'), array( $numeroIRPI, new TLabel('Até'), $numeroIRPF));
-        
-        $table->addRowSet(new TLabel('Nº Processo'), array( $numeroProcessoI, new TLabel('Até'), $numeroProcessoF));
-        $table->addRowSet(new TLabel('Emissão'), array( $validadeI, new TLabel('Até'), $validadeF));
+        $table->addRowSet(new TLabel('Nº SRP'), array($numeroSRPI, new TLabel('Até'), $numeroSRPF));
+        $table->addRowSet(new TLabel('Nº IRP'), array($numeroIRPI, new TLabel('Até'), $numeroIRPF));
 
-        $this->form->setFields(array($numeroProcessoI, $numeroProcessoF, $numeroIRPI, $numeroIRPF, $nomeI, $nomeF, $validadeI, $validadeF, $numeroSRPI, $numeroSRPF));
+        $table->addRowSet(new TLabel('Nº Processo'), array($numeroProcessoI, new TLabel('Até'), $numeroProcessoF));
+        $table->addRowSet(new TLabel('Emissão'), array($validadeI, new TLabel('Até'), $validadeF));
+        $table->addRowSet(new TLabel('Lista itens zerado?'), $itensZero);
+
+        $this->form->setFields(array($numeroProcessoI, $numeroProcessoF, $numeroIRPI, $numeroIRPF, $nomeI, $nomeF, $validadeI, $validadeF, $numeroSRPI, $numeroSRPF, $itensZero));
 
 
         //$aprovado->addItems(array('1' => 'Sim', '0' => 'Não', '%' => 'Todos'));
@@ -123,7 +131,7 @@ class SrpReport extends TPage {
         // add a row for the form action
         $table->addRowSet($generate_button, '')->class = 'tformaction';
 
-        $container = new TTable;       
+        $container = new TTable;
         $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         parent::add($container);
@@ -143,7 +151,24 @@ class SrpReport extends TPage {
         $this->pdf->Cell(0, 5, utf8_decode(date('d/m/Y h:i:s')), 'T');
     }
 
-    function srpHeader() {
+    private function countItem($itens, $imprimeZero = FALSE) {
+        if (!$imprimeZero) {
+            $count = 0;
+            foreach ($itens as $item) {
+                if ($item->estoqueDisponivel !== 0) {
+                    $count++;
+                }
+            }
+            return $count;
+        } else {
+            return count($itens);
+        }
+    }
+
+    function srpHeader($imprimeZero = NULL) {
+        if ($this->countItem($this->data->getItems(), $imprimeZero) === 0){
+            return;
+        }
         $this->pdf->Cell(0, 0, '', 'T', 1);
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nº SRP: ')), 5, utf8_decode('Nº SRP:'), 0, 0, 'L');
@@ -161,7 +186,7 @@ class SrpReport extends TPage {
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Emissão: ')), 5, utf8_decode('Emissão:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
         $this->pdf->Cell(35, 5, utf8_decode(TDate::date2br($this->data->validade)), 0, 1, 'L');
-        
+
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell($this->pdf->GetStringWidth(utf8_decode('Nome: ')), 5, utf8_decode('Nome:'), 0, 0, 'L');
         $this->pdf->SetFont('Times', '', 12);
@@ -174,19 +199,30 @@ class SrpReport extends TPage {
         $this->pdf->SetFont('Times', 'B', 12);
         $this->pdf->Cell(20, 5, utf8_decode('Nº Item'), 0, 0, 'L');
         $this->pdf->Cell(90, 5, utf8_decode('Descrição Sumária'), 0, 0, 'L');
-        $this->pdf->Cell(15, 5, utf8_decode('Qtd. Inicial'   ), 0, 0, 'R');
+        $this->pdf->Cell(15, 5, utf8_decode('Qtd. Inicial'), 0, 0, 'R');
         $this->pdf->Cell(35, 5, utf8_decode('Qtd. Disponível'), 0, 0, 'R');
-        $this->pdf->Cell(0 , 5, utf8_decode('Valor Unitário' ), 0, 1, 'R');
-        $this->pdf->Cell(0 , 0, '', 'T', 1);
+        $this->pdf->Cell(0, 5, utf8_decode('Valor Unitário'), 0, 1, 'R');
+        $this->pdf->Cell(0, 0, '', 'T', 1);
     }
 
-    function srpItens() {
+    function srpItens($imprimeZero = NULL) {
         $itens = $this->data->getItems();
+        
+        if ($this->countItem($itens, $imprimeZero) === 0){
+            return;
+        }
 
         $totalItem = 0;
         $ValorTotal = 0;
 
         foreach ($itens as $item) {
+            
+            if ($item->estoqueDisponivel == 0){
+                if ($imprimeZero === false){
+                    continue;
+                }
+            }
+            
             $this->pdf->SetFont('Times', '', 9);
             $descricaoSumaria = $item->descricaoSumaria;
 
@@ -230,12 +266,12 @@ class SrpReport extends TPage {
             $validadeI = $formdata->validadeI;
             $validadeF = TDate::date2us($formdata->validadeF);
 
-            if (!$validadeI===0) {
+            if (!$validadeI === 0) {
                 $validadeI = '0';
             } else {
                 $validadeI = TDate::date2us($validadeI);
             }
-            
+
 
             $this->form->validate();
 
@@ -256,6 +292,13 @@ class SrpReport extends TPage {
                 $criteria->add(new TFilter('numeroIRP', 'between', "{$formdata->numeroIRPI}", "{$formdata->numeroIRPF}"));
             }
 
+            $imprimeZero = true;
+            if (isset($formdata->itensZero)) {
+                if ($formdata->itensZero === '0') {
+                    $imprimeZero = false;
+                }
+            }
+
 
             $srps = $repository->load($criteria, true);
             if ($srps) {
@@ -268,8 +311,8 @@ class SrpReport extends TPage {
                 $this->pdf->AddPage();
                 foreach ($srps as $srp) {
                     $this->data = $srp;
-                    $this->srpHeader();
-                    $this->srpItens();
+                    $this->srpHeader($imprimeZero);
+                    $this->srpItens($imprimeZero);
                 }
 
                 if (!file_exists("app/output/RelatorioSrp.pdf") OR is_writable("app/output/RelatorioSrp.pdf")) {
