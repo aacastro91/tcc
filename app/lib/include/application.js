@@ -3,7 +3,7 @@ loading = true;
 function showLoading()
 {
   if (loading){
-    console.log('block');
+    //console.log('block');
     __adianti_block_ui('Carregando');
   }
 }
@@ -21,7 +21,7 @@ Adianti.onBeforeLoad = function ()
 {
   loading = true;
 
-  console.log('start');
+  //console.log('start');
   setTimeout(function () {
     showLoading();
   }, 400);
@@ -30,7 +30,7 @@ Adianti.onBeforeLoad = function ()
 Adianti.onAfterLoad = function ()
 {
   loading = false;
-  console.log('unblock');
+  //console.log('unblock');
   __adianti_unblock_ui();
 
   $("input.frm_number_only").keydown(function (event) {
