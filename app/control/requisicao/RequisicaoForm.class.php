@@ -314,7 +314,14 @@ class RequisicaoForm extends TPage {
         } catch (Exception $e) {
             $this->form_itens->setData($this->form_itens->getData());
             $this->form_requisicao->setData($requisicao);
-            new TMessage('error', $e->getMessage());
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
         }
     }
     
@@ -367,7 +374,7 @@ class RequisicaoForm extends TPage {
             TTransaction::open('saciq');
             $item = new Item($item_id);
             TTransaction::close();
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
             TTransaction::rollback();
         }
 
@@ -456,9 +463,17 @@ class RequisicaoForm extends TPage {
             TForm::sendData('form_requisicao', $form_requisicao);
             $this->onReload();
             TTransaction::close();
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
-            new TMessage('error', 'Erro: ' . $ex->getMessage());
         }
     }
 
@@ -498,7 +513,14 @@ class RequisicaoForm extends TPage {
             }
             $this->loaded = true;
         } catch (Exception $e) { // in case of exception
-            new TMessage('error', '<b>Error</b> ' . $e);
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
         }
     }
 
@@ -554,7 +576,14 @@ class RequisicaoForm extends TPage {
             TTransaction::close();
             $this->onReload();
         } catch (Exception $e) {
-            new TMessage('error', $e->getMessage());
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
         }
     }
 

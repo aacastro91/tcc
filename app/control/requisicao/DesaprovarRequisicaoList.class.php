@@ -183,8 +183,16 @@ class DesaprovarRequisicaoList extends TPage
             TTransaction::close();
             new TMessage('info', 'Requisição Desaprovada com sucesso!');
             $this->onReload();
-        } catch (Exception $ex) {
-            new TMessage('error', $ex->getMessage());
+        } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
             return;
         }
@@ -213,8 +221,16 @@ class DesaprovarRequisicaoList extends TPage
                     'Nº Processo: '. $Requisicao->numeroProcesso .'<br>'.
                     'Emissão: ' . TDate::date2br($Requisicao->emissao);
             TTransaction::close();            
-        } catch (Exception $ex) {
-            new TMessage('error', $ex->getMessage());
+        } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
             return;
         }
@@ -321,10 +337,15 @@ class DesaprovarRequisicaoList extends TPage
         }
         catch (Exception $e) // in case of exception
         {
-            // shows the exception error message
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
-            // undo all pending operations
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -362,8 +383,16 @@ class DesaprovarRequisicaoList extends TPage
         }
         catch (Exception $e) // in case of exception
         {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
+            TTransaction::rollback();
         }
     }
     

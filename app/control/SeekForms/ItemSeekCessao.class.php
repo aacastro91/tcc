@@ -229,8 +229,16 @@ class ItemSeekCessao extends TWindow {
             //fecha a transacao
             TTransaction::close();
             $this->carregado = true;
-        } catch (Exception $ex) {
-            new TMessage('error', '<b>Error</b> ' . $ex->getMessage());
+        } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -309,7 +317,7 @@ class ItemSeekCessao extends TWindow {
                 parent::closeWindow();
             }
             TTransaction::close();
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
             $obj = new stdClass();
             $obj->item_id = '';
             $obj->descricaoSumaria = '';

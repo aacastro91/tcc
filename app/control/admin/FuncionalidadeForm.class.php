@@ -71,14 +71,16 @@ class FuncionalidadeForm extends TPage
             TTransaction::close(); // close the transaction
             new TMessage('info', 'Registro salvo'); // shows the success message
         } catch (Exception $e) { // Em caso de erro
-            if (strpos($e->getMessage(), 'Integrity constraint violation')) {
-                
-
+            if ($e->getCode() == 23000) {
                 new TMessage('error', '<b>Registro duplicado</b><br>A Classe de controle "' . $object->classe . '" já foi registrada');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
             } else {
-
-                new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
             }
+            // desfazer todas as operacoes pendentes
+            TTransaction::rollback();
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
@@ -109,9 +111,14 @@ class FuncionalidadeForm extends TPage
                 $this->form->clear();
             }
         } catch (Exception $e) { // Em caso de erro
-            // mostrar mensagem de erro
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }

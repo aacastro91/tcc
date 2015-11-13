@@ -150,39 +150,6 @@ class SubelementoList extends TPage
     }
     
     /**
-     * method onInlineEdit()
-     * Inline record editing
-     * @param $param Array containing:
-     *              key: object ID value
-     *              field name: object attribute to be updated
-     *              value: new attribute content 
-     *//*
-    function onInlineEdit($param)
-    {
-        try
-        {
-            // get the parameter $key
-            $field = $param['field'];
-            $key   = $param['key'];
-            $value = $param['value'];
-            
-            TTransaction::open('saciq'); // open a transaction with database
-            $object = new Subelemento($key); // instantiates the Active Record
-            $object->{$field} = $value;
-            $object->store(); // update the object in the database
-            TTransaction::close(); // close the transaction
-            
-            $this->onReload($param); // reload the listing
-            new TMessage('info', "Registro atualizado");
-        }
-        catch (Exception $e) // in case of exception
-        {
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
-            TTransaction::rollback(); // undo all pending operations
-        }
-    }*/
-    
-    /**
      * method onSearch()
      * Register the filter in the session when the user performs a search
      */
@@ -272,10 +239,15 @@ class SubelementoList extends TPage
         }
         catch (Exception $e) // in case of exception
         {
-            // shows the exception error message
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
-            // undo all pending operations
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }

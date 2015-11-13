@@ -201,8 +201,14 @@ class FuncionalidadeList extends TPage
         }
         catch (Exception $e) // Em caso de erro
         {
-            // mostrar mensagem de erro
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
@@ -317,9 +323,14 @@ class FuncionalidadeList extends TPage
         }
         catch (Exception $e) // Em caso de erro
         {
-            // mostrar mensagem de erro
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
@@ -369,9 +380,14 @@ class FuncionalidadeList extends TPage
         }
         catch (Exception $e) // Em caso de erro
         {
-            // mostrar mensagem de erro
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
-            
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
             // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }

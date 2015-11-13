@@ -207,6 +207,15 @@ class ImportForm extends TPage {
             TTransaction::close();
             return true;
         } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
         }
     }
@@ -243,8 +252,16 @@ class ImportForm extends TPage {
             $data = $this->form->getData();
             $this->form->validate();
         } catch (Exception $e) {
-            new TMessage('error', '<b>Error</b>: <br> ' . $e->getMessage());
-            return;
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
+            TTransaction::rollback();
         }
 
         $file = $this->checkFile($param['file']);
@@ -385,8 +402,16 @@ class ImportForm extends TPage {
 
             TTransaction::close();
         } catch (Exception $e) {
+            if ($e->getCode() == 23000) {
+                new TMessage('error', '<b>Registro duplicado</b><br>Verifique os campos inseridos e tente novamente');
+            } else
+            if ($e->getCode() == 0) {
+                new TMessage('error', '<b>Error</b> <br>' . $e->getMessage());
+            } else {
+                new TMessage('error', '<b>Error Desconhecido</b> <br>Código: ' . $e->getCode());
+            }
+            // desfazer todas as operacoes pendentes
             TTransaction::rollback();
-            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
         }
         $this->notebook->setCurrentPage(0);
         $this->form->setData($data);
