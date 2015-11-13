@@ -139,7 +139,7 @@ class ImportForm extends TPage {
         $this->frmSelecao->addRowSet('&nbsp');
         $this->frmSelecao->addRowSet('&nbsp');
         $link = new TElement('a');
-        $link->href = 'Files/template.xls';
+        $link->href = 'Files/template.xlsx';
         $link->add('Link para o layout');
         $this->frmSelecao->addRowSet($link);
         
