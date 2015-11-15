@@ -278,6 +278,9 @@ class SrpReport extends TPage {
 
             $repository = new TRepository('Srp');
             $criteria = new TCriteria;
+            $param['order'] = 'id';
+            $param['direction'] = 'desc';
+            $criteria->setProperties($param);
 
             if ($formdata->numeroProcessoI != '' && $formdata->numeroProcessoF != '') {
                 $criteria->add(new TFilter('numeroProcesso', 'BETWEEN', "{$formdata->numeroProcessoI}", "{$formdata->numeroProcessoF}"));

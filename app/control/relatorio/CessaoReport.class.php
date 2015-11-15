@@ -251,6 +251,9 @@ class CessaoReport extends TPage {
 
             $repository = new TRepository('Cessao');
             $criteria = new TCriteria;
+            $param['order'] = 'id';
+            $param['direction'] = 'desc';
+            $criteria->setProperties($param);
 
             if ($formdata->numeroCessaoI != '' && $formdata->numeroCessaoF != '') {
                 $criteria->add(new TFilter('numeroCessao', 'BETWEEN', "{$formdata->numeroCessaoI}", "{$formdata->numeroCessaoF}"));
