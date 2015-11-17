@@ -72,7 +72,7 @@ class Exportar {
                 $obj->UASG = $requisicao->srp->uasg;
                 $obj->NomeLicitacao = $requisicao->srp->nome;
                 $obj->SubElemento = $item->subelemento->id;
-                $obj->ValidadeAta = $requisicao->srp->validade;
+                $obj->ValidadeAta = TDate::date2br($requisicao->srp->validade);
                 $obj->PrazoEntrega = $item->prazoEntrega;
                 $obj->EstimativoCampus = CAMPUS;
                 $obj->OrcamentoCampus = CAMPUS;
